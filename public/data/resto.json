@@ -1,0 +1,45 @@
+{
+  "_nota": "Configuración de la carta. Cada comercio tiene su propio archivo: identidad, secciones propias y selección de productos de Marian.",
+  "resto": {
+    "nombre": "Café Tilo",
+    "bajada": "Café de especialidad, cocina de estación y pastelería.",
+    "direccion": "Dirección a completar · Buenos Aires",
+    "horario": "Lun a dom · 8 a 20 h",
+    "whatsapp": "",
+    "tema": { "fondo": "#F5EEE1", "texto": "#23372D", "acento": "#B4572F", "cabecera": "#23372D", "cabeceraTexto": "#F5EEE1", "titulos": "Fraunces", "cuerpo": "DM Sans" }
+  },
+  "marian": {
+    "web": "https://marian.marianacaci.com",
+    "retiro": true,
+    "titulo": "Pastelería de Marian",
+    "texto": "Todo lo dulce de esta carta lo hace Marian cakes boutique. Si querés una torta entera, encargala en su web con anticipación y retirala acá.",
+    "items": [
+      { "id": "brownie-blondie", "nombre": "Brownie blondie", "modo": "vitrina", "precio": "" },
+      { "id": "barra-maracuya", "nombre": "Barra de maracuyá", "modo": "vitrina", "precio": "" },
+      { "id": "dessert-oreo-mascarpone", "nombre": "Oreo y mascarpone", "modo": "vitrina", "precio": "" },
+      { "id": "cookie-triple-choco", "nombre": "Cookie triple chocolate", "modo": "vitrina", "precio": "" },
+      { "id": "cookie-lotus", "nombre": "Cookie Lotus Biscuit", "modo": "vitrina", "precio": "" },
+      { "id": "alfajor-almendras-pistacho", "nombre": "Alfajor de almendras y pistacho", "modo": "vitrina", "precio": "" },
+      { "id": "tarta-manzana-crumble", "nombre": "Tarta de manzana con crumble", "modo": "encargo", "precio": "" },
+      { "id": "tiramisu", "nombre": "Torta tiramisú", "modo": "encargo", "precio": "" },
+      { "id": "red-velvet", "nombre": "Torta red velvet", "modo": "encargo", "precio": "" }
+    ]
+  },
+  "secciones": [
+    { "id": "desayunos", "titulo": "Desayunos y meriendas", "items": [
+      { "nombre": "Café con leche + 2 medialunas", "desc": "Medialunas de manteca.", "precio": "$ —" },
+      { "nombre": "Tostado de jamón y queso", "desc": "Pan de masa madre, queso fresco.", "precio": "$ —" },
+      { "nombre": "Tostón de palta y huevo", "desc": "Pan de masa madre, palta, huevo poché.", "precio": "$ —" }
+    ]},
+    { "id": "platos", "titulo": "Platos", "items": [
+      { "nombre": "Ensalada de estación", "desc": "Hojas, vegetales de temporada, semillas.", "precio": "$ —" },
+      { "nombre": "Pasta del día", "desc": "Consultá la salsa de hoy.", "precio": "$ —" },
+      { "nombre": "Sándwich de bondiola braseada", "desc": "Pan de campo, cebolla caramelizada.", "precio": "$ —" }
+    ]},
+    { "id": "bebidas", "titulo": "Bebidas", "items": [
+      { "nombre": "Espresso / Doble", "desc": "", "precio": "$ —" },
+      { "nombre": "Flat white", "desc": "", "precio": "$ —" },
+      { "nombre": "Limonada con menta y jengibre", "desc": "", "precio": "$ —" }
+    ]}
+  ]
+}
