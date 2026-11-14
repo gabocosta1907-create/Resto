@@ -1,0 +1,48 @@
+{
+  "_nota": "Comercio de ejemplo ficticio (datos y precios inventados). Estructura distinta a Café Tilo: formato compacto, variantes copa/botella y bloque de Marian al final.",
+  "resto": {
+    "nombre": "Vermutería Zorzal",
+    "bajada": "Vermut, vinos por copa y picadas de barrio.",
+    "direccion": "Dirección a completar · Buenos Aires",
+    "horario": "Mar a sáb · 18 a 1 h",
+    "aviso": "Hora del vermut · 18 a 20 h",
+    "whatsapp": "",
+    "tema": { "fondo": "#14213D", "texto": "#F1E9DA", "acento": "#E9A23B", "cabecera": "#E9A23B", "cabeceraTexto": "#14213D", "titulos": "Bebas Neue", "pesoTitulos": 400, "cuerpo": "Work Sans" }
+  },
+  "marian": {
+    "web": "https://marian.marianacaci.com",
+    "retiro": true,
+    "despuesDe": "final",
+    "titulo": "Pastelería de Marian",
+    "texto": "Para cerrar, lo dulce lo hace Marian cakes boutique. Si querés una torta entera, encargala en su web con anticipación y retirala acá.",
+    "items": [
+      { "id": "alfajor-coco-moka", "nombre": "Alfajor de coco y crema moka", "modo": "vitrina", "precio": "" },
+      { "id": "brownie-palmer", "nombre": "Brownie Palmer House", "modo": "vitrina", "precio": "" },
+      { "id": "dessert-ddl-coco", "nombre": "Dessert de dulce de leche y coco", "modo": "vitrina", "precio": "" },
+      { "id": "cookie-chips", "nombre": "Cookie con chips de chocolate", "modo": "vitrina", "precio": "" },
+      { "id": "vasca-san-sebastian", "nombre": "Vasca San Sebastián", "modo": "encargo", "precio": "" },
+      { "id": "key-lime-pie", "nombre": "Key lime pie", "modo": "encargo", "precio": "" },
+      { "id": "selva-negra", "nombre": "Selva negra", "modo": "encargo", "precio": "" }
+    ]
+  },
+  "secciones": [
+    { "id": "picadas", "titulo": "Para picar", "sub": "Pensado para compartir.", "formato": "compacto", "items": [
+      { "nombre": "Aceitunas marinadas", "desc": "Cítricos y romero.", "precio": "$ —" },
+      { "nombre": "Pan de campo y manteca", "desc": "Con sal de mar.", "precio": "$ —" },
+      { "nombre": "Provoleta", "desc": "A la parrilla, orégano.", "precio": "$ —" },
+      { "nombre": "Tabla de fiambres", "desc": "Selección del día.", "precio": "$ —" },
+      { "nombre": "Berenjenas en escabeche", "desc": "", "precio": "$ —" },
+      { "nombre": "Tostadas de ricota", "desc": "Miel y nueces.", "precio": "$ —" }
+    ]},
+    { "id": "vermut", "titulo": "Vermut y aperitivos", "items": [
+      { "nombre": "Vermut de la casa", "desc": "Rojo, con soda y gajo de naranja.", "variantes": [{ "n": "Vaso", "p": "$ —" }, { "n": "Jarra", "p": "$ —" }] },
+      { "nombre": "Spritz de la casa", "desc": "Aperitivo amargo, espumante, soda.", "variantes": [{ "n": "Vaso", "p": "$ —" }] },
+      { "nombre": "Negroni", "desc": "Gin, vermut rojo, bitter.", "variantes": [{ "n": "Vaso", "p": "$ —" }] }
+    ]},
+    { "id": "vinos", "titulo": "Vinos", "items": [
+      { "nombre": "Malbec", "desc": "Valle de Uco.", "variantes": [{ "n": "Copa", "p": "$ —" }, { "n": "Botella", "p": "$ —" }] },
+      { "nombre": "Torrontés", "desc": "Valles Calchaquíes.", "variantes": [{ "n": "Copa", "p": "$ —" }, { "n": "Botella", "p": "$ —" }] },
+      { "nombre": "Espumante brut nature", "desc": "", "variantes": [{ "n": "Copa", "p": "$ —" }, { "n": "Botella", "p": "$ —" }] }
+    ]}
+  ]
+}

@@ -1,21 +1,24 @@
-:root{--bg:#F5EEE1;--tx:#23372D;--ac:#B4572F;--cab:#23372D;--cabtx:#F5EEE1;--ft:'Fraunces',serif;--fb:'DM Sans',sans-serif;--line:color-mix(in srgb,var(--tx) 22%,transparent)}
+:root{--bg:#F5EEE1;--tx:#23372D;--ac:#B4572F;--cab:#23372D;--cabtx:#F5EEE1;--ft:'Fraunces',serif;--fb:'DM Sans',sans-serif;--wt:500;--line:color-mix(in srgb,var(--tx) 22%,transparent)}
 *{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:64px}
 body{margin:0;background:var(--bg);color:var(--tx);font:400 16px/1.5 var(--fb)}
 .wrap{max-width:680px;margin:0 auto;padding:0 20px}
 .top{background:var(--cab);color:var(--cabtx);padding:44px 0 30px}
-.top h1{font:500 clamp(40px,11vw,64px)/1 var(--ft);margin:0 0 10px;letter-spacing:-.01em}
-.top p{margin:0;opacity:.9}.top .meta{margin-top:14px;font-size:13px;opacity:.7;letter-spacing:.04em}
+.top h1{font:var(--wt) clamp(40px,11vw,64px)/1 var(--ft);margin:0 0 10px;letter-spacing:-.01em}
+.top p{margin:0;opacity:.9}.top .aviso{display:inline-block;margin-top:16px;padding:6px 14px;border-radius:99px;border:1px solid currentColor;color:var(--cabtx);font-size:13px;font-weight:600;opacity:1}.top .meta{margin-top:14px;font-size:13px;opacity:.7;letter-spacing:.04em}
 .chips{position:sticky;top:0;z-index:5;display:flex;gap:8px;overflow-x:auto;padding:12px 20px;background:var(--bg);border-bottom:1px solid var(--line);scrollbar-width:none}
 .chips::-webkit-scrollbar{display:none}
 .chips a{flex:none;text-decoration:none;color:var(--tx);border:1px solid var(--line);border-radius:99px;padding:6px 14px;font-size:14px}
 .chips a.on{background:var(--tx);color:var(--bg);border-color:var(--tx)}
 section{padding:34px 0 6px}
-h2{font:500 28px/1.1 var(--ft);margin:0 0 18px}
+h2{font:var(--wt) 28px/1.1 var(--ft);margin:0 0 18px}
 .it{padding:12px 0;border-bottom:1px solid var(--line)}
 .it .r{display:flex;gap:12px;justify-content:space-between;align-items:baseline}
 .it b{font-weight:600}.it .p{white-space:nowrap}.it small{display:block;opacity:.75;font-size:14px}
-.marian{margin:38px -20px 0;padding:34px 20px 30px;background:#F3C9C4;color:#5A2A22}
-.marian h2{color:#7A2E2A}
+.sub{margin:-8px 0 14px;opacity:.75;font-size:14px}
+.vr{list-style:none;margin:6px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:4px 18px;font-size:14px}.vr li{display:flex;gap:8px}.vr li span:first-child{opacity:.75}
+.f-compacto .its{display:grid;grid-template-columns:1fr 1fr;gap:0 18px}.f-compacto .it .r{flex-direction:column;gap:2px}.f-compacto .it .p{font-size:14px;opacity:.8}
+.marian{margin:38px -20px 0;padding:34px 20px 30px;background:#F3C9C4;color:#5A2A22;font-family:'Nunito',sans-serif}
+.marian h2{color:#7A2E2A;font:400 34px/1.1 'Instrumental Serif',serif}
 .marian .lead{margin:0 0 20px}
 .rail{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;padding:0 20px 6px;margin:0 -20px;scrollbar-width:none}
 .rail::-webkit-scrollbar{display:none}
@@ -25,8 +28,8 @@ h2{font:500 28px/1.1 var(--ft);margin:0 0 18px}
 .card b{display:block;font-weight:600;font-size:14px;line-height:1.25}
 .tag{display:inline-block;margin-top:6px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;border:1px solid currentColor;border-radius:99px;padding:2px 8px;opacity:.8}
 .cta{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
-.btn{display:inline-block;text-decoration:none;font:700 12px/1 'Nunito Sans',var(--fb);letter-spacing:.1em;text-transform:uppercase;padding:13px 20px;border-radius:99px;background:#5A2A22;color:#fff}
+.btn{display:inline-block;text-decoration:none;font:700 12px/1 'Nunito Sans',sans-serif;letter-spacing:.1em;text-transform:uppercase;padding:13px 20px;border-radius:99px;background:#5A2A22;color:#fff}
 .btn.o{background:transparent;color:#5A2A22;border:1px solid #5A2A22}
 .retiro{margin-top:18px;font-size:14px;display:flex;gap:10px;align-items:flex-start}
 .retiro svg{flex:none;margin-top:2px}
-.foot{padding:34px 20px 50px;font-size:13px;opacity:.75}.foot .proto{margin-top:8px;font-size:12px;opacity:.7}
+.foot{padding:34px 20px 50px;font-size:13px;opacity:.75}.foot .proto{margin-top:8px;font-size:12px;opacity:.7}.foot a{color:inherit}
