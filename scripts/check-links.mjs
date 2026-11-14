@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 // Verifica cada comercio (public/<comercio>/resto.json) contra el products.json actual de Marian.
 // Uso: node scripts/check-links.mjs [ruta/a/products.json]   (por defecto ../marian/public/data/products.json)
-// Errores (exit 1): id que no existe en Marian, foto faltante en public/img/marian/, modo inválido, comercio sin carpeta o sin listar.
+// Errores (exit 1): id que no existe en Marian, foto faltante en public/img/marian/, modo inválido, comercio sin carpeta o sin listar,
+// y en las cartas «hojas»: ids de plato repetidos, historias/maridajes que apuntan a platos o vinos inexistentes, fotos propias faltantes.
 // Avisos: foto fuente de Marian ausente, ids repetidos en un comercio, fotos sin usar.
 import { readFileSync, existsSync, readdirSync } from 'node:fs';
 import { join, dirname, resolve } from 'node:path';
@@ -21,7 +22,16 @@ for (const c of listados) {
   const f = join(pub, c, 'resto.json');
   if (!existsSync(f)) { E('falta resto.json'); continue; }
   if (!existsSync(join(pub, c, 'index.html'))) E('falta index.html');
-  const items = JSON.parse(readFileSync(f, 'utf8')).marian?.items || [], vistos = new Set();
+  const cfg = JSON.parse(readFileSync(f, 'utf8')), items = cfg.marian?.items || [], vistos = new Set();
+  // Cartas «hojas»: ids únicos, referencias de historias/maridajes y fotos propias del comercio.
+  const ids = new Set(), dup = [];
+  for (const sec of cfg.secciones || []) { if (sec.foto && !existsSync(join(pub, c, sec.foto.src))) E(`${sec.id}: falta ${c}/${sec.foto.src}`); for (const it of sec.items || []) { if (it.id) { if (ids.has(it.id)) dup.push(it.id); ids.add(it.id); } } }
+  for (const d of dup) E(`id de plato repetido: ${d}`);
+  for (const e of cfg.editorial || []) {
+    if (!ids.has(e.plato)) E(`editorial ${e.id}: el plato ${e.plato} no existe`);
+    if (e.maridaje && !ids.has(e.maridaje.vino)) E(`editorial ${e.id}: el vino ${e.maridaje.vino} no existe`);
+    for (const a of [e.foto?.src, e.video?.src, e.video?.poster].filter(Boolean)) if (!existsSync(join(pub, c, a))) E(`editorial ${e.id}: falta ${c}/${a}`);
+  }
   for (const i of items) {
     const p = prods.get(i.id);
     if (vistos.has(i.id)) W(`${i.id}: repetido`); vistos.add(i.id); usadas.add(i.id);

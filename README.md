@@ -19,3 +19,6 @@ Pieza del ecosistema Marian cakes boutique: la carta digital de un comercio gast
 2. Sumar `"<nuevo>"` a `public/data/comercios.json`.
 3. Traer las fotos que falten a `public/img/marian/<id>.jpg` (600×800).
 4. Correr `node scripts/check-links.mjs` (por defecto lee `../marian/public/data/products.json`; o pasarle la ruta).
+
+## Layout «hojas» (CENTENO)
+Un comercio con `"resto":{"layout":"hojas"}` usa `js/hojas.js` en vez de `carta.js`; su `index.html` es un cascarón (ver `centeno/index.html`). Campos propios en `resto.json`: `secciones[].{id,titulo,corto,sub,foto,oculta}`, `items[].{id,agotado,variantes}`, `marian.despuesDe` (id de sección o `final`), y `editorial[]` = `{plato,titulo,texto[],maridaje:{vino,nota},foto,video,placeholder}` (la historia se abre desde el plato; `check-links` valida que plato y vino existan). Probar con `?debug` para ver los eventos en consola.

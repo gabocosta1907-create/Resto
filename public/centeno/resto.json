@@ -1,0 +1,618 @@
+{
+ "_nota": "Prototipo de carta de CENTENO (Cocina & Café, Las Cañitas). Carta v1.4 del documento de Drive; precios simulados; bodega ficticia. Layout \"hojas\": ver public/js/hojas.js. Historias y maridajes son texto de ejemplo.",
+ "resto": {
+  "layout": "hojas",
+  "nombre": "CENTENO",
+  "subtitulo": "Cocina & Café",
+  "bajada": "Cocina de todos los días.",
+  "direccion": "Las Cañitas · Buenos Aires",
+  "horario": "",
+  "whatsapp": "",
+  "tema": {
+   "fondo": "#F7F5EE",
+   "texto": "#2B2B2B",
+   "acento": "#B5634A",
+   "cabecera": "#55634A",
+   "cabeceraTexto": "#F7F5EE",
+   "piedra": "#B7B1A1",
+   "titulos": "Cormorant Garamond",
+   "pesoTitulos": 500,
+   "cuerpo": "DM Sans"
+  }
+ },
+ "marian": {
+  "web": "https://marian.marianacaci.com",
+  "retiro": true,
+  "despuesDe": "final",
+  "titulo": "Pastelería de Marian",
+  "corto": "Marian",
+  "texto": "Lo dulce para llevar lo hace Marian cakes boutique. Si querés una torta entera, encargala en su web con anticipación y retirala acá.",
+  "items": [
+   {
+    "id": "alfajor-coco-moka",
+    "nombre": "Alfajor de coco y crema moka",
+    "modo": "vitrina",
+    "precio": ""
+   },
+   {
+    "id": "cookie-chips",
+    "nombre": "Cookie con chips de chocolate",
+    "modo": "vitrina",
+    "precio": ""
+   },
+   {
+    "id": "brownie-palmer",
+    "nombre": "Brownie Palmer House",
+    "modo": "vitrina",
+    "precio": ""
+   },
+   {
+    "id": "barra-maracuya",
+    "nombre": "Barra de maracuyá",
+    "modo": "vitrina",
+    "precio": ""
+   },
+   {
+    "id": "vasca-san-sebastian",
+    "nombre": "Vasca San Sebastián",
+    "modo": "encargo",
+    "precio": ""
+   },
+   {
+    "id": "key-lime-pie",
+    "nombre": "Key lime pie",
+    "modo": "encargo",
+    "precio": ""
+   },
+   {
+    "id": "tarta-manzana-crumble",
+    "nombre": "Tarta de manzana con crumble",
+    "modo": "encargo",
+    "precio": ""
+   }
+  ]
+ },
+ "secciones": [
+  {
+   "id": "cafeteria",
+   "titulo": "Cafetería",
+   "foto": {
+    "src": "img/salon.jpg",
+    "alt": "Salón de CENTENO con ventanales, mesas de madera y plantas",
+    "ratio": "7/5"
+   },
+   "items": [
+    {
+     "id": "espresso",
+     "nombre": "Espresso",
+     "precio": 4200
+    },
+    {
+     "id": "cortado",
+     "nombre": "Cortado",
+     "precio": 4500
+    },
+    {
+     "id": "americano",
+     "nombre": "Americano",
+     "precio": 4800
+    },
+    {
+     "id": "cappuccino",
+     "nombre": "Cappuccino",
+     "precio": 5800
+    },
+    {
+     "id": "flat-white",
+     "nombre": "Flat White",
+     "precio": 6200
+    },
+    {
+     "id": "latte",
+     "nombre": "Latte",
+     "precio": 6000
+    },
+    {
+     "id": "te-en-hebras",
+     "nombre": "Té en hebras",
+     "precio": 4800
+    },
+    {
+     "id": "medialuna-de-manteca",
+     "nombre": "Medialuna de manteca",
+     "precio": 3200
+    },
+    {
+     "id": "budin-humedo-de-naranja",
+     "nombre": "Budín húmedo de naranja",
+     "precio": 7500
+    },
+    {
+     "id": "porcion-de-torta-de-chocolate",
+     "nombre": "Porción de torta de chocolate",
+     "precio": 10500
+    }
+   ]
+  },
+  {
+   "id": "desayunos",
+   "titulo": "Desayunos",
+   "foto": {
+    "src": "img/cafe.jpg",
+    "alt": "Taza de cerámica con café con leche y arte latte",
+    "ratio": "4/3"
+   },
+   "items": [
+    {
+     "id": "tostadas-de-campo",
+     "nombre": "Tostadas de campo",
+     "desc": "Manteca, queso crema y mermelada.",
+     "precio": 8500
+    },
+    {
+     "id": "huevos-cremosos",
+     "nombre": "Huevos cremosos",
+     "desc": "Huevos revueltos, masa madre y ciboulette.",
+     "precio": 14500
+    },
+    {
+     "id": "toston-verde",
+     "nombre": "Tostón verde",
+     "desc": "Palta, huevo a punto, cherry y semillas.",
+     "precio": 16500
+    },
+    {
+     "id": "yogur-de-estacion",
+     "nombre": "Yogur de estación",
+     "desc": "Frutas frescas, granola, miel y coco.",
+     "precio": 12500
+    }
+   ]
+  },
+  {
+   "id": "brunch",
+   "titulo": "Brunch",
+   "items": [
+    {
+     "id": "rosti-de-papa-y-huevo",
+     "nombre": "Rosti de papa y huevo",
+     "desc": "Papa rallada dorada, huevo a punto, ricota cremosa y verdeo.",
+     "precio": 19500
+    },
+    {
+     "id": "french-toast-de-banana",
+     "nombre": "French toast de banana",
+     "desc": "Brioche dorado, banana caramelizada, crema y dulce de leche.",
+     "precio": 17500
+    },
+    {
+     "id": "huevos-benedictinos",
+     "nombre": "Huevos Benedictinos",
+     "desc": "Brioche tostado, huevos poché, panceta crocante y salsa de limón.",
+     "precio": 20500
+    },
+    {
+     "id": "brunch-para-dos",
+     "nombre": "Brunch para dos",
+     "desc": "Huevos revueltos, tostadas, medialunas, quesos, frutas, yogur, dos cafés y dos jugos pequeños.",
+     "precio": 46000
+    }
+   ]
+  },
+  {
+   "id": "entradas",
+   "titulo": "Entradas",
+   "foto": {
+    "src": "img/burrata.jpg",
+    "alt": "Burrata con tomates asados y albahaca en un plato de cerámica",
+    "ratio": "5/3"
+   },
+   "items": [
+    {
+     "id": "papas-rotas",
+     "nombre": "Papas rotas",
+     "desc": "Queso cremoso, verdeo y panceta crocante.",
+     "precio": 14500
+    },
+    {
+     "id": "provoleta-de-tomates-dulces",
+     "nombre": "Provoleta de tomates dulces",
+     "desc": "Provoleta, tomates asados y pan de campo.",
+     "precio": 19500
+    },
+    {
+     "id": "croquetas-de-hongos",
+     "nombre": "Croquetas de hongos",
+     "desc": "Cuatro unidades, con alioli de ajo asado.",
+     "precio": 16500
+    },
+    {
+     "id": "burrata-remolachas-y-naranja",
+     "nombre": "Burrata, remolachas y naranja",
+     "desc": "Burrata, remolachas asadas, cítricos y pistachos.",
+     "precio": 24500
+    },
+    {
+     "id": "focaccia-con-tres-untables",
+     "nombre": "Focaccia con tres untables",
+     "desc": "Focaccia tibia y tres preparaciones de la casa.",
+     "precio": 16500
+    }
+   ]
+  },
+  {
+   "id": "ensaladas",
+   "titulo": "Ensaladas",
+   "items": [
+    {
+     "id": "caesar-crocante",
+     "nombre": "Caesar crocante",
+     "desc": "Pollo, lechuga, parmesano, croutones y aderezo Caesar.",
+     "precio": 21500
+    },
+    {
+     "id": "calabaza-y-quinoa",
+     "nombre": "Calabaza y quinoa",
+     "desc": "Calabaza asada, quinoa, verdes, queso y semillas.",
+     "precio": 19500
+    },
+    {
+     "id": "pollo-palta-y-verdes",
+     "nombre": "Pollo, palta y verdes",
+     "desc": "Pollo grillado, palta, tomates, almendras y limón.",
+     "precio": 22500
+    }
+   ]
+  },
+  {
+   "id": "sandwiches",
+   "titulo": "Sándwiches y hamburguesas",
+   "corto": "Sándwiches",
+   "items": [
+    {
+     "id": "bondiola-con-repollo-violeta",
+     "nombre": "Bondiola con repollo violeta",
+     "desc": "Bondiola desmechada, repollo violeta, cebolla encurtida y mayonesa de mostaza.",
+     "precio": 24500
+    },
+    {
+     "id": "burger-centeno",
+     "nombre": "Burger CENTENO",
+     "desc": "Carne vacuna, cheddar, panceta, cebolla caramelizada y salsa de la casa. Con papas.",
+     "precio": 25500
+    },
+    {
+     "id": "focaccia-caprese",
+     "nombre": "Focaccia caprese",
+     "desc": "Focaccia, mozzarella, tomates asados, albahaca y pesto.",
+     "precio": 18500
+    }
+   ]
+  },
+  {
+   "id": "platos-principales",
+   "titulo": "Platos principales",
+   "corto": "Principales",
+   "items": [
+    {
+     "id": "milanesa-de-tomates-dulces",
+     "nombre": "Milanesa de tomates dulces",
+     "desc": "Milanesa crocante, mozzarella, tomates cherry asados, albahaca y papas rústicas.",
+     "precio": 31500
+    },
+    {
+     "id": "pollo-al-limon-y-hierbas",
+     "nombre": "Pollo al limón y hierbas",
+     "desc": "Pollo dorado, papines al horno, vegetales y salsa suave de limón.",
+     "precio": 26500
+    },
+    {
+     "id": "bondiola-de-manzana-y-mostaza",
+     "nombre": "Bondiola de manzana y mostaza",
+     "desc": "Bondiola al horno, manzanas doradas, mostaza antigua y puré de batata.",
+     "precio": 32500
+    },
+    {
+     "id": "ojo-de-bife-a-la-parrilla",
+     "nombre": "Ojo de bife a la parrilla",
+     "desc": "Ojo de bife, papas rústicas, manteca de hierbas y chimichurri.",
+     "precio": 44500
+    }
+   ]
+  },
+  {
+   "id": "pastas",
+   "titulo": "Pastas",
+   "items": [
+    {
+     "id": "noquis-dorados-de-calabaza",
+     "nombre": "Ñoquis dorados de calabaza",
+     "desc": "Ñoquis de calabaza dorados, manteca de salvia, parmesano y avellanas tostadas.",
+     "precio": 26500
+    },
+    {
+     "id": "tagliatelle-al-ragu",
+     "nombre": "Tagliatelle al ragú",
+     "desc": "Pasta al huevo, carne cocida lentamente con tomate y vino tinto.",
+     "precio": 28500
+    },
+    {
+     "id": "sorrentinos-de-calabaza",
+     "nombre": "Sorrentinos de calabaza",
+     "desc": "Sorrentinos de calabaza y mozzarella, manteca de hierbas y almendras tostadas.",
+     "precio": 26500
+    }
+   ]
+  },
+  {
+   "id": "postres",
+   "titulo": "Postres",
+   "items": [
+    {
+     "id": "brownie-de-tres-texturas",
+     "nombre": "Brownie de tres texturas",
+     "desc": "Brownie húmedo, crema de dulce de leche y crumble crocante.",
+     "precio": 14500
+    },
+    {
+     "id": "cheesecake-vasco",
+     "nombre": "Cheesecake vasco",
+     "desc": "Tarta de queso horneada, interior cremoso y frutos rojos.",
+     "precio": 13500
+    },
+    {
+     "id": "flan-con-dulce-de-leche",
+     "nombre": "Flan con dulce de leche",
+     "desc": "Flan casero de vainilla, crema y dulce de leche.",
+     "precio": 9500
+    },
+    {
+     "id": "crumble-tibio-de-manzana",
+     "nombre": "Crumble tibio de manzana",
+     "desc": "Manzanas especiadas, cubierta crocante y helado de crema.",
+     "precio": 12500
+    }
+   ]
+  },
+  {
+   "id": "vinos",
+   "titulo": "Vinos",
+   "sub": "La bodega es ficticia para el prototipo.",
+   "items": [
+    {
+     "id": "malbec-joven",
+     "nombre": "Malbec joven",
+     "desc": "Tinto",
+     "variantes": [
+      {
+       "n": "Copa",
+       "p": 8500
+      },
+      {
+       "n": "Botella",
+       "p": 28000
+      }
+     ]
+    },
+    {
+     "id": "cabernet-franc",
+     "nombre": "Cabernet Franc",
+     "desc": "Tinto",
+     "variantes": [
+      {
+       "n": "Copa",
+       "p": 9500
+      },
+      {
+       "n": "Botella",
+       "p": 33000
+      }
+     ]
+    },
+    {
+     "id": "pinot-noir",
+     "nombre": "Pinot Noir",
+     "desc": "Tinto",
+     "variantes": [
+      {
+       "n": "Copa",
+       "p": 9500
+      },
+      {
+       "n": "Botella",
+       "p": 33000
+      }
+     ]
+    },
+    {
+     "id": "sauvignon-blanc",
+     "nombre": "Sauvignon Blanc",
+     "desc": "Blanco",
+     "variantes": [
+      {
+       "n": "Copa",
+       "p": 8500
+      },
+      {
+       "n": "Botella",
+       "p": 28000
+      }
+     ]
+    },
+    {
+     "id": "rosado-de-malbec",
+     "nombre": "Rosado de Malbec",
+     "desc": "Rosado",
+     "variantes": [
+      {
+       "n": "Copa",
+       "p": 8500
+      },
+      {
+       "n": "Botella",
+       "p": 28000
+      }
+     ]
+    },
+    {
+     "id": "malbec-reserva",
+     "nombre": "Malbec Reserva",
+     "desc": "Tinto · Reserva",
+     "variantes": [
+      {
+       "n": "Copa",
+       "p": 12500
+      },
+      {
+       "n": "Botella",
+       "p": 46000
+      }
+     ]
+    },
+    {
+     "id": "espumante-extra-brut",
+     "nombre": "Espumante Extra Brut",
+     "desc": "Espumante",
+     "variantes": [
+      {
+       "n": "Botella",
+       "p": 39000
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "bebidas",
+   "titulo": "Bebidas",
+   "items": [
+    {
+     "id": "agua-mineral",
+     "nombre": "Agua mineral",
+     "precio": 4500
+    },
+    {
+     "id": "agua-con-gas",
+     "nombre": "Agua con gas",
+     "precio": 4500
+    },
+    {
+     "id": "gaseosas",
+     "nombre": "Gaseosas",
+     "precio": 5000
+    },
+    {
+     "id": "limonada-clasica",
+     "nombre": "Limonada clásica",
+     "precio": 7500
+    },
+    {
+     "id": "limonada-de-menta-y-jengibre",
+     "nombre": "Limonada de menta y jengibre",
+     "precio": 8500
+    },
+    {
+     "id": "limonada-de-frutos-rojos",
+     "nombre": "Limonada de frutos rojos",
+     "precio": 9000
+    },
+    {
+     "id": "jugo-de-naranja",
+     "nombre": "Jugo de naranja",
+     "precio": 8000
+    },
+    {
+     "id": "gin-tonic",
+     "nombre": "Gin tonic",
+     "precio": 14500
+    },
+    {
+     "id": "aperol-spritz",
+     "nombre": "Aperol Spritz",
+     "precio": 14500
+    },
+    {
+     "id": "vermut-con-soda",
+     "nombre": "Vermut con soda",
+     "precio": 11500
+    },
+    {
+     "id": "cerveza-tirada",
+     "nombre": "Cerveza tirada",
+     "precio": "A definir"
+    }
+   ]
+  }
+ ],
+ "editorial": [
+  {
+   "id": "burrata-remolachas-y-naranja",
+   "plato": "burrata-remolachas-y-naranja",
+   "titulo": "Burrata, remolachas y naranja",
+   "texto": [
+    "La burrata llega a temperatura ambiente, cuando la crema del centro ya se anima a salir.",
+    "Las remolachas se asan enteras y se pelan tibias; la naranja aporta el contraste ácido y los pistachos tostados, el crocante final."
+   ],
+   "maridaje": {
+    "vino": "sauvignon-blanc",
+    "nota": "La acidez del blanco acompaña los cítricos y limpia la crema."
+   },
+   "placeholder": true
+  },
+  {
+   "id": "milanesa-de-tomates-dulces",
+   "plato": "milanesa-de-tomates-dulces",
+   "titulo": "Milanesa de tomates dulces",
+   "texto": [
+    "Una milanesa de las de siempre, con mozzarella gratinada. Arriba, tomates cherry asados hasta que se ponen dulces y casi se deshacen.",
+    "El gesto de la casa está en los tomates: ácidos y dulces a la vez, con albahaca fresca al final."
+   ],
+   "maridaje": {
+    "vino": "malbec-joven",
+    "nota": "Un tinto joven y frutado acompaña los tomates asados sin tapar la milanesa."
+   },
+   "placeholder": true
+  },
+  {
+   "id": "rosti-de-papa-y-huevo",
+   "plato": "rosti-de-papa-y-huevo",
+   "titulo": "Rosti de papa y huevo",
+   "texto": [
+    "Papa rallada que se dora en la plancha hasta formar una costra fina, y queda tierna por dentro.",
+    "Arriba, un huevo a punto, ricota cremosa y verdeo. Se corta con el tenedor y la yema hace de salsa."
+   ],
+   "maridaje": {
+    "vino": "espumante-extra-brut",
+    "nota": "Las burbujas cortan lo untuoso del huevo y la ricota. Pensado para el brunch."
+   },
+   "placeholder": true
+  },
+  {
+   "id": "noquis-dorados-de-calabaza",
+   "plato": "noquis-dorados-de-calabaza",
+   "titulo": "Ñoquis dorados de calabaza",
+   "texto": [
+    "Ñoquis de calabaza que se doran en la sartén antes de llegar a la mesa: costra por fuera, suaves por dentro.",
+    "Manteca de salvia, parmesano y avellanas tostadas."
+   ],
+   "maridaje": {
+    "vino": "pinot-noir",
+    "nota": "Un tinto liviano acompaña la calabaza y la manteca sin pesar."
+   },
+   "placeholder": true
+  },
+  {
+   "id": "brownie-de-tres-texturas",
+   "plato": "brownie-de-tres-texturas",
+   "titulo": "Brownie de tres texturas",
+   "texto": [
+    "Tres texturas en un solo postre: el brownie húmedo, una crema de dulce de leche y un crumble crocante."
+   ],
+   "maridaje": {
+    "vino": "malbec-reserva",
+    "nota": "Un reserva con más cuerpo acompaña el chocolate y el dulce de leche."
+   },
+   "placeholder": true
+  }
+ ]
+}

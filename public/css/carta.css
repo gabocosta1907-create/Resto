@@ -17,19 +17,6 @@ h2{font:var(--wt) 28px/1.1 var(--ft);margin:0 0 18px}
 .sub{margin:-8px 0 14px;opacity:.75;font-size:14px}
 .vr{list-style:none;margin:6px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:4px 18px;font-size:14px}.vr li{display:flex;gap:8px}.vr li span:first-child{opacity:.75}
 .f-compacto .its{display:grid;grid-template-columns:1fr 1fr;gap:0 18px}.f-compacto .it .r{flex-direction:column;gap:2px}.f-compacto .it .p{font-size:14px;opacity:.8}
-.marian{margin:38px -20px 0;padding:34px 20px 30px;background:#F3C9C4;color:#5A2A22;font-family:'Nunito',sans-serif}
-.marian h2{color:#7A2E2A;font:400 34px/1.1 'Instrumental Serif',serif}
-.marian .lead{margin:0 0 20px}
-.rail{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;padding:0 20px 6px;margin:0 -20px;scrollbar-width:none}
-.rail::-webkit-scrollbar{display:none}
-.card{flex:none;width:44%;max-width:210px;scroll-snap-align:start;background:#fff;border-radius:6px;overflow:hidden;text-decoration:none;color:inherit;display:block}
-.card img{width:100%;aspect-ratio:3/4;object-fit:cover;display:block}
-.card div{padding:10px 12px 12px}
-.card b{display:block;font-weight:600;font-size:14px;line-height:1.25}
-.tag{display:inline-block;margin-top:6px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;border:1px solid currentColor;border-radius:99px;padding:2px 8px;opacity:.8}
-.cta{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
-.btn{display:inline-block;text-decoration:none;font:700 12px/1 'Nunito Sans',sans-serif;letter-spacing:.1em;text-transform:uppercase;padding:13px 20px;border-radius:99px;background:#5A2A22;color:#fff}
-.btn.o{background:transparent;color:#5A2A22;border:1px solid #5A2A22}
-.retiro{margin-top:18px;font-size:14px;display:flex;gap:10px;align-items:flex-start}
-.retiro svg{flex:none;margin-top:2px}
 .foot{padding:34px 20px 50px;font-size:13px;opacity:.75}.foot .proto{margin-top:8px;font-size:12px;opacity:.7}.foot a{color:inherit}
+
+.marian{margin:38px -20px 0}
