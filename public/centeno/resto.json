@@ -146,26 +146,44 @@
     {
      "id": "tostadas-de-campo",
      "nombre": "Tostadas de campo",
-     "desc": "Manteca, queso crema y mermelada.",
-     "precio": 8500
+     "desc": "Pan de campo tostado hasta quedar ligeramente crocante. Se sirve tibio, con manteca, queso crema y mermelada para combinar a gusto.",
+     "precio": 8500,
+     "foto": {
+      "src": "https://images.unsplash.com/photo-1689020353604-8041221e1273?auto=format&fit=crop&fm=jpg&q=80&w=1600",
+      "alt": "Tostadas de pan de campo con manteca",
+      "ratio": "3/4",
+      "ref": true
+     }
     },
     {
      "id": "huevos-cremosos",
      "nombre": "Huevos cremosos",
-     "desc": "Huevos revueltos, masa madre y ciboulette.",
-     "precio": 14500
+     "desc": "Huevos revueltos a fuego suave, para que queden tiernos y cremosos. Se acompañan con tostadas de masa madre y ciboulette fresco.",
+     "precio": 14500,
+     "foto": {
+      "src": "https://plus.unsplash.com/premium_photo-1713038455300-738111c141e1?auto=format&fit=crop&fm=jpg&q=80&w=1600",
+      "alt": "Huevos revueltos cremosos con tostadas",
+      "ratio": "3/4",
+      "ref": true
+     }
     },
     {
      "id": "toston-verde",
      "nombre": "Tostón verde",
-     "desc": "Palta, huevo a punto, cherry y semillas.",
+     "desc": "Una rebanada gruesa de masa madre tostada, con palta, huevo a punto, tomates cherry y semillas. Cremoso por dentro, con el contraste del pan crocante.",
      "precio": 16500
     },
     {
      "id": "yogur-de-estacion",
      "nombre": "Yogur de estación",
-     "desc": "Frutas frescas, granola, miel y coco.",
-     "precio": 12500
+     "desc": "Yogur natural con frutas frescas, granola, miel y coco tostado. Una combinación de texturas suaves y crocantes, con el sabor de las frutas de temporada.",
+     "precio": 12500,
+     "foto": {
+      "src": "https://images.unsplash.com/photo-1639389756203-d1ae1b3c21ef?auto=format&fit=crop&fm=jpg&q=80&w=1600",
+      "alt": "Bowl de yogur con granola y frutillas",
+      "ratio": "3/4",
+      "ref": true
+     }
     }
    ]
   },
@@ -176,28 +194,64 @@
     {
      "id": "rosti-de-papa-y-huevo",
      "nombre": "Rosti de papa y huevo",
-     "desc": "Papa rallada dorada, huevo a punto, ricota cremosa y verdeo.",
-     "precio": 19500
+     "desc": "Papa rallada que se dora en la plancha hasta formar una costra fina y queda tierna por dentro. Arriba, un huevo a punto, ricota cremosa y verdeo. Se corta con el tenedor y la yema hace de salsa.",
+     "precio": 19500,
+     "foto": {
+      "src": "https://static.wixstatic.com/media/1d7dfe_0c1745d56ac1498fa703d2ad38a1a769~mv2.jpg/v1/fill/w_1200,h_900,al_c,q_90/1d7dfe_0c1745d56ac1498fa703d2ad38a1a769~mv2.jpg",
+      "alt": "Rosti de papa con huevo poché y ricota",
+      "ratio": "3/4",
+      "ref": true
+     }
     },
     {
      "id": "french-toast-de-banana",
      "nombre": "French toast de banana",
-     "desc": "Brioche dorado, banana caramelizada, crema y dulce de leche.",
-     "precio": 17500
+     "desc": "Brioche dorado en manteca, tierno por dentro, con banana caramelizada, crema batida y dulce de leche. El pan absorbe los sabores y conserva sus bordes ligeramente tostados.",
+     "precio": 17500,
+     "foto": {
+      "src": "https://api.photon.aremedia.net.au/wp-content/uploads/sites/4/2019/10/16/31310/web_frenchtoast.jpg?fit=1200%2C1000",
+      "alt": "French toast con banana caramelizada",
+      "ratio": "3/4",
+      "ref": true
+     }
     },
     {
      "id": "huevos-benedictinos",
      "nombre": "Huevos Benedictinos",
-     "desc": "Brioche tostado, huevos poché, panceta crocante y salsa de limón.",
-     "precio": 20500
+     "desc": "Brioche tostado, panceta crocante y huevos poché cubiertos con salsa holandesa de limón. Al cortarlos, la yema se mezcla con la salsa y el pan.",
+     "precio": 20500,
+     "foto": {
+      "src": "https://images.unsplash.com/photo-1776194569490-dac42ea51e5e?auto=format&fit=crop&fm=jpg&q=80&w=1600",
+      "alt": "Huevos benedictinos con salsa holandesa",
+      "ratio": "3/4",
+      "ref": true
+     }
+    },
+    {
+     "id": "bagel-de-pollo-y-palta",
+     "nombre": "Bagel de pollo y palta",
+     "precio": 21500,
+     "desc": "Bagel de sésamo tostado, relleno de pollo grillado, palta, repollo violeta y cebolla encurtida. El aderezo de yogur y limón une los sabores y aporta frescura. Sin huevo."
     },
     {
      "id": "brunch-para-dos",
      "nombre": "Brunch para dos",
-     "desc": "Huevos revueltos, tostadas, medialunas, quesos, frutas, yogur, dos cafés y dos jugos pequeños.",
-     "precio": 46000
+     "desc": "Una selección para compartir: huevos revueltos, tostadas, medialunas, quesos, frutas y yogur con granola. Se completa con dos cafés y dos jugos pequeños.",
+     "precio": 46000,
+     "foto": {
+      "src": "https://images.unsplash.com/photo-1793904485821-48988323a2cb?auto=format&fit=crop&fm=jpg&q=80&w=1600",
+      "alt": "Mesa de brunch con panificados y jugos",
+      "ratio": "3/4",
+      "ref": true
+     }
     }
-   ]
+   ],
+   "foto": {
+    "src": "https://images.unsplash.com/photo-1776194569490-dac42ea51e5e?auto=format&fit=crop&fm=jpg&q=80&w=1600&h=1200",
+    "alt": "Huevos benedictinos con salsa holandesa",
+    "ratio": "4/3",
+    "ref": true
+   }
   },
   {
    "id": "entradas",
@@ -211,31 +265,31 @@
     {
      "id": "papas-rotas",
      "nombre": "Papas rotas",
-     "desc": "Queso cremoso, verdeo y panceta crocante.",
+     "desc": "Papas cocidas, aplastadas y doradas hasta formar bordes crocantes. Se sirven con queso cremoso, verdeo y panceta tostada.",
      "precio": 14500
     },
     {
      "id": "provoleta-de-tomates-dulces",
      "nombre": "Provoleta de tomates dulces",
-     "desc": "Provoleta, tomates asados y pan de campo.",
+     "desc": "Provoleta dorada por fuera y fundida en el centro. Encima, tomates cherry asados lentamente, que concentran su dulzor. Se acompaña con pan de campo.",
      "precio": 19500
     },
     {
      "id": "croquetas-de-hongos",
      "nombre": "Croquetas de hongos",
-     "desc": "Cuatro unidades, con alioli de ajo asado.",
+     "desc": "Cuatro croquetas de cubierta dorada y relleno suave de hongos y queso. Se sirven calientes, con alioli de ajo asado.",
      "precio": 16500
     },
     {
      "id": "burrata-remolachas-y-naranja",
      "nombre": "Burrata, remolachas y naranja",
-     "desc": "Burrata, remolachas asadas, cítricos y pistachos.",
+     "desc": "Burrata fresca sobre remolachas asadas y gajos de naranja. Los pistachos aportan un toque crocante al contraste entre queso cremoso, dulzor y acidez.",
      "precio": 24500
     },
     {
      "id": "focaccia-con-tres-untables",
      "nombre": "Focaccia con tres untables",
-     "desc": "Focaccia tibia y tres preparaciones de la casa.",
+     "desc": "Focaccia tibia, de interior aireado y superficie dorada. Se acompaña con tres preparaciones de la casa para probar diferentes combinaciones en cada bocado.",
      "precio": 16500
     }
    ]
@@ -247,22 +301,34 @@
     {
      "id": "caesar-crocante",
      "nombre": "Caesar crocante",
-     "desc": "Pollo, lechuga, parmesano, croutones y aderezo Caesar.",
-     "precio": 21500
+     "desc": "Hojas frescas, pollo grillado, parmesano y croutones de masa madre. El aderezo Caesar envuelve los ingredientes sin perder el contraste de texturas.",
+     "precio": 21500,
+     "foto": {
+      "src": "https://images.unsplash.com/photo-1690573313202-4493a7d02e9c?auto=format&fit=crop&fm=jpg&q=80&w=1600",
+      "alt": "Ensalada Caesar con pollo y croutones",
+      "ratio": "3/4",
+      "ref": true
+     }
     },
     {
      "id": "calabaza-y-quinoa",
      "nombre": "Calabaza y quinoa",
-     "desc": "Calabaza asada, quinoa, verdes, queso y semillas.",
+     "desc": "Calabaza asada hasta quedar dorada en los bordes, quinoa, hojas verdes, queso y semillas. Una ensalada de sabores suaves, con notas tostadas y diferentes texturas.",
      "precio": 19500
     },
     {
      "id": "pollo-palta-y-verdes",
      "nombre": "Pollo, palta y verdes",
-     "desc": "Pollo grillado, palta, tomates, almendras y limón.",
+     "desc": "Pollo grillado, palta, tomates frescos y hojas verdes. Almendras tostadas y un aderezo de limón aportan el contraste crocante y ácido.",
      "precio": 22500
     }
-   ]
+   ],
+   "foto": {
+    "src": "https://images.unsplash.com/photo-1690573313202-4493a7d02e9c?auto=format&fit=crop&fm=jpg&q=80&w=1600&h=1200",
+    "alt": "Ensalada con pollo, tomates y hojas verdes",
+    "ratio": "4/3",
+    "ref": true
+   }
   },
   {
    "id": "sandwiches",
@@ -272,19 +338,19 @@
     {
      "id": "bondiola-con-repollo-violeta",
      "nombre": "Bondiola con repollo violeta",
-     "desc": "Bondiola desmechada, repollo violeta, cebolla encurtida y mayonesa de mostaza.",
+     "desc": "Bondiola cocida lentamente hasta poder desmenuzarla, servida en pan brioche con repollo violeta y cebolla encurtida. La frescura y acidez equilibran la carne tierna.",
      "precio": 24500
     },
     {
      "id": "burger-centeno",
      "nombre": "Burger CENTENO",
-     "desc": "Carne vacuna, cheddar, panceta, cebolla caramelizada y salsa de la casa. Con papas.",
+     "desc": "Hamburguesa de carne vacuna con cheddar fundido, panceta crocante y cebolla caramelizada. Se sirve en pan brioche, con salsa de la casa y papas.",
      "precio": 25500
     },
     {
      "id": "focaccia-caprese",
      "nombre": "Focaccia caprese",
-     "desc": "Focaccia, mozzarella, tomates asados, albahaca y pesto.",
+     "desc": "Focaccia de superficie dorada, rellena con mozzarella, tomates asados, albahaca y pesto. Se sirve tibia para que el queso se ablande y se mezclen los aromas.",
      "precio": 18500
     }
    ]
@@ -297,25 +363,25 @@
     {
      "id": "milanesa-de-tomates-dulces",
      "nombre": "Milanesa de tomates dulces",
-     "desc": "Milanesa crocante, mozzarella, tomates cherry asados, albahaca y papas rústicas.",
+     "desc": "Milanesa de carne crocante, cubierta con mozzarella fundida y tomates cherry asados lentamente. La albahaca aporta frescura y las papas rústicas completan el plato.",
      "precio": 31500
     },
     {
      "id": "pollo-al-limon-y-hierbas",
      "nombre": "Pollo al limón y hierbas",
-     "desc": "Pollo dorado, papines al horno, vegetales y salsa suave de limón.",
+     "desc": "Pollo dorado, jugoso por dentro, acompañado de papines al horno y vegetales. Una salsa suave de limón y hierbas aporta frescura sin tapar el sabor del pollo.",
      "precio": 26500
     },
     {
      "id": "bondiola-de-manzana-y-mostaza",
      "nombre": "Bondiola de manzana y mostaza",
-     "desc": "Bondiola al horno, manzanas doradas, mostaza antigua y puré de batata.",
+     "desc": "Bondiola al horno, tierna y dorada, con manzanas salteadas y mostaza antigua. Se acompaña con puré de batata, que aporta suavidad y un dulzor natural.",
      "precio": 32500
     },
     {
      "id": "ojo-de-bife-a-la-parrilla",
      "nombre": "Ojo de bife a la parrilla",
-     "desc": "Ojo de bife, papas rústicas, manteca de hierbas y chimichurri.",
+     "desc": "Ojo de bife cocido a la parrilla, con exterior dorado y el punto de cocción elegido. Se acompaña con papas rústicas, manteca de hierbas y chimichurri de la casa.",
      "precio": 44500
     }
    ]
@@ -327,19 +393,19 @@
     {
      "id": "noquis-dorados-de-calabaza",
      "nombre": "Ñoquis dorados de calabaza",
-     "desc": "Ñoquis de calabaza dorados, manteca de salvia, parmesano y avellanas tostadas.",
+     "desc": "Ñoquis de calabaza que se terminan en la sartén para formar una superficie ligeramente dorada. Manteca de salvia, parmesano y avellanas tostadas completan el contraste de sabores y texturas.",
      "precio": 26500
     },
     {
      "id": "tagliatelle-al-ragu",
      "nombre": "Tagliatelle al ragú",
-     "desc": "Pasta al huevo, carne cocida lentamente con tomate y vino tinto.",
+     "desc": "Cintas de pasta al huevo con carne cocida lentamente en tomate y vino tinto. La salsa se integra a la pasta y se termina con queso rallado.",
      "precio": 28500
     },
     {
      "id": "sorrentinos-de-calabaza",
      "nombre": "Sorrentinos de calabaza",
-     "desc": "Sorrentinos de calabaza y mozzarella, manteca de hierbas y almendras tostadas.",
+     "desc": "Sorrentinos rellenos de calabaza y mozzarella, con manteca de hierbas y almendras tostadas. La pasta tierna contrasta con el crocante de los frutos secos.",
      "precio": 26500
     }
    ]
@@ -351,25 +417,25 @@
     {
      "id": "brownie-de-tres-texturas",
      "nombre": "Brownie de tres texturas",
-     "desc": "Brownie húmedo, crema de dulce de leche y crumble crocante.",
+     "desc": "Brownie de chocolate húmedo y compacto, cubierto con crema de dulce de leche y crumble crocante. Tres texturas que se encuentran en cada cucharada.",
      "precio": 14500
     },
     {
      "id": "cheesecake-vasco",
      "nombre": "Cheesecake vasco",
-     "desc": "Tarta de queso horneada, interior cremoso y frutos rojos.",
+     "desc": "Tarta de queso horneada a temperatura alta, con superficie tostada e interior cremoso. Se sirve con frutos rojos, que aportan frescura y acidez.",
      "precio": 13500
     },
     {
      "id": "flan-con-dulce-de-leche",
      "nombre": "Flan con dulce de leche",
-     "desc": "Flan casero de vainilla, crema y dulce de leche.",
+     "desc": "Flan de vainilla de textura suave, con caramelo, dulce de leche y crema. Un postre clásico donde se combinan el amargor ligero del caramelo y la dulzura de los acompañamientos.",
      "precio": 9500
     },
     {
      "id": "crumble-tibio-de-manzana",
      "nombre": "Crumble tibio de manzana",
-     "desc": "Manzanas especiadas, cubierta crocante y helado de crema.",
+     "desc": "Manzanas cocidas con especias suaves, cubiertas con una mezcla dorada y crocante. Se sirve tibio, con helado de crema que se funde lentamente sobre la fruta.",
      "precio": 12500
     }
    ]
@@ -472,7 +538,7 @@
     {
      "id": "espumante-extra-brut",
      "nombre": "Espumante Extra Brut",
-     "desc": "Espumante",
+     "desc": "La bodega es ficticia para el prototipo. La elección comercial real queda pendiente.",
      "variantes": [
       {
        "n": "Botella",
@@ -539,7 +605,8 @@
     {
      "id": "cerveza-tirada",
      "nombre": "Cerveza tirada",
-     "precio": "A definir"
+     "precio": "A definir",
+     "desc": "Posibles platos futuros · Excluidos de la carta vigente"
     }
    ]
   }

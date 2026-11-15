@@ -25,7 +25,7 @@ for (const c of listados) {
   const cfg = JSON.parse(readFileSync(f, 'utf8')), items = cfg.marian?.items || [], vistos = new Set();
   // Cartas «hojas»: ids únicos, referencias de historias/maridajes y fotos propias del comercio.
   const ids = new Set(), dup = [];
-  for (const sec of cfg.secciones || []) { if (sec.foto && !existsSync(join(pub, c, sec.foto.src))) E(`${sec.id}: falta ${c}/${sec.foto.src}`); for (const it of sec.items || []) { if (it.id) { if (ids.has(it.id)) dup.push(it.id); ids.add(it.id); } } }
+  for (const sec of cfg.secciones || []) { if (sec.foto && !/^https?:/.test(sec.foto.src) && !existsSync(join(pub, c, sec.foto.src))) E(`${sec.id}: falta ${c}/${sec.foto.src}`); for (const it of sec.items || []) { if (it.foto && !/^https?:/.test(it.foto.src) && !existsSync(join(pub, c, it.foto.src))) E(`${it.id}: falta ${c}/${it.foto.src}`); if (it.id) { if (ids.has(it.id)) dup.push(it.id); ids.add(it.id); } } }
   for (const d of dup) E(`id de plato repetido: ${d}`);
   for (const e of cfg.editorial || []) {
     if (!ids.has(e.plato)) E(`editorial ${e.id}: el plato ${e.plato} no existe`);

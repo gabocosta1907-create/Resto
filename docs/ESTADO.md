@@ -9,6 +9,8 @@ Sitio: resto.marianacaci.com · repo gabocosta1907-create/Resto (main) · deploy
 - `/centeno/` (CENTENO, Las Cañitas): layout «hojas» (`resto.layout:"hojas"`, motor `js/hojas.js` + `css/hojas.css`). Una hoja por categoría, cambio horizontal plano con gesto, scroll vertical propio, índice inferior fijo + índice completo (hamburguesa), rutas `#/categoria` y `#/categoria/plato` con History API, capa de plato (historia, vino sugerido, "Volver a la carta" con posición conservada), analítica (stub en `window.__eventos`/`dataLayer`, origen `?o=`), estados de carga/error, agotado/oculta/orden desde el JSON, teclado y prefers-reduced-motion. Bloque de Marian como hoja propia (`js/marian.js` + `css/marian.css`, compartido con las otras cartas).
 - `scripts/check-links.mjs`: valida ids, fotos y modos de cada `resto.json` contra el `products.json` de Marian.
 
+- Carta CENTENO v1.6: Bagel de pollo y palta agregado; textos para los 31 platos de comida; fotos de referencia (Unsplash/otros, enlazadas, con etiqueta "Foto de referencia"): miniatura 3:4 en la lista, ficha del plato con foto, heros 4:3 en Brunch y Ensaladas. Pendientes del doc: Tostón verde, Bagel y hero de Platos principales (sin URL directa). Benedictinos muestra salmón en la referencia (el plato lleva panceta).
+
 ## Reglas
 - Identidad de Marian fija (Instrumental Serif, Nunito, Nunito Sans Bold en mayúsculas en botones, texto chocolate #4A2A1C) solo en el bloque de Marian; cada carta tiene su identidad propia.
 - HTML/CSS/JS vanilla, mobile first, noindex. Backoffice en Airtable más adelante; pagos al final.

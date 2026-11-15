@@ -30,9 +30,14 @@ a{color:inherit}
 .eyebrow{margin:0 0 10px;font:500 11.5px/1 var(--fb);letter-spacing:.22em;text-transform:uppercase;color:var(--ac);font-variant-numeric:tabular-nums}
 .tit{margin:0;font:var(--wt) 42px/1.05 var(--ft);letter-spacing:-.015em}
 .sub{margin:8px 0 0;font-size:14px;opacity:.7}
-.foto{margin:22px -22px 8px;aspect-ratio:var(--r,4/3);background:var(--pi);overflow:hidden}
+.foto{position:relative;margin:22px -22px 8px;aspect-ratio:var(--r,4/3);background:var(--pi);overflow:hidden}
 .foto img{display:block;width:100%;height:100%;object-fit:cover}
+.foto figcaption{position:absolute;left:10px;bottom:10px;padding:5px 8px;border-radius:2px;background:rgba(43,43,43,.62);color:#F7F5EE;font:500 10px/1 var(--fb);letter-spacing:.1em;text-transform:uppercase}
+.capa .foto{margin:18px auto 8px;width:min(100%,calc(58vh*.75));border-radius:2px}
 .its{margin-top:14px}
+.it.cf{display:grid;grid-template-columns:minmax(0,1fr) 84px;column-gap:16px;align-items:start}
+.it.cf>*{grid-column:1}
+.it.cf .th{grid-column:2;grid-row:1/span 4;width:84px;aspect-ratio:3/4;object-fit:cover;border-radius:2px;background:var(--pi)}
 .it{padding:16px 0 15px;border-bottom:1px solid var(--line)}
 .it .r{display:flex;justify-content:space-between;align-items:baseline;gap:16px}
 .it h3{margin:0;font:600 18px/1.25 var(--fb)}
