@@ -23,7 +23,7 @@ a{color:inherit}
 /* escenario y hojas */
 .stage{position:relative;flex:1;min-height:0;overflow:hidden;background:var(--bg)}
 .pila{position:absolute;inset:0;z-index:0;isolation:isolate}
-.hoja{position:absolute;inset:0;overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y;background:var(--bg);visibility:hidden;outline:none}
+.hoja{position:absolute;inset:0;overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y pinch-zoom;background:var(--bg);visibility:hidden;outline:none}
 .hoja.mov{box-shadow:1px 0 0 var(--line)}
 .drag,.drag *{user-select:none;-webkit-user-select:none}
 .pad{padding:28px 22px 28px}
@@ -102,3 +102,14 @@ a{color:inherit}
 .toast.on{opacity:1;transform:translate(-50%,0)}
 .carga{display:grid;place-content:center;justify-items:center;gap:16px;height:100%;margin:0;font:var(--wt) 24px var(--ft)}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
+
+/* zoom con dos dedos: sí en textos e imágenes de la carta; no en cabecera, índice y heros */
+.cab,.indice,.capa .top,.foto.hero{touch-action:pan-x pan-y}
+.foto.hero{touch-action:pan-y}
+.capa .foto.w{width:auto;margin:18px -22px 8px;border-radius:0}
+.it.ed{position:relative}
+.it.ed .pl::after{content:"";position:absolute;inset:0}
+.it .go{flex:none;align-self:center;display:inline-flex;margin-left:6px;color:var(--ac)}
+.exp{margin-top:14px}
+.exp .mini{margin:16px 0 4px}
+.exp p{margin:0;font-size:16px;line-height:1.5}
