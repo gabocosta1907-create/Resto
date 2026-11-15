@@ -1,0 +1,8 @@
+{
+ "extiende": "/centeno/resto.json",
+ "resto": {
+  "nombre": "CENTENO",
+  "bajada": "Versión visual: miniaturas en la lista.",
+  "listado": "visual"
+ }
+}

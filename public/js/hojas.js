@@ -17,8 +17,10 @@ const track=(ev,p={})=>{const e={ev,origen,...p};eventos.push(e);window.dataLaye
 
 // ── datos ──
 const app=$('#app');
-let cfg=null;
-try{const r=await fetch(base+'resto.json');if(!r.ok)throw 0;cfg=await r.json()}catch(e){}
+let cfg=null,dir=base;
+// Una versión puede extender el contenido de otra (`extiende`) y solo cambiar `resto` (listado, nombre, tema…): un solo contenido, varios modelos.
+try{const r=await fetch(base+'resto.json');if(!r.ok)throw 0;cfg=await r.json();
+ if(cfg.extiende){const b=await (await fetch(cfg.extiende)).json();dir=cfg.extiende.replace(/[^/]*$/,'');b.resto={...b.resto,...cfg.resto,tema:{...b.resto.tema,...(cfg.resto||{}).tema}};cfg=b}}catch(e){cfg=null}
 if(!cfg||!cfg.secciones){app.innerHTML='<div class="carga"><p>No pudimos cargar la carta.</p><button class="btn-v" id="reintentar" style="width:auto;padding:0 28px">Reintentar</button></div>';$('#reintentar').onclick=()=>location.reload();return}
 const R=cfg.resto,M=cfg.marian,T=R.tema,root=document.documentElement.style;
 [['bg',T.fondo],['tx',T.texto],['ac',T.acento],['cab',T.cabecera],['cabtx',T.cabeceraTexto],['pi',T.piedra||T.cabecera]].forEach(([k,v])=>root.setProperty('--'+k,v));
@@ -27,11 +29,12 @@ const fam=(n,w)=>`family=${n.replace(/ /g,'+')}:wght@${w}`;
 // El bloque de Marian usa siempre la identidad de Marian.
 $('#gf').href=`https://fonts.googleapis.com/css2?${[fam(T.titulos,T.pesoTitulos||500),fam(T.cuerpo,'400;500;600'),fam('Instrumental Serif','400'),fam('Nunito','400;600'),fam('Nunito Sans','700')].join('&')}&display=swap`;
 const ext=u=>/^https?:/.test(u);
-const imgSrc=(u,w)=>ext(u)?(/images\.unsplash\.com|plus\.unsplash\.com/.test(u)?u.replace(/([?&])w=\d+/,'$1w='+w).replace(/&h=\d+/,''):u):base+u;
+const imgSrc=(u,w)=>ext(u)?(/images\.unsplash\.com|plus\.unsplash\.com/.test(u)?u.replace(/([?&])w=\d+/,'$1w='+w).replace(/&h=\d+/,''):u):dir+u;
 const imgAttr=u=>ext(u)?' referrerpolicy="no-referrer"':'';
 const fmt=p=>p==null||p===''?'':typeof p==='number'?'$'+String(p).replace(/\B(?=(\d{3})+(?!\d))/g,'.'):String(p);
 const num=i=>String(i+1).padStart(2,'0');
 
+const CON=R.listado==='conciso';
 const SECS=cfg.secciones.filter(s=>!s.oculta);
 const H=SECS.map(s=>({id:s.id,titulo:s.titulo,corto:s.corto||s.titulo,s}));
 if(M){const j=M.despuesDe&&M.despuesDe!=='final'?H.findIndex(h=>h.id===M.despuesDe):-1,m={id:'marian',titulo:M.titulo,corto:M.corto||M.titulo,marian:true};j>=0?H.splice(j+1,0,m):H.push(m)}
@@ -39,15 +42,15 @@ const N=H.length;
 const ITEMS=new Map(),ED=new Map();
 SECS.forEach(s=>s.items.forEach(it=>ITEMS.set(it.id,{it,sec:s})));
 (cfg.editorial||[]).forEach(e=>{if(ITEMS.has(e.plato))ED.set(e.plato,e)});
-const DET=id=>ED.has(id)||!!(ITEMS.get(id)&&ITEMS.get(id).it.foto);
+const DET=id=>{const x=ITEMS.get(id);return ED.has(id)||!!(x&&(x.it.foto||(CON&&x.it.desc&&x.sec.ficha!==false)))};
 
 // ── marcado ──
 const LEAF='<svg viewBox="0 0 32 32" width="28" height="28" aria-hidden="true"><path d="M16 29V16" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" fill="none"/><path d="M16 18C9 18 5.5 12.5 6 5c6.500.5 10 4.500 10 13Z" fill="currentColor"/><path d="M16 16c0-7 3.500-11 9.500-11.500C26 10.500 23 16 16 16Z" fill="currentColor" opacity=".8"/></svg>';
 const ARR='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
 const chev=d=>`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${d}"/></svg>`;
 const vr=it=>(it.variantes||[]).filter(v=>v.p!=null&&v.p!=='').map(v=>`<li><span>${esc(v.n)}</span><b>${esc(fmt(v.p))}</b></li>`).join('');
-const itemHTML=(it,s)=>{const e=DET(it.id),v=vr(it),h=`#/${esc(s.id)}/${esc(it.id)}`,th=it.foto?`<img class="th" src="${esc(imgSrc(it.foto.src,320))}"${imgAttr(it.foto.src)} alt="" loading="lazy" decoding="async" onerror="this.remove()">`:'';
-return `<article class="it${e?' ed':''}${th?' cf':''}${it.agotado?' agotado':''}" id="it-${esc(it.id)}"><div class="r"><h3>${e?`<a class="pl" href="${h}">${esc(it.nombre)}</a>`:esc(it.nombre)}</h3>${it.agotado?'<span class="ag">Agotado</span>':(it.variantes?'':`<span class="p">${esc(fmt(it.precio))}</span>`)}</div>${it.desc?`<p class="d">${esc(it.desc)}</p>`:''}${v?`<ul class="vr">${v}</ul>`:''}${e?`<a class="mas" href="${h}" tabindex="-1" aria-hidden="true">${ED.has(it.id)?'Historia y maridaje':'Ver el plato'} ${ARR}</a>`:''}${th}</article>`};
+const itemHTML=(it,s)=>{const e=DET(it.id),v=vr(it),h=`#/${esc(s.id)}/${esc(it.id)}`,th=it.foto&&!CON?`<img class="th" src="${esc(imgSrc(it.foto.src,320))}"${imgAttr(it.foto.src)} alt="" loading="lazy" decoding="async" onerror="this.remove()">`:'';
+return `<article class="it${e?' ed':''}${th?' cf':''}${it.agotado?' agotado':''}" id="it-${esc(it.id)}"><div class="r"><h3>${e?`<a class="pl" href="${h}">${esc(it.nombre)}</a>`:esc(it.nombre)}</h3>${it.agotado?'<span class="ag">Agotado</span>':(it.variantes?'':`<span class="p">${esc(fmt(it.precio))}</span>`)}</div>${it.desc&&(!CON||!e)?`<p class="d">${esc(it.desc)}</p>`:''}${v?`<ul class="vr">${v}</ul>`:''}${e?`<a class="mas" href="${h}" tabindex="-1" aria-hidden="true">${ED.has(it.id)?'Historia y maridaje':'Ver el plato'} ${ARR}</a>`:''}${th}</article>`};
 const foto=(f,w=900)=>f?`<figure class="foto" style="--r:${esc(f.ratio||'4/3')}"><img src="${esc(imgSrc(f.src,w))}"${imgAttr(f.src)} alt="${esc(f.alt||'')}" loading="lazy" decoding="async" onerror="this.closest('figure').remove()">${f.ref?'<figcaption>Foto de referencia</figcaption>':''}</figure>`:'';
 const sig=i=>`<div class="sig">${H[i-1]?`<button class="sg" data-go="-1">← ${esc(H[i-1].corto)}</button>`:'<span></span>'}${H[i+1]?`<button class="sg" data-go="1">${esc(H[i+1].corto)} →</button>`:'<span></span>'}</div>`;
 const sheetHTML=(h,i)=>h.marian
@@ -142,7 +145,7 @@ addEventListener('resize',()=>{if(!endFn)layout()});
 
 // ── capa de plato: historia → vino → volver a la carta ──
 function capaHTML(id){const{it,sec}=ITEMS.get(id),e=ED.get(id)||{},vv=e.maridaje&&ITEMS.get(e.maridaje.vino);
- return `<div class="top"><button class="back" data-close>← Volver a la carta</button><button class="ib" data-share aria-label="Compartir este plato">${chev('M12 3v12M7 8l5-5 5 5M5 14v6h14v-6')}</button></div><div class="pad"><p class="eyebrow">${esc(sec.titulo)}</p><h2 class="tit" id="capa-t">${esc(e.titulo||it.nombre)}</h2>${it.precio!=null?`<p class="cp">${esc(fmt(it.precio))}</p>`:''}${foto(e.foto||it.foto)}${it.desc?`<p class="d">${esc(it.desc)}</p>`:''}${e.video&&e.video.src?`<video controls playsinline preload="none"${e.video.poster?` poster="${esc(base+e.video.poster)}"`:''} src="${esc(base+e.video.src)}"></video>`:''}${(e.texto||[]).length?`<div class="hist"><h3 class="mini">Historia</h3>${e.texto.map(p=>`<p>${esc(p)}</p>`).join('')}</div>`:''}${vv?`<details class="vino"><summary><span><span class="mini">Vino sugerido</span><b>${esc(vv.it.nombre)}</b></span>${chev('M12 5v14M5 12h14')}</summary><div class="vc"><ul class="vr">${vr(vv.it)}</ul>${e.maridaje.nota?`<p class="nota">${esc(e.maridaje.nota)}</p>`:''}<a class="ver" href="#/${esc(vv.sec.id)}/${esc(vv.it.id)}">Ver en la carta de vinos ${ARR}</a></div></details>`:''}${e.placeholder?'<p class="ejemplo">Texto de ejemplo del prototipo.</p>':''}<button class="btn-v" data-close>Volver a la carta</button></div>`}
+ return `<div class="top"><button class="back" data-close>← Volver a la carta</button><button class="ib" data-share aria-label="Compartir este plato">${chev('M12 3v12M7 8l5-5 5 5M5 14v6h14v-6')}</button></div><div class="pad"><p class="eyebrow">${esc(sec.titulo)}</p><h2 class="tit" id="capa-t">${esc(e.titulo||it.nombre)}</h2>${it.precio!=null?`<p class="cp">${esc(fmt(it.precio))}</p>`:''}${foto(e.foto||it.foto)}${it.desc?`<p class="d">${esc(it.desc)}</p>`:''}${e.video&&e.video.src?`<video controls playsinline preload="none"${e.video.poster?` poster="${esc(dir+e.video.poster)}"`:''} src="${esc(dir+e.video.src)}"></video>`:''}${(e.texto||[]).length?`<div class="hist"><h3 class="mini">Historia</h3>${e.texto.map(p=>`<p>${esc(p)}</p>`).join('')}</div>`:''}${vv?`<details class="vino"><summary><span><span class="mini">Vino sugerido</span><b>${esc(vv.it.nombre)}</b></span>${chev('M12 5v14M5 12h14')}</summary><div class="vc"><ul class="vr">${vr(vv.it)}</ul>${e.maridaje.nota?`<p class="nota">${esc(e.maridaje.nota)}</p>`:''}<a class="ver" href="#/${esc(vv.sec.id)}/${esc(vv.it.id)}">Ver en la carta de vinos ${ARR}</a></div></details>`:''}${e.placeholder?'<p class="ejemplo">Texto de ejemplo del prototipo.</p>':''}<button class="btn-v" data-close>Volver a la carta</button></div>`}
 function openCapa(id){if(overlayItem===id)return;
  if(overlayItem==null){opener=document.activeElement&&document.activeElement!==document.body?document.activeElement:null}
  overlayItem=id;capa.innerHTML=capaHTML(id);capa.scrollTop=0;pila.inert=true;capa.classList.add('on');

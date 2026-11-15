@@ -33,7 +33,7 @@ a{color:inherit}
 .foto{position:relative;margin:22px -22px 8px;aspect-ratio:var(--r,4/3);background:var(--pi);overflow:hidden}
 .foto img{display:block;width:100%;height:100%;object-fit:cover}
 .foto figcaption{position:absolute;left:10px;bottom:10px;padding:5px 8px;border-radius:2px;background:rgba(43,43,43,.62);color:#F7F5EE;font:500 10px/1 var(--fb);letter-spacing:.1em;text-transform:uppercase}
-.capa .foto{margin:18px auto 8px;width:min(100%,calc(58vh*.75));border-radius:2px}
+.capa .foto{margin:18px auto 8px;width:min(100%,calc(44vh*.75));border-radius:2px}
 .its{margin-top:14px}
 .it.cf{display:grid;grid-template-columns:minmax(0,1fr) 84px;column-gap:16px;align-items:start}
 .it.cf>*{grid-column:1}

@@ -18,7 +18,8 @@
    "titulos": "Newsreader",
    "pesoTitulos": 400,
    "cuerpo": "DM Sans"
-  }
+  },
+  "listado": "conciso"
  },
  "marian": {
   "web": "https://marian.marianacaci.com",
@@ -132,7 +133,8 @@
      "nombre": "Porción de torta de chocolate",
      "precio": 10500
     }
-   ]
+   ],
+   "ficha": false
   },
   {
    "id": "desayunos",
@@ -546,7 +548,8 @@
       }
      ]
     }
-   ]
+   ],
+   "ficha": false
   },
   {
    "id": "bebidas",
@@ -608,7 +611,8 @@
      "precio": "A definir",
      "desc": "Posibles platos futuros · Excluidos de la carta vigente"
     }
-   ]
+   ],
+   "ficha": false
   }
  ],
  "editorial": [

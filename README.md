@@ -22,3 +22,5 @@ Pieza del ecosistema Marian cakes boutique: la carta digital de un comercio gast
 
 ## Layout «hojas» (CENTENO)
 Un comercio con `"resto":{"layout":"hojas"}` usa `js/hojas.js` en vez de `carta.js`; su `index.html` es un cascarón (ver `centeno/index.html`). Campos propios en `resto.json`: `secciones[].{id,titulo,corto,sub,foto,oculta}`, `items[].{id,agotado,variantes}`, `marian.despuesDe` (id de sección o `final`), y `editorial[]` = `{plato,titulo,texto[],maridaje:{vino,nota},foto,video,placeholder}` (la historia se abre desde el plato; `check-links` valida que plato y vino existan). Probar con `?debug` para ver los eventos en consola.
+
+**Versiones del mismo contenido:** un `resto.json` puede traer `"extiende":"/otra/resto.json"` y sobrescribir solo `resto` (p. ej. `listado: "conciso" | "visual"`). Así hay un único contenido y varios modelos de presentación.

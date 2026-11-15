@@ -22,7 +22,9 @@ for (const c of listados) {
   const f = join(pub, c, 'resto.json');
   if (!existsSync(f)) { E('falta resto.json'); continue; }
   if (!existsSync(join(pub, c, 'index.html'))) E('falta index.html');
-  const cfg = JSON.parse(readFileSync(f, 'utf8')), items = cfg.marian?.items || [], vistos = new Set();
+  let cfg = JSON.parse(readFileSync(f, 'utf8'));
+  if (cfg.extiende) { const b = join(pub, cfg.extiende.replace(/^\//, '')); if (!existsSync(b)) { E(`extiende ${cfg.extiende}: no existe`); continue; } console.log(`  extiende ${cfg.extiende} (se valida allí)`); continue; }
+  const items = cfg.marian?.items || [], vistos = new Set();
   // Cartas «hojas»: ids únicos, referencias de historias/maridajes y fotos propias del comercio.
   const ids = new Set(), dup = [];
   for (const sec of cfg.secciones || []) { if (sec.foto && !/^https?:/.test(sec.foto.src) && !existsSync(join(pub, c, sec.foto.src))) E(`${sec.id}: falta ${c}/${sec.foto.src}`); for (const it of sec.items || []) { if (it.foto && !/^https?:/.test(it.foto.src) && !existsSync(join(pub, c, it.foto.src))) E(`${it.id}: falta ${c}/${it.foto.src}`); if (it.id) { if (ids.has(it.id)) dup.push(it.id); ids.add(it.id); } } }
