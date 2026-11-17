@@ -65,7 +65,7 @@ ${N>1?'<p class="hint" id="hint" aria-hidden="true">Deslizá para pasar de categ
 <nav class="indice" aria-label="Categorías de la carta"><div class="tira" id="tira">${H.map(h=>`<a href="#/${esc(h.id)}">${esc(h.corto)}</a>`).join('')}</div></nav><div class="sr" id="live" aria-live="polite"></div>`;
 H.forEach(h=>h.el=$('#h-'+h.id));
 const stage=$('#stage'),pila=$('#pila'),capa=$('#capa'),full=$('#full'),tira=$('#tira'),cnt=$('#cnt'),bprev=$('#bprev'),bnext=$('#bnext'),bmenu=$('#bmenu'),live=$('#live'),hint=$('#hint'),toastEl=$('#toast');
-if(R.mozo&&hint)setTimeout(()=>hint.classList.add("off"),3000);
+if(hint){hint.classList.add("off");let ht;stage.addEventListener("scroll",()=>{hint.classList.remove("off");clearTimeout(ht);ht=setTimeout(()=>hint.classList.add("off"),1000)},true)}
 
 // ── estado y disposición de las hojas ──
 let cur=-1,endFn=null,tm=null,pendingReveal=null,focusAfter=false,overlayItem=null,fullOpen=false,opener=null,deepItem=null,supp=false;
@@ -81,7 +81,7 @@ function after(prev){const h=H[cur];
  const a=tira.children[cur];if(a)tira.scrollTo({left:a.offsetLeft-(tira.clientWidth-a.offsetWidth)/2,behavior:reduce.matches?'auto':'smooth'});
  cnt.textContent=`${num(cur)} / ${String(N).padStart(2,'0')}`;bprev.disabled=cur===0;bnext.disabled=cur===N-1;
  document.title=`${h.titulo} · ${R.nombre}`;live.textContent=`${h.titulo}, ${cur+1} de ${N}`;
- if(prev>=0&&hint)hint.classList.add('off');
+
  track('categoria',{cat:h.id});
  if(focusAfter){h.el.focus({preventScroll:true});focusAfter=false}}
 // Cambio de hoja animado: hacia adelante la hoja actual se corre y descubre la siguiente; hacia atrás la anterior vuelve a cubrirla.
