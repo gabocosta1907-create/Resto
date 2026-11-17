@@ -123,3 +123,13 @@ a{color:inherit}
 .rbtn{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 18px;border:1px solid var(--ac);color:var(--ac);font:600 12px/1 var(--fb);letter-spacing:.12em;text-transform:uppercase;text-decoration:none;border-radius:99px}
 .resena.pop{position:absolute;top:calc(var(--hh) + 6px);right:10px;z-index:20;width:min(320px,calc(100vw - 20px));margin:0;background:var(--bg);box-shadow:0 10px 30px rgba(0,0,0,.18)}
 .resena.pop[hidden]{display:none}
+
+.mozo{position:absolute;right:14px;bottom:14px;z-index:5;display:inline-flex;align-items:center;gap:7px;min-height:44px;padding:0 16px;border:0;border-radius:99px;background:var(--tx);color:var(--bg);font:600 13px/1 var(--fb);letter-spacing:.02em;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.22);touch-action:pan-x pan-y}
+.mozo.on{background:var(--bg);color:var(--tx);box-shadow:0 0 0 1px var(--line),0 4px 14px rgba(0,0,0,.14)}
+.mozo .mz-i{display:inline-flex}
+.pmozo{position:absolute;left:14px;right:14px;bottom:70px;z-index:7;padding:16px;background:var(--bg);border:1px solid var(--line);border-radius:12px;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.18)}
+.pmozo[hidden]{display:none}
+.pmozo h3{margin:0 0 4px;font:500 20px/1.2 var(--ft,var(--fb))}
+.pmozo p{margin:0 0 12px;font-size:15px}
+.stage:has(.mozo) .hoja .pad{padding-bottom:96px}
+.stage:has(.mozo) .hint{left:14px;right:auto;text-align:left;max-width:calc(100% - 190px);line-height:1.5}

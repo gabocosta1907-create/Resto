@@ -19,7 +19,10 @@
    "pesoTitulos": 400,
    "cuerpo": "DM Sans"
   },
-  "listado": "conciso"
+  "listado": "conciso",
+  "mozo": {
+   "nombre": "Lucía"
+  }
  },
  "marian": {
   "web": "https://marian.marianacaci.com",

@@ -61,10 +61,11 @@ app.innerHTML=`<header class="cab"><a class="marca" href="#/${esc(H[0].id)}" ari
 <main class="stage" id="stage"><div class="pila" id="pila">${H.map(sheetHTML).join('')}</div>
 <div class="capa" id="capa" role="dialog" aria-labelledby="capa-t" tabindex="-1"></div>
 <div class="full" id="full" role="dialog" aria-label="Índice de la carta" tabindex="-1"><div class="top"><span class="mini">Todas las categorías</span><button class="ib" data-closefull aria-label="Cerrar el índice">${chev('M6 6l12 12M18 6L6 18')}</button></div><ol class="lista">${H.map((h,i)=>`<li><a href="#/${esc(h.id)}"><span class="n">${num(i)}</span><span class="t">${esc(h.titulo)}</span></a></li>`).join('')}</ol><a class="vsitio" href="/">← Todos los prototipos</a></div>
-${N>1?'<p class="hint" id="hint" aria-hidden="true">Deslizá para pasar de categoría</p>':''}<div class="toast" id="toast" role="status"></div></main>
+${N>1?'<p class="hint" id="hint" aria-hidden="true">Deslizá para pasar de categoría</p>':''}${R.mozo?`<button class="mozo" id="bmozo" aria-haspopup="dialog"><i class="mz-i" aria-hidden="true"></i><span id="mozot">Llamar al mozo</span></button><div class="pmozo" id="pmozo" role="dialog" aria-labelledby="pmozo-t" hidden><h3 id="pmozo-t"></h3><p></p><button class="rbtn" id="mozoc">Cancelar llamada</button></div>`:''}<div class="toast" id="toast" role="status"></div></main>
 <nav class="indice" aria-label="Categorías de la carta"><div class="tira" id="tira">${H.map(h=>`<a href="#/${esc(h.id)}">${esc(h.corto)}</a>`).join('')}</div></nav><div class="sr" id="live" aria-live="polite"></div>`;
 H.forEach(h=>h.el=$('#h-'+h.id));
 const stage=$('#stage'),pila=$('#pila'),capa=$('#capa'),full=$('#full'),tira=$('#tira'),cnt=$('#cnt'),bprev=$('#bprev'),bnext=$('#bnext'),bmenu=$('#bmenu'),live=$('#live'),hint=$('#hint'),toastEl=$('#toast');
+if(R.mozo&&hint)setTimeout(()=>hint.classList.add("off"),3000);
 
 // ── estado y disposición de las hojas ──
 let cur=-1,endFn=null,tm=null,pendingReveal=null,focusAfter=false,overlayItem=null,fullOpen=false,opener=null,deepItem=null,supp=false;
@@ -111,7 +112,7 @@ function dragTo(dx){const c=H[cur].el,n=H[cur+1]&&H[cur+1].el,p=H[cur-1]&&H[cur-
 stage.addEventListener('pointerdown',e=>{
  if(dg&&e.pointerId!==dg.id){const m=dg.mode;dg=null;stage.classList.remove('drag');if(m==='h')spring();return}
  if(window.visualViewport&&visualViewport.scale>1.02)return;
- if(overlayItem!=null||fullOpen||N<2||(e.pointerType==='mouse'&&e.button!==0)||e.target.closest('.rail,video,input,textarea,select,summary'))return;
+ if(overlayItem!=null||fullOpen||N<2||(e.pointerType==='mouse'&&e.button!==0)||e.target.closest('.rail,video,input,textarea,select,summary,.mozo,.pmozo'))return;
  settleNow();dg={id:e.pointerId,x:e.clientX,y:e.clientY,mode:null,dx:0,s:[[e.timeStamp,e.clientX]]}});
 stage.addEventListener('pointermove',e=>{if(!dg||e.pointerId!==dg.id)return;
  const dx=e.clientX-dg.x,dy=e.clientY-dg.y;
@@ -134,6 +135,16 @@ const fine=matchMedia('(hover:hover)');
 document.addEventListener('click',e=>{if(!pp.hidden&&!pp.contains(e.target))set(false)});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!pp.hidden){set(false);b.focus()}},true);
 window.addEventListener('hashchange',()=>set(false));})();
+
+(()=>{const b=document.getElementById('bmozo'),pp=document.getElementById('pmozo');if(!b)return;
+const nom=R.mozo.nombre||'tu mozo',I='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 5a2 2 0 1 1 4 0 7 7 0 0 1 4 6v3a4 4 0 0 0 2 3H4a4 4 0 0 0 2-3v-3a7 7 0 0 1 4-6M9 17v1a3 3 0 0 0 6 0v-1"/></svg>',OK='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-9"/></svg>';
+let on=false,t1,t2;const ic=b.firstElementChild,tx=document.getElementById('mozot');
+const draw=()=>{ic.innerHTML=on?OK:I;tx.textContent=on?'Mozo avisado':'Llamar al mozo';b.classList.toggle('on',on)};
+const card=()=>{pp.querySelector('h3').textContent=on?'Ya avisamos a '+nom:'¿Llamamos a '+nom+'?';pp.querySelector('p').textContent=on?'Se acerca a tu mesa.':'Se acerca a tu mesa en cuanto pueda.';const c=document.getElementById('mozoc');c.textContent=on?'Cancelar llamada':'Llamar al mozo';pp.hidden=false;clearTimeout(t1);if(on)t1=setTimeout(()=>{pp.hidden=true},5000)};
+b.addEventListener('click',e=>{e.stopPropagation();if(!pp.hidden){pp.hidden=true;return}card()});
+document.getElementById('mozoc').addEventListener('click',e=>{e.stopPropagation();clearTimeout(t2);if(on){on=false;track('mozo_cancelado');pp.hidden=true}else{on=true;track('mozo_llamado');t2=setTimeout(()=>{on=false;draw();toast(nom+' ya está en camino')},20000);card()}draw()});
+document.addEventListener('click',e=>{if(!pp.hidden&&!pp.contains(e.target)&&!b.contains(e.target))pp.hidden=true});
+window.addEventListener('hashchange',()=>{pp.hidden=true});draw();})();
 
 // iOS ignora touch-action para el pellizco: en cabecera, índice y heros se frena con gesturestart.
 document.addEventListener('gesturestart',e=>{if(e.target.closest&&e.target.closest('.cab,.indice,.foto.hero,.capa .top'))e.preventDefault()},{passive:false});
