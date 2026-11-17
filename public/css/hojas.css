@@ -115,4 +115,9 @@ a{color:inherit}
 .exp .mini{margin:16px 0 4px}
 .exp p{margin:0;font-size:16px;line-height:1.5}
 .it.nf{padding-right:100px}
-@media(max-width:380px){.cab .cnt{display:none}}
+.cab .cnt{white-space:nowrap}
+@media(max-width:400px){.cab .cnt{display:none}}
+.resena{margin-top:30px;padding:20px 18px;border:1px solid var(--line);border-radius:2px;text-align:center}
+.resena h3{margin:0 0 6px;font:500 22px/1.2 var(--ft,var(--fb))}
+.resena p{margin:0 0 12px;font-size:15px;line-height:1.45}
+.rbtn{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 18px;border:1px solid var(--ac);color:var(--ac);font:600 12px/1 var(--fb);letter-spacing:.12em;text-transform:uppercase;text-decoration:none;border-radius:99px}
