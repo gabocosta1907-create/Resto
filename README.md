@@ -24,3 +24,19 @@ Pieza del ecosistema Marian cakes boutique: la carta digital de un comercio gast
 Un comercio con `"resto":{"layout":"hojas"}` usa `js/hojas.js` en vez de `carta.js`; su `index.html` es un cascarón (ver `centeno/index.html`). Campos propios en `resto.json`: `secciones[].{id,titulo,corto,sub,foto,oculta}`, `items[].{id,agotado,variantes}`, `marian.despuesDe` (id de sección o `final`), y `editorial[]` = `{plato,titulo,texto[],maridaje:{vino,nota},foto,video,placeholder}` (la historia se abre desde el plato; `check-links` valida que plato y vino existan). Probar con `?debug` para ver los eventos en consola.
 
 **Versiones del mismo contenido:** un `resto.json` puede traer `"extiende":"/otra/resto.json"` y sobrescribir solo `resto` (p. ej. `listado: "conciso" | "visual"`). Así hay un único contenido y varios modelos de presentación.
+
+### Campos de CENTENO (modelo de datos)
+- `resto.listado`: `conciso` (lista nombre+precio; el plato abre ficha con foto 4:3, "Cómo se elabora/presenta") o `visual` (miniatura 3:4 + `resumen` corto; ficha con foto 3:4).
+- Sección: `foto` `{src,alt,ratio,ref}` (hero, siempre 5/3), `ficha:false` (la sección no abre fichas: café, vinos, bebidas).
+- Plato: `resumen` (lista visual), `elaboracion`, `presentacion` (ficha), `desc` (respaldo), `foto` `{src,alt,ratio:'3/4',ref:true}`. Con `ref:true` se muestra "Foto de referencia".
+- `resto.mapa` + `resto.resena` `{titulo,texto,boton}`: la cabecera muestra una estrella que despliega el cuadro "Dejanos tu opinión" con botón al enlace de reseñas de Google Maps. Hoy solo en `/centeno-visual/`.
+- Fotos externas se enlazan (hotlink); antes del lanzamiento hay que reemplazarlas por fotos propias en `public/<comercio>/`.
+
+## Pautas de desarrollo
+- Vanilla HTML/CSS/JS, mobile first, sin build. Probar con `?debug`. Ejecutar `node scripts/check-links.mjs` antes de pushear.
+- Un solo contenido por comercio; los modelos de presentación se derivan con `extiende` (no duplicar datos).
+- Tipografías CENTENO: Newsreader (titulares, frases, destacados) y DM Sans (navegación, platos, descripciones, precios). Marian conserva la suya.
+- Lista de platos: grilla de tres columnas (nombre / precio alineado a la derecha / ícono); mantener el espacio del ícono y de la miniatura para que los precios queden en columna.
+- Gestos: swipe horizontal propio (`touch-action: pan-y pinch-zoom` en la hoja); cabecera, índice, heros y barra de la ficha sin pellizco. Con zoom activo no hay swipe.
+- Tests: `tests/centeno_playwright.py` (Playwright, iPhone 13, 64 comprobaciones). Espera un servidor en `localhost:8767` sobre `public/` y fuentes/imágenes externas simuladas en `/tmp` (ver cabecera del archivo). Limitación: el emulador no aplica `touch-action` a toques sintéticos; el pellizco se prueba en celular real.
+- Deploy: push a `main` → Cloudflare Workers Builds. Verificar el build antes de dar por publicado.

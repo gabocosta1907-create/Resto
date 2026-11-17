@@ -26,9 +26,18 @@ Sitio: resto.marianacaci.com · repo gabocosta1907-create/Resto (main) · deploy
 - Falta un comercio real para armar su carta.
 - Precios, direcciones y textos son placeholders; las fotos de `img/marian/` son copias, hay que reponerlas si Marian las actualiza.
 
+## Historial reciente
+- v1.6 textos y fotos de referencia; dos modelos (`extiende`); v1.7 ajustes; cabecera con estrella de reseña y Google Maps (solo visual); QR generados para `/centeno/`, `/centeno-visual/` y marian2.marianacaci.com (no versionados).
+
 ## Ajustes de v1.7 (zoom, heros, íconos, textos)
 - Heros de sección: todos 5/3 (altura de Entradas), en ambas versiones.
 - `/centeno/` (conciso): foto de la ficha 4:3 a todo el ancho; ícono (chevron) en vez de "Ver el plato"; toda la fila es tocable.
 - `/centeno-visual/`: lista con `resumen` corto; ficha con "Cómo se elabora" y "Cómo se presenta" (`elaboracion`, `presentacion` en el JSON).
 - Zoom con dos dedos: permitido en textos e imágenes (`touch-action: pan-y pinch-zoom`); bloqueado en cabecera, índice, heros y barra de la ficha (`pan-x pan-y`; en iOS además `gesturestart`). Con zoom activo se desactiva el swipe entre categorías.
 - Pendiente de prueba en celular real: pellizco en iOS/Android (el emulador no aplica touch-action).
+
+- Reseña: la estrella de la cabecera (solo `/centeno-visual/`) despliega "Dejanos tu opinión" con botón a Google Maps; el enlace usado es el de «Ceto» (confirmar que sea el local correcto).
+- Decisión pendiente: subdominios (`centeno.marianacaci.com`) por comercio o por versión; requiere dominio personalizado en el Worker y un enrutador por host. Los QR impresos dependen de esto.
+- Contenido por limpiar: «Cerveza tirada» (Bebidas) trae un texto del documento fuente («Posibles platos futuros…»).
+- Contador de categorías oculto en pantallas ≤400 px por falta de espacio en la cabecera.
+- Tests versionados en `tests/centeno_playwright.py` (dependen de mocks en `/tmp`).
