@@ -41,3 +41,11 @@ Sitio: resto.marianacaci.com · repo gabocosta1907-create/Resto (main) · deploy
 - Contenido por limpiar: «Cerveza tirada» (Bebidas) trae un texto del documento fuente («Posibles platos futuros…»).
 - Contador de categorías oculto en pantallas ≤400 px por falta de espacio en la cabecera.
 - Tests versionados en `tests/centeno_playwright.py` (dependen de mocks en `/tmp`).
+
+## Pedido del cliente (maqueta, ambas versiones)
+- Activo con `resto.pedido: true` y mesa identificada (`?m=N`; `?demo` = mesa 3 y botones de simulación). Sin mesa no aparece nada.
+- Módulos: `pedido-reglas.js` (reglas puras de cierre/despacho/cancelación: único lugar a tocar si cambian), `pedido-store.js` (estado; hoy localStorage, contrato intercambiable por servidor), `pedido-ui.js` + `pedido.css` (botón `+`, barra "Mi pedido", panel, rondas).
+- Concurrencia (decisión provisoria): carro común por mesa; cantidades como deltas (dos celulares suman); cada cambio sube `version`; el envío es atómico y se valida contra la versión que el cliente revisó (primero que envía gana; el otro ve aviso y "Ya lo revisé"). Cada envío = ronda numerada.
+- Estados: enviado → en preparación → listo → entregado. Cancelar solo en enviado/en preparación; el aviso cambia si ya empezó. Aval del mozo independiente y nunca frena. El cliente nunca ve tiempo estimado.
+- Tests: `tests/pedido_playwright.py` (22), `tests/centeno_playwright.py` (67).
+- Límites: sin servidor (pestañas simulan celulares); "Lucía" es nombre de ejemplo; botón Atrás de Android no cierra el panel; la ficha tapa el botón del mozo; iOS sin probar en real.

@@ -35,6 +35,12 @@ const fmt=p=>p==null||p===''?'':typeof p==='number'?'$'+String(p).replace(/\B(?=
 const num=i=>String(i+1).padStart(2,'0');
 
 const CON=R.listado==='conciso';
+// Pedido de mesa: solo si la carta lo habilita y la mesa viene identificada (?m=N desde el QR; ?demo para probar).
+let PED=null,PEDCTX=null;
+{const m=qs.get('m')||(qs.has('demo')?'3':null);if(m)try{sessionStorage.setItem('gratto_m',m)}catch(_){}
+ const mesa=m||(()=>{try{return sessionStorage.getItem('gratto_m')}catch(_){return null}})();
+ if(R.pedido&&mesa)PEDCTX={mesa:String(mesa).replace(/[^\w-]/g,'').slice(0,6),comercio:dir.replace(/[^\w-]/g,'')||'carta',demo:qs.has('demo')}}
+
 const SECS=cfg.secciones.filter(s=>!s.oculta);
 const H=SECS.map(s=>({id:s.id,titulo:s.titulo,corto:s.corto||s.titulo,s}));
 if(M){const j=M.despuesDe&&M.despuesDe!=='final'?H.findIndex(h=>h.id===M.despuesDe):-1,m={id:'marian',titulo:M.titulo,corto:M.corto||M.titulo,marian:true};j>=0?H.splice(j+1,0,m):H.push(m)}
@@ -43,14 +49,15 @@ const ITEMS=new Map(),ED=new Map();
 SECS.forEach(s=>s.items.forEach(it=>ITEMS.set(it.id,{it,sec:s})));
 (cfg.editorial||[]).forEach(e=>{if(ITEMS.has(e.plato))ED.set(e.plato,e)});
 const DET=id=>{const x=ITEMS.get(id);return ED.has(id)||!!(x&&(x.it.foto||(CON&&x.it.desc&&x.sec.ficha!==false)))};
+if(PEDCTX)try{PED=(await import('/js/pedido-ui.js')).crear({...PEDCTX,esc,fmt,track,ITEMS,mozo:(R.mozo&&R.mozo.nombre)||''})}catch(_){PED=null}
 
 // ── marcado ──
 const LEAF='<svg viewBox="0 0 32 32" width="28" height="28" aria-hidden="true"><path d="M16 29V16" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" fill="none"/><path d="M16 18C9 18 5.5 12.5 6 5c6.500.5 10 4.500 10 13Z" fill="currentColor"/><path d="M16 16c0-7 3.500-11 9.500-11.500C26 10.500 23 16 16 16Z" fill="currentColor" opacity=".8"/></svg>';
 const ARR='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
 const chev=d=>`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${d}"/></svg>`;
-const vr=it=>(it.variantes||[]).filter(v=>v.p!=null&&v.p!=='').map(v=>`<li><span>${esc(v.n)}</span><b>${esc(fmt(v.p))}</b></li>`).join('');
+const vr=it=>(it.variantes||[]).filter(v=>v.p!=null&&v.p!=='').map(v=>`<li><span>${esc(v.n)}</span><b>${esc(fmt(v.p))}</b>${PED?PED.btn(it,v):''}</li>`).join('');
 const itemHTML=(it,s)=>{const e=DET(it.id),v=vr(it),h=`#/${esc(s.id)}/${esc(it.id)}`,th=it.foto&&!CON?`<img class="th" src="${esc(imgSrc(it.foto.src,320))}"${imgAttr(it.foto.src)} alt="" loading="lazy" decoding="async" onerror="this.remove()">`:'';
-const go=`<span class="go" aria-hidden="true">${(e&&!ED.has(it.id))?chev('M9 5l7 7-7 7'):''}</span>`;const ico=e&&!ED.has(it.id);
+const go=PED?(it.variantes?'<span class="add-vacio"></span>':PED.btn(it)):`<span class="go" aria-hidden="true">${(e&&!ED.has(it.id))?chev('M9 5l7 7-7 7'):''}</span>`;const ico=e&&!ED.has(it.id);
 return `<article class="it${e?' ed':''}${th?' cf':(CON?'':' nf')}${it.agotado?' agotado':''}" id="it-${esc(it.id)}"><div class="r"><h3>${e?`<a class="pl" href="${h}">${esc(it.nombre)}</a>`:esc(it.nombre)}</h3>${it.agotado?'<span class="ag">Agotado</span>':(it.variantes?'':`<span class="p">${esc(fmt(it.precio))}</span>`)}${go}</div>${(!CON||!e)&&(it.resumen||it.desc)?`<p class="d">${esc(it.resumen||it.desc)}</p>`:''}${v?`<ul class="vr">${v}</ul>`:''}${e&&!ico?`<a class="mas" href="${h}" tabindex="-1" aria-hidden="true">${ED.has(it.id)?'Historia y maridaje':'Ver el plato'} ${ARR}</a>`:''}${th}</article>`};
 const foto=(f,w=900,ratio,hero)=>f?`<figure class="foto${ratio?' w':''}${hero?' hero':''}" style="--r:${esc(ratio||f.ratio||'4/3')}"><img src="${esc(imgSrc(f.src,w))}"${imgAttr(f.src)} alt="${esc(f.alt||'')}" loading="lazy" decoding="async" onerror="this.closest('figure').remove()">${f.ref?'<figcaption>Foto de referencia</figcaption>':''}</figure>`:'';
 const sig=i=>`<div class="sig">${H[i-1]?`<button class="sg" data-go="-1">← ${esc(H[i-1].corto)}</button>`:'<span></span>'}${H[i+1]?`<button class="sg" data-go="1">${esc(H[i+1].corto)} →</button>`:'<span></span>'}</div>`;
@@ -61,7 +68,7 @@ app.innerHTML=`<header class="cab"><a class="marca" href="#/${esc(H[0].id)}" ari
 <main class="stage" id="stage"><div class="pila" id="pila">${H.map(sheetHTML).join('')}</div>
 <div class="capa" id="capa" role="dialog" aria-labelledby="capa-t" tabindex="-1"></div>
 <div class="full" id="full" role="dialog" aria-label="Índice de la carta" tabindex="-1"><div class="top"><span class="mini">Todas las categorías</span><button class="ib" data-closefull aria-label="Cerrar el índice">${chev('M6 6l12 12M18 6L6 18')}</button></div><ol class="lista">${H.map((h,i)=>`<li><a href="#/${esc(h.id)}"><span class="n">${num(i)}</span><span class="t">${esc(h.titulo)}</span></a></li>`).join('')}</ol><a class="vsitio" href="/">← Todos los prototipos</a></div>
-${N>1?'<p class="hint" id="hint" aria-hidden="true">Deslizá para pasar de categoría</p>':''}${R.mozo?`<button class="mozo" id="bmozo" aria-haspopup="dialog"><i class="mz-i" aria-hidden="true"></i><span id="mozot">Llamar al mozo</span></button><div class="pmozo" id="pmozo" role="dialog" aria-labelledby="pmozo-t" hidden><h3 id="pmozo-t"></h3><p></p><button class="rbtn" id="mozoc">Cancelar llamada</button></div>`:''}<div class="toast" id="toast" role="status"></div></main>
+${N>1?'<p class="hint" id="hint" aria-hidden="true">Deslizá para pasar de categoría</p>':''}${R.mozo?`<button class="mozo" id="bmozo" aria-haspopup="dialog"><i class="mz-i" aria-hidden="true"></i><span id="mozot">Llamar al mozo</span></button><div class="pmozo" id="pmozo" role="dialog" aria-labelledby="pmozo-t" hidden><h3 id="pmozo-t"></h3><p></p><button class="rbtn" id="mozoc">Cancelar llamada</button><button class="lnk" id="mozos">Prefiero hablar con el supervisor</button></div>`:''}<div class="toast" id="toast" role="status"></div></main>
 <nav class="indice" aria-label="Categorías de la carta"><div class="tira" id="tira">${H.map(h=>`<a href="#/${esc(h.id)}">${esc(h.corto)}</a>`).join('')}</div></nav><div class="sr" id="live" aria-live="polite"></div>`;
 H.forEach(h=>h.el=$('#h-'+h.id));
 const stage=$('#stage'),pila=$('#pila'),capa=$('#capa'),full=$('#full'),tira=$('#tira'),cnt=$('#cnt'),bprev=$('#bprev'),bnext=$('#bnext'),bmenu=$('#bmenu'),live=$('#live'),hint=$('#hint'),toastEl=$('#toast');
@@ -112,7 +119,7 @@ function dragTo(dx){const c=H[cur].el,n=H[cur+1]&&H[cur+1].el,p=H[cur-1]&&H[cur-
 stage.addEventListener('pointerdown',e=>{
  if(dg&&e.pointerId!==dg.id){const m=dg.mode;dg=null;stage.classList.remove('drag');if(m==='h')spring();return}
  if(window.visualViewport&&visualViewport.scale>1.02)return;
- if(overlayItem!=null||fullOpen||N<2||(e.pointerType==='mouse'&&e.button!==0)||e.target.closest('.rail,video,input,textarea,select,summary,.mozo,.pmozo'))return;
+ if(overlayItem!=null||fullOpen||N<2||(e.pointerType==='mouse'&&e.button!==0)||e.target.closest('.rail,video,input,textarea,select,summary,.mozo,.pmozo,.add,.addf,.pbar,.ped'))return;
  settleNow();dg={id:e.pointerId,x:e.clientX,y:e.clientY,mode:null,dx:0,s:[[e.timeStamp,e.clientX]]}});
 stage.addEventListener('pointermove',e=>{if(!dg||e.pointerId!==dg.id)return;
  const dx=e.clientX-dg.x,dy=e.clientY-dg.y;
@@ -142,6 +149,7 @@ let on=false,t1,t2;const ic=b.firstElementChild,tx=document.getElementById('mozo
 const draw=()=>{ic.innerHTML=on?OK:I;tx.textContent=on?'Mozo avisado':'Llamar al mozo';b.classList.toggle('on',on)};
 const card=()=>{pp.querySelector('h3').textContent=on?'Ya avisamos a '+nom:'¿Llamamos a '+nom+'?';pp.querySelector('p').textContent=on?'Se acerca a tu mesa.':'Se acerca a tu mesa en cuanto pueda.';const c=document.getElementById('mozoc');c.textContent=on?'Cancelar llamada':'Llamar al mozo';pp.hidden=false;clearTimeout(t1);if(on)t1=setTimeout(()=>{pp.hidden=true},5000)};
 b.addEventListener('click',e=>{e.stopPropagation();if(!pp.hidden){pp.hidden=true;return}card()});
+document.getElementById('mozos').addEventListener('click',e=>{e.stopPropagation();track('supervisor_pedido');pp.hidden=true;toast('Avisamos al supervisor. Se acerca a tu mesa.')});
 document.getElementById('mozoc').addEventListener('click',e=>{e.stopPropagation();clearTimeout(t2);if(on){on=false;track('mozo_cancelado');pp.hidden=true}else{on=true;track('mozo_llamado');t2=setTimeout(()=>{on=false;draw();toast(nom+' ya está en camino')},20000);card()}draw()});
 document.addEventListener('click',e=>{if(!pp.hidden&&!pp.contains(e.target)&&!b.contains(e.target))pp.hidden=true});
 window.addEventListener('hashchange',()=>{pp.hidden=true});draw();})();
@@ -171,7 +179,7 @@ addEventListener('resize',()=>{if(!endFn)layout()});
 
 // ── capa de plato: historia → vino → volver a la carta ──
 function capaHTML(id){const{it,sec}=ITEMS.get(id),e=ED.get(id)||{},vv=e.maridaje&&ITEMS.get(e.maridaje.vino);
- return `<div class="top"><button class="back" data-close>← Volver a la carta</button><button class="ib" data-share aria-label="Compartir este plato">${chev('M12 3v12M7 8l5-5 5 5M5 14v6h14v-6')}</button></div><div class="pad"><p class="eyebrow">${esc(sec.titulo)}</p><h2 class="tit" id="capa-t">${esc(e.titulo||it.nombre)}</h2>${it.precio!=null?`<p class="cp">${esc(fmt(it.precio))}</p>`:''}${foto(e.foto||it.foto,900,CON?'4/3':null)}${it.elaboracion?`<div class="exp"><h3 class="mini">Cómo se elabora</h3><p>${esc(it.elaboracion)}</p><h3 class="mini">Cómo se presenta</h3><p>${esc(it.presentacion||'')}</p></div>`:(it.desc?`<p class="d">${esc(it.desc)}</p>`:'')}${e.video&&e.video.src?`<video controls playsinline preload="none"${e.video.poster?` poster="${esc(dir+e.video.poster)}"`:''} src="${esc(dir+e.video.src)}"></video>`:''}${(e.texto||[]).length?`<div class="hist"><h3 class="mini">Historia</h3>${e.texto.map(p=>`<p>${esc(p)}</p>`).join('')}</div>`:''}${vv?`<details class="vino"><summary><span><span class="mini">Vino sugerido</span><b>${esc(vv.it.nombre)}</b></span>${chev('M12 5v14M5 12h14')}</summary><div class="vc"><ul class="vr">${vr(vv.it)}</ul>${e.maridaje.nota?`<p class="nota">${esc(e.maridaje.nota)}</p>`:''}<a class="ver" href="#/${esc(vv.sec.id)}/${esc(vv.it.id)}">Ver en la carta de vinos ${ARR}</a></div></details>`:''}${e.placeholder?'<p class="ejemplo">Texto de ejemplo del prototipo.</p>':''}<button class="btn-v" data-close>Volver a la carta</button></div>`}
+ return `<div class="top"><button class="back" data-close>← Volver a la carta</button><button class="ib" data-share aria-label="Compartir este plato">${chev('M12 3v12M7 8l5-5 5 5M5 14v6h14v-6')}</button></div><div class="pad"><p class="eyebrow">${esc(sec.titulo)}</p><h2 class="tit" id="capa-t">${esc(e.titulo||it.nombre)}</h2>${it.precio!=null?`<p class="cp">${esc(fmt(it.precio))}</p>`:''}${foto(e.foto||it.foto,900,CON?'4/3':null)}${PED&&!it.variantes?PED.fichaBtn(it):''}${it.elaboracion?`<div class="exp"><h3 class="mini">Cómo se elabora</h3><p>${esc(it.elaboracion)}</p><h3 class="mini">Cómo se presenta</h3><p>${esc(it.presentacion||'')}</p></div>`:(it.desc?`<p class="d">${esc(it.desc)}</p>`:'')}${e.video&&e.video.src?`<video controls playsinline preload="none"${e.video.poster?` poster="${esc(dir+e.video.poster)}"`:''} src="${esc(dir+e.video.src)}"></video>`:''}${(e.texto||[]).length?`<div class="hist"><h3 class="mini">Historia</h3>${e.texto.map(p=>`<p>${esc(p)}</p>`).join('')}</div>`:''}${vv?`<details class="vino"><summary><span><span class="mini">Vino sugerido</span><b>${esc(vv.it.nombre)}</b></span>${chev('M12 5v14M5 12h14')}</summary><div class="vc"><ul class="vr">${vr(vv.it)}</ul>${e.maridaje.nota?`<p class="nota">${esc(e.maridaje.nota)}</p>`:''}<a class="ver" href="#/${esc(vv.sec.id)}/${esc(vv.it.id)}">Ver en la carta de vinos ${ARR}</a></div></details>`:''}${e.placeholder?'<p class="ejemplo">Texto de ejemplo del prototipo.</p>':''}<button class="btn-v" data-close>Volver a la carta</button></div>`}
 function openCapa(id){if(overlayItem===id)return;
  if(overlayItem==null){opener=document.activeElement&&document.activeElement!==document.body?document.activeElement:null}
  overlayItem=id;capa.innerHTML=capaHTML(id);capa.scrollTop=0;pila.inert=true;capa.classList.add('on');
@@ -191,6 +199,8 @@ function closeFull(){if(!fullOpen)return;fullOpen=false;full.classList.remove('o
 
 // ── interacciones ──
 let toastTm;const toast=t=>{toastEl.textContent=t;toastEl.classList.add('on');clearTimeout(toastTm);toastTm=setTimeout(()=>toastEl.classList.remove('on'),2200)};
+if(dbg&&PED)window.__ped=PED;
+if(PED){PED.ctx.stage=stage;PED.ctx.toast=toast;PED.montar()}
 async function share(){const u=location.origin+location.pathname+location.hash,title=`${document.title}`;track('compartir',{item:overlayItem});
  if(navigator.share){try{await navigator.share({title,url:u})}catch(_){}return}
  try{await navigator.clipboard.writeText(u);toast('Link copiado')}catch(_){toast('Copiá el link desde la barra del navegador')}}
@@ -206,7 +216,7 @@ document.addEventListener('click',e=>{
  const m=t.closest('.marian a[href^="http"]');if(m)track('marian_click',{href:m.href})},true);
 capa.addEventListener('toggle',e=>{if(e.target.matches('details.vino')&&e.target.open)track('vino_consultado',{item:overlayItem})},true);
 capa.addEventListener('play',()=>track('video_play',{item:overlayItem}),true);
-document.addEventListener('keydown',e=>{
+document.addEventListener('keydown',e=>{if(document.querySelector('.ped.on'))return;
  if(e.key==='Escape'){if(fullOpen){closeFull();bmenu.focus();e.preventDefault()}else if(overlayItem!=null){closeCapaUser();e.preventDefault()}return}
  if(e.key==='Tab'&&(fullOpen||overlayItem!=null)){const box=fullOpen?full:capa,f=$$('a[href],button:not([disabled]),summary,video[controls]',box).filter(x=>x.offsetParent!==null&&x.getAttribute('tabindex')!=='-1');
   if(f.length&&!box.contains(document.activeElement)){f[0].focus();e.preventDefault()}

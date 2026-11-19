@@ -22,7 +22,8 @@
   "listado": "conciso",
   "mozo": {
    "nombre": "Lucía"
-  }
+  },
+  "pedido": true
  },
  "marian": {
   "web": "https://marian.marianacaci.com",
