@@ -36,9 +36,9 @@ Sitio: resto.marianacaci.com · repo gabocosta1907-create/Resto (main) · deploy
 - Zoom con dos dedos: permitido en textos e imágenes (`touch-action: pan-y pinch-zoom`); bloqueado en cabecera, índice, heros y barra de la ficha (`pan-x pan-y`; en iOS además `gesturestart`). Con zoom activo se desactiva el swipe entre categorías.
 - Pendiente de prueba en celular real: pellizco en iOS/Android (el emulador no aplica touch-action).
 
-- Reseña: la estrella de la cabecera (solo `/centeno-visual/`) despliega "Dejanos tu opinión" con botón a Google Maps; el enlace usado es el de «Ceto» (confirmar que sea el local correcto).
-- Decisión pendiente: subdominios (`centeno.marianacaci.com`) por comercio o por versión; requiere dominio personalizado en el Worker y un enrutador por host. Los QR impresos dependen de esto.
-- Contenido por limpiar: «Cerveza tirada» (Bebidas) trae un texto del documento fuente («Posibles platos futuros…»).
+- Reseña: la estrella de la cabecera (solo `/centeno-visual/`) despliega "Dejanos tu opinión" con botón a Google Maps; el enlace es el del local correcto (confirmado por Gabo).
+- Decidido: un subdominio por versión (p. ej. uno para la conciso y otro para la visual). Falta darlos de alta como dominio personalizado del Worker y un enrutador por host; los QR impresos se hacen recién cuando estén.
+- «Cerveza tirada»: se quitó el texto del documento fuente (queda precio «A definir»).
 - Contador de categorías oculto en pantallas ≤400 px por falta de espacio en la cabecera.
 - Tests versionados en `tests/centeno_playwright.py` (dependen de mocks en `/tmp`).
 

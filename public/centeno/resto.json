@@ -705,8 +705,7 @@
     {
      "id": "cerveza-tirada",
      "nombre": "Cerveza tirada",
-     "precio": "A definir",
-     "desc": "Posibles platos futuros · Excluidos de la carta vigente"
+     "precio": "A definir"
     }
    ],
    "ficha": false
