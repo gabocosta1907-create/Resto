@@ -185,15 +185,11 @@ with sync_playwright() as p:
         xs=pg.evaluate("[...document.querySelectorAll('#h-brunch .it .p')].map(e=>Math.round(e.getBoundingClientRect().right))")
         ok(f'T23 {ver} precios alineados',len(set(xs))==1 and len(xs)>2,xs)
         ok(f'T23 {ver} sin "Ver el plato"',pg.evaluate("![...document.querySelectorAll('.it')].some(i=>/Ver el plato/.test(i.textContent))"))
-    # T24 llamar al mozo (maqueta): lista larga, botón sobre la barra, fin de lista libre
-    load(pg,'/centeno/#/brunch')
-    pg.evaluate("(()=>{const l=document.querySelector('#h-brunch .its');const it=l.children[1];for(let i=0;i<14;i++)l.appendChild(it.cloneNode(true));document.querySelector('#h-brunch').scrollTop=99999})()")
-    r=pg.evaluate("(()=>{const b=document.getElementById('bmozo').getBoundingClientRect(),bar=document.querySelector('.indice').getBoundingClientRect(),sig=document.querySelector('#h-brunch .sig').getBoundingClientRect();return{gap:bar.top-b.bottom,libre:sig.bottom<=b.top}})()")
-    ok('T24 botón apoyado sobre la barra (sin tocarla) y el final de la lista queda libre',r['gap']>=8 and r['libre'],r)
-    pg.tap('#bmozo');pg.tap('#mozoc')
-    ok('T24 llamar → "Mozo avisado" y cancelar vuelve al estado inicial',pg.evaluate("document.getElementById('mozot').textContent")=='Mozo avisado')
-    pg.tap('#bmozo');pg.tap('#bmozo');pg.tap('#mozoc')
-    ok('T24 cancelar',pg.evaluate("document.getElementById('mozot').textContent")=='Llamar al mozo')
+    # T24 sin botón «Llamar al mozo» (producto Carta) y estrella de reseña en ambas versiones
+    for ver in ('/centeno/','/centeno-visual/'):
+        load(pg,ver+'#/brunch')
+        ok(f'T24 {ver} sin botón de mozo y con estrella de reseña',pg.evaluate("!document.getElementById('bmozo')&&!!document.getElementById('bres')"))
+        pg.tap('#bres');ok(f'T24 {ver} la estrella abre la tarjeta con enlace a Maps',pg.evaluate("(()=>{const p=document.getElementById('pres');return !p.hidden&&/google\\.com\\/maps/.test(p.querySelector('a').href)})()"))
     # T17 rutas inválidas
     load(pg,'/centeno/#/xyz');a=st(pg)['h'];load(pg,'/centeno/#/vinos/nada');b=st(pg)['h']
     ok('T17 rutas inválidas se normalizan',a=='#/cafeteria' and b=='#/vinos',(a,b))

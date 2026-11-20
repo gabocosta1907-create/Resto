@@ -22,8 +22,8 @@ with sync_playwright() as p:
         xs=pg.evaluate("[...document.querySelectorAll('#h-brunch .it .p')].map(e=>Math.round(e.getBoundingClientRect().right))")
         ok(f'P2 {ver} precios alineados con el +',len(set(xs))==1,xs)
         pg.tap('#h-brunch .it:nth-of-type(2) .add');pg.tap('#h-brunch .it:nth-of-type(2) .add');pg.wait_for_timeout(200)
-        r=pg.evaluate("(()=>{const b=document.getElementById('pbar'),m=document.getElementById('bmozo').getBoundingClientRect(),i=document.querySelector('.indice').getBoundingClientRect(),r=b.getBoundingClientRect();return{vis:!b.hidden,txt:b.textContent,mw:Math.round(m.width),gap:Math.round(i.top-r.bottom),solap:r.right>m.left}})()")
-        ok(f'P3 {ver} barra de pedido visible, mozo compacto y sin tocar la barra de categorías',r['vis'] and r['mw']<=48 and r['gap']>=8 and not r['solap'],r)
+        r=pg.evaluate("(()=>{const b=document.getElementById('pbar'),i=document.querySelector('.indice').getBoundingClientRect(),r=b.getBoundingClientRect();return{vis:!b.hidden,txt:b.textContent,gap:Math.round(i.top-r.bottom),solap:false}})()")
+        ok(f'P3 {ver} barra de pedido visible y sin tocar la barra de categorías',r['vis'] and r['gap']>=8,r)
         ok(f'P3 {ver} la barra muestra cantidad y total',r['txt'].startswith('2') and '$' in r['txt'],r['txt'])
         # ficha
         pg.evaluate("location.hash='#/brunch/french-toast-de-banana'");pg.wait_for_timeout(500)
