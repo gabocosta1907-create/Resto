@@ -14,7 +14,6 @@ export function crear(ctx) {
   const local = crearStore({ comercio: ctx.comercio, mesa: ctx.mesa });
   // Con servidor (resto.servidor) el carro es compartido en tiempo real; en ?demo o sin servidor, maqueta local.
   const store = ctx.servidor && !demo && /^\d{1,2}$/.test(ctx.mesa) ? crearStoreRemoto({ comercio: ctx.comercio, mesa: ctx.mesa, servidor: ctx.servidor, local }) : local;
-  const mesaTxt = `Mesa ${ctx.mesa}`;
   const css = document.createElement('link'); css.rel = 'stylesheet'; css.href = '/css/pedido.css'; document.head.appendChild(css);
 
   const precioDe = (it) => (typeof it.precio === 'number' ? it.precio : null);
@@ -23,7 +22,7 @@ export function crear(ctx) {
 
   // ── piezas que usa el motor al armar la lista y la ficha ──
   const btn = (it, v) => pedible(it, v)
-    ? `<span class="ctl"><button class="menos" data-menos-plato="${esc(it.id)}"${v ? ` data-v="${esc(v.n)}"` : ''} aria-label="Quitar uno: ${esc(it.nombre)}${v ? ' (' + esc(v.n) + ')' : ''}" hidden>${MINUS}</button><button class="add" data-add="${esc(it.id)}"${v ? ` data-v="${esc(v.n)}"` : ''} aria-label="Agregar ${esc(it.nombre)}${v ? ' (' + esc(v.n) + ')' : ''} al pedido">${PLUS}<b class="bd" hidden></b></button></span>`
+    ? `<span class="ctl"><button class="add" data-add="${esc(it.id)}"${v ? ` data-v="${esc(v.n)}"` : ''} aria-label="Agregar ${esc(it.nombre)}${v ? ' (' + esc(v.n) + ')' : ''} al pedido">${PLUS}<b class="bd" hidden></b></button><button class="menos" data-menos-plato="${esc(it.id)}"${v ? ` data-v="${esc(v.n)}"` : ''} aria-label="Quitar uno: ${esc(it.nombre)}${v ? ' (' + esc(v.n) + ')' : ''}" hidden>${MINUS}</button></span>`
     : '<span class="add-vacio"></span>';
   const fichaBtn = (it) => pedible(it)
     ? `<button class="addf" data-add="${esc(it.id)}" data-f="1"><span class="addf-t">Agregar al pedido</span><span class="addf-p">${esc(fmt(it.precio))}</span></button>`
@@ -104,10 +103,10 @@ export function crear(ctx) {
   // ── panel ──
   function abrir() {
     const e = store.estado(); revisada = e.version; ultimaVersion = e.version; cambioAjeno = false; confirmCancel = null;
-    abierto = true; panel.classList.add('on'); barra.hidden = true; pintar(); panel.scrollTop = 0; panel.focus({ preventScroll: true });
+    abierto = true; ctx.stage.classList.add('ped-on'); panel.classList.add('on'); barra.hidden = true; pintar(); panel.scrollTop = 0; panel.focus({ preventScroll: true });
     track('pedido_abierto');
   }
-  function cerrar() { abierto = false; panel.classList.remove('on'); refrescar(); }
+  function cerrar() { abierto = false; ctx.stage.classList.remove('ped-on'); panel.classList.remove('on'); refrescar(); }
 
   const lineaHTML = (l) => `<li class="ln" data-l="${esc(l.id)}"><div class="ln-a"><span class="ln-n">${esc(l.nombre)}</span><span class="ln-p">${esc(fmt(l.precio * l.cant))}</span></div>
     <div class="ln-b"><button class="lnk-nota" data-nota="${esc(l.id)}">${l.nota ? esc(l.nota) : 'Agregar nota'}</button>
@@ -132,12 +131,11 @@ export function crear(ctx) {
       ? `${aviso}<ul class="lns">${e.lineas.map(lineaHTML).join('')}</ul><p class="rt gt"><span>Total</span><b>${esc(fmt(total(e.lineas)))}</b></p>
          <p class="nt">Tu pedido va directo a cocina.${mozo ? ' ' + esc(mozo) : ' Tu mozo'} se acerca a confirmarlo con vos.</p>
          <button class="env" data-enviar>${cambioAjeno ? 'Ya lo revisé' : 'Enviar pedido'}</button>
-         <button class="env seguir" data-cerrar>Seguir mirando la carta</button>
          <button class="lnk limpiar" data-limpiar>Limpiar</button>`
       : `${e.rondas.length ? '<p class="vacio">No hay nada nuevo para enviar.</p>' : ''}<button class="env seguir" data-cerrar>Seguir mirando la carta</button>`;
     const rondas = e.rondas.slice().reverse().map(rondaHTML).join('');
-    panel.innerHTML = `<div class="top"><button class="back" data-cerrar>← Volver a la carta</button><span class="mesa">${esc(mesaTxt)}</span><button class="ib" data-cerrar aria-label="Cerrar">${X}</button></div>
-      <div class="pad"><h2 class="tit">Lo pedido por la mesa</h2><p class="sub">Lo ven todos los celulares de la mesa.</p>${cuerpo}${rondas ? `<h2 class="tit r2">Ya enviado</h2>${rondas}` : ''}</div>`;
+    panel.innerHTML = `<div class="top"><button class="back" data-cerrar>← Volver a la carta</button><button class="ib" data-cerrar aria-label="Cerrar">${X}</button></div>
+      <div class="pad"><h2 class="tit">Hasta ahora anotaste esto:</h2><p class="sub">Lo ven todos los celulares de la mesa.</p>${cuerpo}${rondas ? `<h2 class="tit r2">Ya enviado</h2>${rondas}` : ''}</div>`;
   }
 
   function clickPanel(ev) {

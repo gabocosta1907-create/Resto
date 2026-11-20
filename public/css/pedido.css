@@ -4,24 +4,24 @@
 .has-ped .vr{display:block}
 .has-ped .vr li+li{margin-top:2px}
 .ctl,.add-vacio{grid-column:3;justify-self:end;width:80px;height:44px;position:relative;z-index:2}
-.ctl{display:flex;align-items:center;justify-content:flex-end}
+.ctl{display:flex;align-items:center;justify-content:flex-start}
 .add{width:44px;height:44px;position:relative;z-index:2}
-.menos{width:36px;height:44px;border:0;background:none;padding:0;color:var(--ac);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;touch-action:pan-x pan-y}
-.menos[hidden]{display:none}
-.menos svg{width:24px;height:24px;padding:5px;border:1px solid var(--ac);border-radius:50%;box-sizing:border-box}
+.menos{width:32px;height:44px;border:0;background:none;padding:0;color:var(--ac);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;touch-action:pan-x pan-y}
+.menos[hidden]{display:inline-flex;visibility:hidden}
+.menos svg{width:22px;height:22px;padding:4px;border:1px solid var(--ac);border-radius:50%;box-sizing:border-box}
 .add-vacio{display:block}
 .add{border:0;background:none;padding:0;color:var(--ac);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;touch-action:pan-x pan-y}
 .add svg{width:30px;height:30px;padding:6px;border:1px solid var(--ac);border-radius:50%;box-sizing:border-box}
 .add.on svg{background:var(--ac);color:var(--bg)}
-.add .bd{position:absolute;top:3px;right:1px;min-width:18px;height:18px;padding:0 4px;border-radius:9px;background:var(--tx);color:var(--bg);font:600 11px/18px var(--fb);text-align:center;box-sizing:border-box}
+.add .bd{position:absolute;top:3px;right:-2px;min-width:18px;height:18px;padding:0 4px;border-radius:9px;background:var(--tx);color:var(--bg);font:600 11px/18px var(--fb);text-align:center;box-sizing:border-box}
 .add .bd[hidden]{display:none}
 .it .r>.ctl{align-self:center}
 .addf{display:flex;justify-content:space-between;align-items:center;width:100%;min-height:52px;margin:18px 0 0;padding:0 20px;border:0;border-radius:99px;background:var(--tx);color:var(--bg);font:600 14px/1 var(--fb);letter-spacing:.04em;cursor:pointer}
 .addf-p{font-variant-numeric:tabular-nums}
 
-.pbar{position:absolute;top:12px;left:50%;transform:translateX(-50%);width:max-content;min-width:210px;max-width:calc(100% - 28px);z-index:5;display:flex;align-items:center;gap:10px;min-height:44px;padding:0 16px 0 8px;border:0;border-radius:99px;background:var(--ac);color:var(--bg);font:600 13px/1 var(--fb);cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.22);touch-action:pan-x pan-y}
+.pbar{position:absolute;top:62px;left:50%;transform:translateX(-50%);width:max-content;min-width:280px;max-width:calc(100% - 20px);z-index:5;display:flex;align-items:center;gap:10px;min-height:44px;padding:0 16px 0 8px;border:0;border-radius:99px;background:color-mix(in srgb,var(--ac) 58%,#000);color:var(--bg);font:600 15px/1 var(--fb);cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.35);touch-action:pan-x pan-y}
 .pbar[hidden]{display:none}
-.pbar .pb-n{display:inline-flex;align-items:center;justify-content:center;min-width:28px;height:28px;border-radius:50%;background:var(--bg);color:var(--ac);font-size:13px}
+.pbar .pb-n{display:inline-flex;align-items:center;justify-content:center;min-width:30px;height:30px;border-radius:50%;background:var(--bg);color:color-mix(in srgb,var(--ac) 58%,#000);font-size:15px}
 .pbar .pb-t{flex:1;text-align:left}
 .pbar .pb-p{font-variant-numeric:tabular-nums}
 .pbar.seg{background:var(--bg);color:var(--tx);box-shadow:0 0 0 1px var(--line),0 4px 14px rgba(0,0,0,.14);padding-left:16px}
@@ -29,7 +29,7 @@
 .ped{position:absolute;inset:0;z-index:9;background:var(--bg);overflow-y:auto;overscroll-behavior:contain;visibility:hidden;transform:translateY(16px);opacity:0;transition:opacity .2s,transform .2s,visibility 0s .2s;touch-action:pan-y pinch-zoom}
 .ped.on{visibility:visible;transform:none;opacity:1;transition:opacity .2s,transform .2s}
 .ped .top{position:sticky;top:0;z-index:2;display:flex;align-items:center;gap:6px;min-height:var(--hh);padding:0 6px 0 14px;background:var(--bg);border-bottom:1px solid var(--line);touch-action:pan-x pan-y}
-.ped .top .mesa{margin-left:auto;font:600 12px/1 var(--fb);letter-spacing:.14em;text-transform:uppercase;opacity:.7}
+.ped .top .ib{margin-left:auto}
 .ped .back{border:0;background:none;color:var(--tx);font:600 13px/1 var(--fb);letter-spacing:.04em;min-height:44px;padding:0 6px;cursor:pointer}
 .ped .pad{padding:22px 22px 120px}
 .ped .tit{margin:0;font:var(--wt) 28px/1.15 var(--ft)}
@@ -50,7 +50,7 @@
 .ped .nt{margin:12px 0 18px;font-size:14.5px;line-height:1.5;opacity:.8}
 .ped .env{width:100%;min-height:52px;border:0;border-radius:99px;background:var(--tx);color:var(--bg);font:600 14px/1 var(--fb);letter-spacing:.06em;text-transform:uppercase;cursor:pointer}
 .ped .aviso{margin:0 0 12px;padding:12px 14px;border-radius:8px;background:color-mix(in srgb,var(--ac) 14%,var(--bg));font-size:14.5px;line-height:1.4}
-.ped .env.seguir{margin-top:10px;background:var(--ac);color:var(--bg)}
+.ped .env.seguir{background:color-mix(in srgb,var(--ac) 58%,#000);color:var(--bg)}
 .ped .lnk.limpiar{display:block;margin:6px auto 0;text-align:center}
 .ped .vacio{margin:6px 0 4px;font-size:15px;opacity:.75}
 .ped .ronda{margin-top:14px;padding:16px;border:1px solid var(--line);border-radius:10px}
@@ -74,5 +74,13 @@
 .ped .cf .rbtn{min-height:44px;padding:0 16px;border:1px solid var(--ac);border-radius:99px;background:none;color:var(--ac);font:600 13px/1 var(--fb);cursor:pointer}
 .ped .sim{margin-top:12px;padding-top:10px;border-top:1px dashed var(--line);display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:12px}
 .ped .sim button{min-height:34px;padding:0 10px;border:1px solid var(--line);border-radius:99px;background:none;color:var(--tx);font:500 12px var(--fb);cursor:pointer}
-@media (max-width:400px){.pbar .pb-t{font-size:12.5px}}
-.stage.con-barra .hint{top:68px;right:auto;left:50%;transform:translateX(-50%);white-space:nowrap}
+@media (max-width:400px){.pbar .pb-t{font-size:14.5px}}
+.stage.has-ped .hint{top:auto;bottom:14px;right:auto;left:50%;transform:translateX(-50%);white-space:nowrap}
+
+/* Llamá a Lucía: arriba a la derecha, siempre visible (también sobre el panel del pedido y la ficha) */
+.stage.has-ped .mozo{top:10px;bottom:auto;right:14px;z-index:12;background:var(--cab);color:var(--cabtx);box-shadow:0 3px 10px rgba(0,0,0,.25)}
+.stage.has-ped .mozo.on{background:var(--bg);color:var(--tx);box-shadow:0 0 0 1px var(--line),0 3px 10px rgba(0,0,0,.14)}
+.stage.has-ped.ped-on .mozo{right:58px;top:8px}
+.stage.has-ped .pmozo{top:60px;bottom:auto;z-index:13}
+.stage.has-ped:has(.mozo) .hoja .pad{padding-bottom:22px}
+.stage:has(.full.on) .pbar{display:none}
