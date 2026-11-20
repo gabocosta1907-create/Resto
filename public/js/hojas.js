@@ -39,7 +39,7 @@ const CON=R.listado==='conciso';
 let PED=null,PEDCTX=null;
 {const m=qs.get('m')||(qs.has('demo')?'3':null);if(m)try{sessionStorage.setItem('gratto_m',m)}catch(_){}
  const mesa=m||(()=>{try{return sessionStorage.getItem('gratto_m')}catch(_){return null}})();
- if(R.pedido&&mesa)PEDCTX={mesa:String(mesa).replace(/[^\w-]/g,'').slice(0,6),comercio:dir.replace(/[^\w-]/g,'')||'carta',demo:qs.has('demo')}}
+ if(R.pedido&&mesa)PEDCTX={mesa:String(mesa).replace(/[^\w-]/g,'').slice(0,6),comercio:dir.replace(/[^\w-]/g,'')||'carta',demo:qs.has('demo'),servidor:qs.has('local')?'':(()=>{const q=qs.get('srv');return q&&/^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(q)?q:(R.servidor||'')})()}}
 
 const SECS=cfg.secciones.filter(s=>!s.oculta);
 const H=SECS.map(s=>({id:s.id,titulo:s.titulo,corto:s.corto||s.titulo,s}));

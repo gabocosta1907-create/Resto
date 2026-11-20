@@ -1,6 +1,7 @@
 // Pantallas del pedido (cliente). Se carga solo si la carta tiene `resto.pedido` y la mesa está identificada.
 // Reglas en pedido-reglas.js; almacenamiento en pedido-store.js (hoy local, luego servidor).
 import { crearStore } from './pedido-store.js';
+import { crearStoreRemoto } from './pedido-store-remoto.js';
 import { ESTADOS, PASOS, SIGUIENTE, puedeCancelar, total, cantidad, textoAval, textoCancelacion, MENSAJES_ERROR } from './pedido-reglas.js';
 
 const PLUS = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>';
@@ -10,7 +11,9 @@ const X = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="c
 export function crear(ctx) {
   const { esc, fmt, track, ITEMS, mozo, demo } = ctx;
   const toast = (t) => ctx.toast && ctx.toast(t);
-  const store = crearStore({ comercio: ctx.comercio, mesa: ctx.mesa });
+  const local = crearStore({ comercio: ctx.comercio, mesa: ctx.mesa });
+  // Con servidor (resto.servidor) el carro es compartido en tiempo real; en ?demo o sin servidor, maqueta local.
+  const store = ctx.servidor && !demo && /^\d{1,2}$/.test(ctx.mesa) ? crearStoreRemoto({ comercio: ctx.comercio, mesa: ctx.mesa, servidor: ctx.servidor, local }) : local;
   const mesaTxt = `Mesa ${ctx.mesa}`;
   const css = document.createElement('link'); css.rel = 'stylesheet'; css.href = '/css/pedido.css'; document.head.appendChild(css);
 
@@ -59,9 +62,10 @@ export function crear(ctx) {
   }
 
   // cambios del carro: propios o de otro celular
-  function alCambiar() {
+  function alCambiar(ev) {
     const e = store.estado();
-    if (abierto && !yo && e.version !== ultimaVersion) cambioAjeno = true;
+    if (ev && ev.propio) revisada = e.version; // store remoto: la respuesta llega después de la acción
+    if (abierto && !yo && !(ev && ev.propio) && e.version !== ultimaVersion) cambioAjeno = true;
     ultimaVersion = e.version;
     refrescar(); if (abierto) pintar();
   }
@@ -138,7 +142,7 @@ export function crear(ctx) {
     if ('enviar' in d) return enviar();
     if (d.cx) { confirmCancel = d.cx; return pintar(); }
     if ('cxNo' in d) { confirmCancel = null; return pintar(); }
-    if (d.cxSi) { let r; propio(() => { r = store.cancelar(d.cxSi); }); confirmCancel = null; track('pedido_cancelacion', { estado: r && r.estadoPrevio }); return pintar(); }
+    if (d.cxSi) { const id = d.cxSi; confirmCancel = null; pintar(); Promise.resolve(store.cancelar(id)).then((r) => { if (!r) toast('No se pudo cancelar. Avisale a tu mozo.'); track('pedido_cancelacion', { estado: r && r.estadoPrevio }); pintar(); }); return; }
     if (d.sim) {
       const r = store.estado().rondas.find((x) => x.id === d.sim); if (!r) return;
       const par = d.a === 'avanzar' ? { estado: SIGUIENTE[r.estado] } : d.a === 'avalar' ? { aval: 'avalado' } : { aval: 'corregido', cambios: 'sin cebolla en el segundo plato' };
@@ -150,12 +154,14 @@ export function crear(ctx) {
     propio(() => store.nota(i.dataset.nid, i.value));
   }
 
-  function enviar() {
+  let enviando = false;
+  async function enviar() {
+    if (enviando) return;
     const e = store.estado();
     if (cambioAjeno) { cambioAjeno = false; revisada = e.version; pintar(); return; }
-    yo = true; const r = store.enviarRonda(revisada); yo = false; if (r.ok) revisada = store.estado().version;
+    enviando = true; yo = true; const r = await store.enviarRonda(revisada); yo = false; enviando = false; if (r.ok) revisada = store.estado().version;
     if (r.ok) { track('pedido_enviado', { ronda: r.ronda.n }); toast('Pedido enviado a cocina'); pintar(); panel.scrollTop = 0; return; }
-    toast(MENSAJES_ERROR[r.motivo] || 'No se pudo enviar');
+    toast(r.motivo === 'sin_conexion' ? 'Sin conexión: no se envió. Tu pedido queda guardado.' : (MENSAJES_ERROR[r.motivo] || 'No se pudo enviar'));
     if (r.motivo === 'carro_cambio') cambioAjeno = true;
     pintar();
   }

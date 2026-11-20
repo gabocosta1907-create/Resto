@@ -16,7 +16,7 @@ with sync_playwright() as p:
     ok('P1 sin mesa identificada no hay botones de pedido',pg.evaluate("document.querySelectorAll('.add').length")==0 and pg.evaluate("!document.getElementById('pbar')"))
     c.close()
     for ver in ('/centeno/','/centeno-visual/'):
-        c=nuevo(b);pg=abrir(c,ver+'?m=3&debug#/brunch')
+        c=nuevo(b);pg=abrir(c,ver+'?m=3&local&debug#/brunch')
         n=pg.evaluate("document.querySelectorAll('#h-brunch .add').length")
         ok(f'P2 {ver} hay botón + en los platos con precio',n>=4,n)
         xs=pg.evaluate("[...document.querySelectorAll('#h-brunch .it .p')].map(e=>Math.round(e.getBoundingClientRect().right))")
@@ -41,7 +41,7 @@ with sync_playwright() as p:
         ok(f'P5 {ver} cada variante (copa/botella) se agrega por separado',v>=6 and any('Botella' in x for x in st),(v,st))
         c.close()
     # concurrencia: dos celulares (pestañas) en la misma mesa
-    c=nuevo(b);A=abrir(c,'/centeno/?m=3&debug#/brunch');B=abrir(c,'/centeno-visual/?m=3&debug#/brunch')
+    c=nuevo(b);A=abrir(c,'/centeno/?m=3&local&debug#/brunch');B=abrir(c,'/centeno-visual/?m=3&local&debug#/brunch')
     A.tap('#h-brunch .it:nth-of-type(2) .add');B.wait_for_timeout(300)
     ok('P6 lo que agrega un celular aparece en el otro (y entre versiones)',B.evaluate("!document.getElementById('pbar').hidden && document.getElementById('pbar').textContent.startsWith('1')"))
     B.tap('#pbar');B.wait_for_timeout(300);A.tap('#h-brunch .it:nth-of-type(3) .add');B.wait_for_timeout(300)

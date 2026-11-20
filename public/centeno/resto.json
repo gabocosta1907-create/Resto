@@ -23,7 +23,8 @@
   "mozo": {
    "nombre": "Lucía"
   },
-  "pedido": true
+  "pedido": true,
+  "servidor": "https://gratto.marianacaci.com"
  },
  "marian": {
   "web": "https://marian.marianacaci.com",
