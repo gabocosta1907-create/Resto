@@ -16,7 +16,7 @@
 .add.on svg{background:var(--ac);color:var(--bg)}
 .add .bd{position:absolute;top:3px;right:-2px;min-width:18px;height:18px;padding:0 4px;border-radius:9px;background:var(--tx);color:var(--bg);font:600 11px/18px var(--fb);text-align:center;box-sizing:border-box}
 .add .bd[hidden]{display:none}
-.it .r>.ctl{align-self:start;margin-top:-12px}
+.it .r>.ctl{align-self:start;margin-top:-12px;margin-right:-8px}
 .addf{display:flex;justify-content:space-between;align-items:center;width:100%;min-height:52px;margin:18px 0 0;padding:0 20px;border:0;border-radius:99px;background:var(--tx);color:var(--bg);font:600 14px/1 var(--fb);letter-spacing:.04em;cursor:pointer}
 .addf-p{font-variant-numeric:tabular-nums}
 
