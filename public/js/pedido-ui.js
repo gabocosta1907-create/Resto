@@ -23,7 +23,7 @@ export function crear(ctx) {
 
   // ── piezas que usa el motor al armar la lista y la ficha ──
   const btn = (it, v) => pedible(it, v)
-    ? `<button class="add" data-add="${esc(it.id)}"${v ? ` data-v="${esc(v.n)}"` : ''} aria-label="Agregar ${esc(it.nombre)}${v ? ' (' + esc(v.n) + ')' : ''} al pedido">${PLUS}<b class="bd" hidden></b></button>`
+    ? `<span class="ctl"><button class="menos" data-menos-plato="${esc(it.id)}"${v ? ` data-v="${esc(v.n)}"` : ''} aria-label="Quitar uno: ${esc(it.nombre)}${v ? ' (' + esc(v.n) + ')' : ''}" hidden>${MINUS}</button><button class="add" data-add="${esc(it.id)}"${v ? ` data-v="${esc(v.n)}"` : ''} aria-label="Agregar ${esc(it.nombre)}${v ? ' (' + esc(v.n) + ')' : ''} al pedido">${PLUS}<b class="bd" hidden></b></button></span>`
     : '<span class="add-vacio"></span>';
   const fichaBtn = (it) => pedible(it)
     ? `<button class="addf" data-add="${esc(it.id)}" data-f="1"><span class="addf-t">Agregar al pedido</span><span class="addf-p">${esc(fmt(it.precio))}</span></button>`
@@ -44,6 +44,8 @@ export function crear(ctx) {
     panel.addEventListener('click', clickPanel);
     panel.addEventListener('change', cambioPanel);
     document.addEventListener('click', (e) => {
+      const m = e.target.closest('[data-menos-plato]');
+      if (m) { e.preventDefault(); e.stopPropagation(); quitar(m); return; }
       const b = e.target.closest('[data-add]'); if (!b) return;
       e.preventDefault(); e.stopPropagation(); agregar(b);
     }, true);
@@ -59,6 +61,13 @@ export function crear(ctx) {
     if (navigator.vibrate) navigator.vibrate(8);
     toast(`Agregado: ${it.nombre}${v ? ' (' + v.n + ')' : ''}`);
     track('pedido_agregar', { item: it.id, variante: v ? v.n : '' });
+  }
+
+  function quitar(b) {
+    const l = store.estado().lineas.filter((x) => x.plato === b.dataset.menosPlato && (x.variante || '') === (b.dataset.v || '')).pop(); if (!l) return;
+    propio(() => store.cambiar(l.id, -1));
+    if (navigator.vibrate) navigator.vibrate(8);
+    track('pedido_quitar', { item: b.dataset.menosPlato });
   }
 
   // cambios del carro: propios o de otro celular
@@ -79,6 +88,7 @@ export function crear(ctx) {
       const k = en(x.it, v), bd = b.querySelector('.bd');
       if (bd) { bd.hidden = !k; bd.textContent = k; }
       b.classList.toggle('on', k > 0);
+      const mn = b.parentElement && b.parentElement.querySelector('.menos'); if (mn) mn.hidden = !k;
       if (b.dataset.f) { const tt = b.querySelector('.addf-t'); if (tt) tt.textContent = k ? `Agregar otro (${k} en tu pedido)` : 'Agregar al pedido'; }
     });
     // barra inferior
@@ -121,8 +131,10 @@ export function crear(ctx) {
     const cuerpo = hay
       ? `${aviso}<ul class="lns">${e.lineas.map(lineaHTML).join('')}</ul><p class="rt gt"><span>Total</span><b>${esc(fmt(total(e.lineas)))}</b></p>
          <p class="nt">Tu pedido va directo a cocina.${mozo ? ' ' + esc(mozo) : ' Tu mozo'} se acerca a confirmarlo con vos.</p>
-         <button class="env" data-enviar>${cambioAjeno ? 'Ya lo revisé' : 'Enviar pedido'}</button>`
-      : `<p class="vacio">${e.rondas.length ? 'No hay nada nuevo para enviar.' : 'Todavía no agregaron nada. Tocá el + de cada plato.'}</p><button class="lnk" data-cerrar>Seguir mirando la carta</button>`;
+         <button class="env" data-enviar>${cambioAjeno ? 'Ya lo revisé' : 'Enviar pedido'}</button>
+         <button class="env seguir" data-cerrar>Seguir mirando la carta</button>
+         <button class="lnk limpiar" data-limpiar>Limpiar</button>`
+      : `${e.rondas.length ? '<p class="vacio">No hay nada nuevo para enviar.</p>' : ''}<button class="env seguir" data-cerrar>Seguir mirando la carta</button>`;
     const rondas = e.rondas.slice().reverse().map(rondaHTML).join('');
     panel.innerHTML = `<div class="top"><button class="back" data-cerrar>← Volver a la carta</button><span class="mesa">${esc(mesaTxt)}</span><button class="ib" data-cerrar aria-label="Cerrar">${X}</button></div>
       <div class="pad"><h2 class="tit">Lo pedido por la mesa</h2><p class="sub">Lo ven todos los celulares de la mesa.</p>${cuerpo}${rondas ? `<h2 class="tit r2">Ya enviado</h2>${rondas}` : ''}</div>`;
@@ -132,6 +144,7 @@ export function crear(ctx) {
     const t = ev.target.closest('button'); if (!t) return;
     const d = t.dataset;
     if ('cerrar' in d) return cerrar();
+    if ('limpiar' in d) { track('pedido_limpiar'); return propio(() => store.vaciar()); }
     if (d.mas) return propio(() => store.cambiar(d.mas, 1));
     if (d.menos) return propio(() => store.cambiar(d.menos, -1));
     if (d.nota) {
