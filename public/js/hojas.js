@@ -72,7 +72,13 @@ ${N>1?'<p class="hint" id="hint" aria-hidden="true">Deslizá para pasar de Hoja<
 <nav class="indice" aria-label="Categorías de la carta"><div class="tira" id="tira">${H.map(h=>`<a href="#/${esc(h.id)}">${esc(h.corto)}</a>`).join('')}</div></nav><div class="sr" id="live" aria-live="polite"></div>`;
 H.forEach(h=>h.el=$('#h-'+h.id));
 const stage=$('#stage'),pila=$('#pila'),capa=$('#capa'),full=$('#full'),tira=$('#tira'),cnt=$('#cnt'),bprev=$('#bprev'),bnext=$('#bnext'),bmenu=$('#bmenu'),live=$('#live'),hint=$('#hint'),toastEl=$('#toast');
-if(hint){hint.classList.add("off");let ht;stage.addEventListener("scroll",()=>{hint.classList.remove("off");clearTimeout(ht);ht=setTimeout(()=>hint.classList.add("off"),5000)},true)}
+if(hint){hint.classList.add("off");let ht,sw=false;try{sw=sessionStorage.getItem('hint_ok')==='1'}catch(_){}
+ window.__hintSwiped=()=>{sw=true;hint.classList.add('off');try{sessionStorage.setItem('hint_ok','1')}catch(_){}};
+ // La leyenda aparece al llegar al final de la hoja (no por scrollear) y solo si todavía no deslizó entre hojas; dura 3 s.
+ const mostrar=()=>{hint.classList.remove("off");clearTimeout(ht);ht=setTimeout(()=>hint.classList.add("off"),3000)};
+ // hoja corta (no hay nada que scrollear): el final ya está a la vista, se avisa al llegar
+ window.__hintCheck=()=>{if(sw)return;const h=document.getElementById('h-'+(H[cur]&&H[cur].id));if(h&&h.scrollHeight<=h.clientHeight+8)mostrar()};
+ stage.addEventListener("scroll",e=>{if(sw)return;const h=e.target;if(!h.classList||!h.classList.contains('hoja'))return;if(h.scrollTop+h.clientHeight>=h.scrollHeight-8&&h.scrollTop>0)mostrar()},true)}
 
 // ── estado y disposición de las hojas ──
 let cur=-1,endFn=null,tm=null,pendingReveal=null,focusAfter=false,overlayItem=null,fullOpen=false,opener=null,deepItem=null,supp=false;
@@ -82,7 +88,7 @@ function layout(){H.forEach((h,i)=>{const e=h.el;e.classList.remove('mov');e.sty
  else{e.style.transform=i<cur?'translateX(-100%)':'none';e.style.visibility='hidden';e.style.zIndex=i<cur?i:N-i}
  e.inert=i!==cur;e.setAttribute('aria-hidden',i===cur?'false':'true')})}
 function settleNow(){if(endFn){const f=endFn;endFn=null;clearTimeout(tm);f()}}
-function after(prev){const h=H[cur];
+function after(prev){const h=H[cur];if(typeof prev==='number'&&prev>=0&&prev!==cur&&window.__hintSwiped)window.__hintSwiped();setTimeout(()=>window.__hintCheck&&window.__hintCheck(),700);
  $$('a',tira).forEach((a,i)=>i===cur?a.setAttribute('aria-current','true'):a.removeAttribute('aria-current'));
  $$('a',full).forEach((a,i)=>i===cur?a.setAttribute('aria-current','true'):a.removeAttribute('aria-current'));
  const a=tira.children[cur];if(a)tira.scrollTo({left:a.offsetLeft-(tira.clientWidth-a.offsetWidth)/2,behavior:reduce.matches?'auto':'smooth'});
