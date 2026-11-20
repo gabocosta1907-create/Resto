@@ -138,7 +138,8 @@
      "precio": 10500
     }
    ],
-   "ficha": false
+   "ficha": false,
+   "destino": "cafeteria"
   },
   {
    "id": "desayunos",
@@ -646,7 +647,8 @@
      ]
     }
    ],
-   "ficha": false
+   "ficha": false,
+   "destino": "mozo"
   },
   {
    "id": "bebidas",
@@ -670,22 +672,26 @@
     {
      "id": "limonada-clasica",
      "nombre": "Limonada clásica",
-     "precio": 7500
+     "precio": 7500,
+     "destino": "cocina"
     },
     {
      "id": "limonada-de-menta-y-jengibre",
      "nombre": "Limonada de menta y jengibre",
-     "precio": 8500
+     "precio": 8500,
+     "destino": "cocina"
     },
     {
      "id": "limonada-de-frutos-rojos",
      "nombre": "Limonada de frutos rojos",
-     "precio": 9000
+     "precio": 9000,
+     "destino": "cocina"
     },
     {
      "id": "jugo-de-naranja",
      "nombre": "Jugo de naranja",
-     "precio": 8000
+     "precio": 8000,
+     "destino": "cocina"
     },
     {
      "id": "gin-tonic",
@@ -708,7 +714,8 @@
      "precio": "A definir"
     }
    ],
-   "ficha": false
+   "ficha": false,
+   "destino": "mozo"
   }
  ],
  "editorial": [

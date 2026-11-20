@@ -49,3 +49,4 @@ Sitio: resto.marianacaci.com · repo gabocosta1907-create/Resto (main) · deploy
 - Estados: enviado → en preparación → listo → entregado. Cancelar solo en enviado/en preparación; el aviso cambia si ya empezó. Aval del mozo independiente y nunca frena. El cliente nunca ve tiempo estimado.
 - Tests: `tests/pedido_playwright.py` (22), `tests/centeno_playwright.py` (67).
 - Límites: sin servidor (pestañas simulan celulares); "Lucía" es nombre de ejemplo; botón Atrás de Android no cierra el panel; la ficha tapa el botón del mozo; iOS sin probar en real.
+- `destino` (cocina | cafeteria | mozo) en secciones y productos de `centeno/resto.json`: la carta no lo usa; lo lee Gratto (`worker/scripts/destinos_desde_resto.mjs`). Cafetería → cafeteria; Vinos y Bebidas → mozo, salvo limonadas y jugo → cocina; el resto → cocina.
