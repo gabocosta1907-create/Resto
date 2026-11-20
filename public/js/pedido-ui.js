@@ -103,7 +103,7 @@ export function crear(ctx) {
   // ── panel ──
   function abrir() {
     const e = store.estado(); revisada = e.version; ultimaVersion = e.version; cambioAjeno = false; confirmCancel = null;
-    abierto = true; ctx.stage.classList.add('ped-on'); panel.classList.add('on'); barra.hidden = true; pintar(); panel.scrollTop = 0; panel.focus({ preventScroll: true });
+    abierto = true; ctx.stage.classList.add('ped-on'); ctx.stage.classList.remove('con-barra'); panel.classList.add('on'); barra.hidden = true; pintar(); panel.scrollTop = 0; panel.focus({ preventScroll: true });
     track('pedido_abierto');
   }
   function cerrar() { abierto = false; ctx.stage.classList.remove('ped-on'); panel.classList.remove('on'); refrescar(); }
