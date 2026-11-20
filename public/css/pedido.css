@@ -5,11 +5,11 @@
 .has-ped .vr li+li{margin-top:2px}
 .ctl,.add-vacio{grid-column:3;justify-self:end;width:44px;height:44px;position:relative;z-index:2}
 .ctl{display:flex;align-items:center;justify-content:flex-start}
-.ctl .menos{position:absolute;left:100%;top:0}
+.ctl .menos{position:absolute;right:1px;bottom:-10px;z-index:3}
 .add{width:44px;height:44px;position:relative;z-index:2}
-.menos{width:32px;height:44px;border:0;background:none;padding:0;color:var(--ac);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;touch-action:pan-x pan-y}
+.menos{width:22px;height:22px;border:1px solid var(--ac);border-radius:50%;background:var(--bg);padding:0;color:var(--ac);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;touch-action:pan-x pan-y}
 .menos[hidden]{display:inline-flex;visibility:hidden}
-.menos svg{width:22px;height:22px;padding:4px;border:1px solid var(--ac);border-radius:50%;box-sizing:border-box}
+.menos svg{width:14px;height:14px}
 .add-vacio{display:block}
 .add{border:0;background:none;padding:0;color:var(--ac);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;touch-action:pan-x pan-y}
 .add svg{width:30px;height:30px;padding:6px;border:1px solid var(--ac);border-radius:50%;box-sizing:border-box}
@@ -20,7 +20,7 @@
 .addf{display:flex;justify-content:space-between;align-items:center;width:100%;min-height:52px;margin:18px 0 0;padding:0 20px;border:0;border-radius:99px;background:var(--tx);color:var(--bg);font:600 14px/1 var(--fb);letter-spacing:.04em;cursor:pointer}
 .addf-p{font-variant-numeric:tabular-nums}
 
-.pbar{position:absolute;left:14px;width:max-content;bottom:14px;z-index:5;display:flex;align-items:center;gap:10px;min-height:44px;padding:0 16px 0 8px;border:0;border-radius:99px;background:var(--ac);color:var(--bg);font:600 13px/1 var(--fb);cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.22);touch-action:pan-x pan-y}
+.pbar{position:absolute;left:50%;transform:translateX(-50%);width:max-content;bottom:14px;z-index:5;display:flex;align-items:center;gap:10px;min-height:44px;padding:0 16px 0 8px;border:0;border-radius:99px;background:var(--ac);color:var(--bg);font:600 13px/1 var(--fb);cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.22);touch-action:pan-x pan-y}
 .pbar[hidden]{display:none}
 .pbar .pb-n{display:inline-flex;align-items:center;justify-content:center;min-width:28px;height:28px;border-radius:50%;background:var(--bg);color:var(--ac);font-size:13px}
 .pbar .pb-t{text-align:left}
@@ -76,7 +76,10 @@
 .ped .sim{margin-top:12px;padding-top:10px;border-top:1px dashed var(--line);display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:12px}
 .ped .sim button{min-height:34px;padding:0 10px;border:1px solid var(--line);border-radius:99px;background:none;color:var(--tx);font:500 12px var(--fb);cursor:pointer}
 @media (max-width:400px){.pbar .pb-t{font-size:12.5px}}
-@media (max-width:370px){.stage.con-barra .mozo{width:44px;padding:0;justify-content:center}.stage.con-barra .mozo span{display:none}}
+.stage.con-barra .mozo{width:44px;padding:0;justify-content:center}
+.stage.con-barra .mozo span{display:none}
+.stage.con-barra:has(.full.on) .mozo{width:auto;padding:0 16px}
+.stage.con-barra:has(.full.on) .mozo span{display:inline}
 .stage.con-barra .hoja .pad{padding-bottom:96px}
 .stage.con-barra .toast{bottom:70px}
 

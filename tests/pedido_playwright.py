@@ -24,11 +24,11 @@ with sync_playwright() as p:
         pg.tap('#h-brunch .it:nth-of-type(2) .add');pg.tap('#h-brunch .it:nth-of-type(2) .add');pg.wait_for_timeout(200)
         r=pg.evaluate("(()=>{const b=document.getElementById('pbar'),i=document.querySelector('.indice').getBoundingClientRect(),r=b.getBoundingClientRect();return{vis:!b.hidden,txt:b.textContent,gap:Math.round(i.top-r.bottom),solap:false}})()")
         ok(f'P3 {ver} barra de pedido visible y sin tocar la barra de categorías',r['vis'] and r['gap']>=8,r)
-        ok(f'P3b {ver} botón «Llamá a Lucía» se ve con su leyenda completa junto a la barra',pg.evaluate("(()=>{const b=document.getElementById('bmozo');return !!b&&b.textContent.trim()==='Llamá a Lucía'&&b.getBoundingClientRect().width>100})()"))
-        ok(f'P3b {ver} «Mi pedido» va abajo, a la izquierda del botón del mozo',pg.evaluate("(()=>{const b=document.getElementById('pbar').getBoundingClientRect(),m=document.getElementById('bmozo').getBoundingClientRect();return Math.abs(b.bottom-m.bottom)<=1&&b.right<=m.left&&b.top>400})()"))
+        ok(f'P3b {ver} botón «Llamá a Lucía» se reduce al timbre mientras está «Mi pedido»',pg.evaluate("(()=>{const b=document.getElementById('bmozo');return !!b&&b.getBoundingClientRect().width<=48})()"))
+        ok(f'P3b {ver} «Mi pedido» va abajo, centrado',pg.evaluate("(()=>{const b=document.getElementById('pbar').getBoundingClientRect(),m=document.getElementById('bmozo').getBoundingClientRect();return Math.abs(b.bottom-m.bottom)<=1&&b.right<=m.left&&b.top>400&&Math.abs((b.left+b.right)/2-innerWidth/2)<=2})()"))
         ok(f'P3b {ver} hay estrella de Google Maps',pg.evaluate("!!document.getElementById('bres')"))
         pg.tap('#h-brunch .it:nth-of-type(2) .menos');pg.wait_for_timeout(150)
-        ok(f'P3c {ver} + alineado con el precio y − entre el + y el borde',pg.evaluate("(()=>{const it=document.querySelector('#h-brunch .it:nth-of-type(2)'),p=it.querySelector('.p').getBoundingClientRect(),a=it.querySelector('.add').getBoundingClientRect(),m=it.querySelector('.menos').getBoundingClientRect();return Math.abs((p.top+p.height/2)-(a.top+a.height/2))<=4&&m.left>=a.right-2})()"))
+        ok(f'P3c {ver} + alineado con el precio y − entre el + y el borde',pg.evaluate("(()=>{const it=document.querySelector('#h-brunch .it:nth-of-type(2)'),p=it.querySelector('.p').getBoundingClientRect(),a=it.querySelector('.add').getBoundingClientRect(),m=it.querySelector('.menos').getBoundingClientRect();return Math.abs((p.top+p.height/2)-(a.top+a.height/2))<=4&&m.right<=a.right+0.5&&a.right-m.right<=3})()"))
         ok(f'P3c {ver} el − baja de 2 a 1 y desaparece al llegar a 0',pg.evaluate("document.getElementById('pbar').textContent.startsWith('1')&&!document.querySelector('#h-brunch .it:nth-of-type(2) .menos').hidden"))
         pg.tap('#h-brunch .it:nth-of-type(2) .menos');pg.wait_for_timeout(150)
         ok(f'P3c {ver} en 0 el − se oculta y la barra se va',pg.evaluate("document.querySelector('#h-brunch .it:nth-of-type(2) .menos').hidden&&document.getElementById('pbar').hidden"))
@@ -83,9 +83,22 @@ with sync_playwright() as p:
     pg.tap('#h-brunch .it:nth-of-type(2) .add');pg.wait_for_timeout(150);pg.tap('#pbar');pg.wait_for_timeout(300)
     r=pg.evaluate("({hay:!!document.querySelector('.ped .env[data-enviar]'),seg:!!document.querySelector('.ped .env.seguir'),lim:!!document.querySelector('.ped [data-limpiar]'),mesa:/Mesa\\s*\\d/.test(document.querySelector('.ped').textContent),tit:document.querySelector('.ped .tit').textContent,moz:(()=>{const m=document.getElementById('bmozo').getBoundingClientRect();return m.top>500&&m.right>300})()})")
     ok('P9 con pedido: «Enviar» y «Limpiar», sin «Seguir mirando»; título nuevo; sin «Mesa #»; mozo visible abajo',r['hay'] and not r['seg'] and r['lim'] and not r['mesa'] and r['tit']=='Hasta ahora anotaste esto:' and r['moz'],r)
+    ok('P9 en el panel «Llamá a Lucía» vuelve con su leyenda',pg.evaluate("document.getElementById('bmozo').getBoundingClientRect().width>100"))
     pg.tap('.ped [data-limpiar]');pg.wait_for_timeout(300)
     r=pg.evaluate("({txt:document.querySelector('.ped').textContent,n:document.querySelectorAll('.ped .ln').length,seg:!!document.querySelector('.ped .env.seguir'),env:!!document.querySelector('.ped .env[data-enviar]')})")
     ok('P9 «Limpiar» deja el pedido en 0 y «Seguir mirando la carta» ocupa el lugar de Enviar',r['n']==0 and 'Todavía no agregaron' not in r['txt'] and r['seg'] and not r['env'],r)
+    # menú general: «Llamá a Lucía» completo aun con pedido; «Mi pedido» oculto
+    pg=abrir(c,'/centeno/?m=6&local&debug#/brunch') if False else None
+    c.close()
+    c=nuevo(b);pg=abrir(c,'/centeno/?m=6&local&debug#/brunch')
+    pg.tap('#h-brunch .it:nth-of-type(2) .add');pg.wait_for_timeout(150);pg.tap('#bmenu');pg.wait_for_timeout(600)
+    ok('P11 menú general: «Llamá a Lucía» completo y sin «Mi pedido»',pg.evaluate("(()=>{const m=document.getElementById('bmozo');return m.getBoundingClientRect().width>100&&getComputedStyle(document.getElementById('pbar')).display==='none'})()"))
+    pg.tap('#full .close, #full [aria-label*=errar]') if False else None
+    c.close()
+    # índice general: «Llamá a Lucía» con su leyenda
+    c=nuevo(b);pg=abrir(c,'/centeno/?m=3&local&debug#/brunch')
+    pg.tap('#h-brunch .it:nth-of-type(2) .add');pg.wait_for_timeout(200);pg.tap('#bmenu');pg.wait_for_timeout(500)
+    ok('P9 en el índice general «Llamá a Lucía» muestra su leyenda',pg.evaluate("document.getElementById('bmozo').getBoundingClientRect().width>100"))
     c.close()
     # leyenda de deslizar: no aparece por scrollear; aparece al llegar al final de la hoja, dura 3 s y no vuelve tras deslizar
     c=nuevo(b);pg=abrir(c,'/centeno/?debug#/brunch')
