@@ -9,12 +9,12 @@
   "horario": "",
   "whatsapp": "",
   "tema": {
-   "fondo": "#101C26",
+   "fondo": "#14282B",
    "texto": "#EDE6D3",
-   "acento": "#C9A24A",
-   "cabecera": "#C9A24A",
-   "cabeceraTexto": "#101C26",
-   "piedra": "#7C8A92",
+   "acento": "#D4A055",
+   "cabecera": "#D4A055",
+   "cabeceraTexto": "#14282B",
+   "piedra": "#7F9794",
    "titulos": "Newsreader",
    "pesoTitulos": 400,
    "cuerpo": "DM Sans"
