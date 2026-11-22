@@ -139,4 +139,4 @@ a{color:inherit}
 .pmozo .lnk{display:block;margin:10px auto 0;border:0;background:none;padding:0;min-height:44px;color:var(--ac);font:500 14px var(--fb);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
 
 /* escala tipográfica fina (opt-in con tema.escala:"fina") */
-.fina .tit{font-size:32px;line-height:1.08}.fina .it{padding:13px 0 12px}.fina .it h3{font:500 16.5px/1.28 var(--fb)}.fina .it .p{font-size:14.5px}.fina .it .d{font-size:14px;margin-top:3px}.fina .vr{font-size:14px}.fina .sub{font-size:13.5px}
+.fina .tit{font-size:32px;line-height:1.08}.fina .it{padding:13px 0 12px}.fina .it h3{font:500 var(--nm,16.5px)/1.28 var(--fb)}.fina .it .p{font-size:14.5px}.fina .it .d{font-size:14px;margin-top:3px}.fina .vr{font-size:14px}.fina .sub{font-size:13.5px}
