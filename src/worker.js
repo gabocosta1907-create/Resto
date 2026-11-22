@@ -83,6 +83,19 @@ export default{
           if(nom)t.nombre=nom;if(b.desc!==undefined)t.desc=des;
           msg=`Modifiqué ${nombreDe(id)}`;
         }
+        else if(b.op==='editar'){
+          const a=e.altas.find(x=>x.id===id);const vs=idx[id]?idx[id].vars:[];
+          const cam={};
+          if(b.nombre!==undefined){const nom=txt(b.nombre,80);if(!nom)return J({error:'el nombre no puede quedar vacío'},400);cam.nombre=nom}
+          if(b.desc!==undefined)cam.desc=txt(b.desc,300);
+          if(b.precio!=null){const n=Number(b.precio);if(!Number.isFinite(n)||n<=0||n>10000000)return J({error:'precio inválido'},400);if(vs.length)return J({error:'tiene varias versiones, indicá el precio de cada una'},400);cam.precio=Math.round(n)}
+          const vp={};
+          if(b.vp&&typeof b.vp==='object')for(const[k,v]of Object.entries(b.vp)){const vn=vs.find(x=>x.toLowerCase()===String(k).toLowerCase());const n=Number(v);if(!vn||!Number.isFinite(n)||n<=0||n>10000000)return J({error:'precio de versión inválido'},400);vp[vn]=Math.round(n)}
+          if(!Object.keys(cam).length&&!Object.keys(vp).length)return J({error:'nada para modificar'},400);
+          const tg=a||(e.items[id]=e.items[id]||{});
+          Object.assign(tg,cam);if(Object.keys(vp).length)tg.vp=Object.assign(tg.vp||{},vp);
+          msg=`Edité ${nombreDe(id)}`;
+        }
         else if(b.op==='agregar'){
           const sec=(base.secciones||[]).find(s=>s.id===b.seccion);if(!sec)return J({error:'sección inexistente'},404);
           const nom=txt(b.nombre,80),n=Number(b.precio);

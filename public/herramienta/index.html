@@ -8,7 +8,11 @@ header{position:sticky;top:0;z-index:5;background:#2B2B2B;color:#fff;padding:12p
 header b{font-size:17px}header button{background:#fff;color:#2B2B2B;border:0;border-radius:99px;padding:9px 16px;font:600 14px system-ui;min-height:40px}
 header button:disabled{opacity:.4}
 main{max-width:620px;margin:0 auto;padding:8px 16px 90px}
-h2{font-size:15px;letter-spacing:.06em;text-transform:uppercase;color:var(--ac);margin:26px 0 6px}
+.cat{display:flex;align-items:center;gap:8px;margin:14px 0 0;padding:6px 0;border-bottom:2px solid var(--line)}
+.cat .tg{flex:1;display:flex;align-items:center;gap:10px;min-height:48px;background:none;border:0;text-align:left;font:700 15px system-ui;letter-spacing:.05em;text-transform:uppercase;color:var(--ac);padding:0}
+.cat .tg i{display:inline-block;width:10px;height:10px;border-right:2.5px solid currentColor;border-bottom:2.5px solid currentColor;transform:rotate(-45deg);transition:transform .15s}
+.cat.on .tg i{transform:rotate(45deg)}.cat .tg small{opacity:.6;font-weight:600;letter-spacing:0}
+.cat .ad{min-height:42px;border-radius:99px;border:1.5px dashed var(--ac);background:#fff;color:var(--ac);font:700 14px system-ui;padding:0 14px;white-space:nowrap}
 .it{display:grid;grid-template-columns:1fr auto;gap:6px 12px;padding:12px 0;border-bottom:1px solid var(--line);align-items:center}
 .it .n{font-weight:600}.it .s{font-size:13.5px;opacity:.7;grid-column:1/3}
 .it.off .n{opacity:.5;text-decoration:line-through}
@@ -41,15 +45,16 @@ base=await (await fetch('/'+who.slug+'/resto.json')).json();
 async function cargar(){est=await (await fetch('/api/estado/'+who.slug,{cache:'no-cache'})).json();pintar()}
 function lista(s){const e=est;const its=(s.items||[]).filter(i=>!(e.bajas||[]).includes(i.id)).map(i=>{const o=(e.items||{})[i.id]||{};return {id:i.id,n:o.nombre||i.nombre,d:o.desc!==undefined?o.desc:i.desc,p:o.precio!=null?o.precio:i.precio,v:(i.variantes||[]).map(v=>({n:v.n,p:o.vp&&o.vp[v.n]!=null?o.vp[v.n]:v.p})),off:!!o.off}});
  (e.altas||[]).filter(a=>a.seccion===s.id).forEach(a=>its.push({id:a.id,n:a.nombre,d:a.desc,p:a.precio,v:[],off:false,nuevo:true}));return its}
+const abiertas=new Set();
 function pintar(){
  let h=`<header><b>${esc(base.resto.nombre||'Mi carta')}</b><button id="und">Deshacer</button></header><main>`;
- base.secciones.filter(s=>!s.oculta).forEach(s=>{h+=`<h2>${esc(s.titulo)}</h2>`;
-  lista(s).forEach(i=>{h+=`<div class="it${i.off?' off':''}" data-id="${esc(i.id)}"><div><div class="n">${esc(i.n)}</div>${i.off?'<div class="tag">SUSPENDIDO · no se ve disponible en la carta</div>':''}</div><button class="sw" data-a="${i.off?'reactivar':'suspender'}">${i.off?'Reactivar':'Suspender'}</button>
+ base.secciones.filter(s=>!s.oculta).forEach(s=>{const L=lista(s),on=abiertas.has(s.id);
+  h+=`<div class="cat${on?' on':''}"><button class="tg" data-a="plegar" data-s="${esc(s.id)}" aria-expanded="${on}"><i></i><span>${esc(s.titulo)} <small>${L.length}</small></span></button><button class="ad" data-a="agregar" data-s="${esc(s.id)}">+ Agregar plato</button></div>`;
+  if(on)L.forEach(i=>{h+=`<div class="it${i.off?' off':''}" data-id="${esc(i.id)}"><div><div class="n">${esc(i.n)}</div>${i.off?'<div class="tag">SUSPENDIDO · se ve agotado en la carta</div>':''}</div><button class="sw" data-a="${i.off?'reactivar':'suspender'}">${i.off?'Reactivar':'Suspender'}</button>
    <div class="s">${i.v.length?i.v.map(v=>esc(v.n)+' '+fmt(v.p)).join(' · '):(i.p!=null?fmt(i.p):'')}</div>
-   <div class="acc"><button data-a="precio">Precio</button><button data-a="modificar">Editar texto</button><button class="q" data-a="quitar">Quitar</button></div></div>`});
-  h+=`<div class="add"><button data-a="agregar" data-s="${esc(s.id)}">+ Agregar plato en ${esc(s.titulo)}</button></div>`});
+   <div class="acc"><button data-a="editar">Editar</button><button class="q" data-a="quitar">Quitar</button></div></div>`})});
  app.innerHTML=h+'</main>';
- const hist=est.v>0;$('#und').disabled=!hist;
+ $('#und').disabled=!(est.v>0);
 }
 const dlg=(html,on)=>{$('#dc').innerHTML=html;$('#dlg').classList.add('on');on&&on();const c=()=>$('#dlg').classList.remove('on');$('#dc').querySelectorAll('[data-x]').forEach(b=>b.onclick=c);return c};
 async function op(b){try{const r=await api('/api/op',{method:'POST',body:JSON.stringify(b)});est=r.estado;pintar();toast(r.msg)}catch(e){toast('No se pudo: '+e.message)}}
@@ -59,8 +64,16 @@ app.addEventListener('click',e=>{
  const b=e.target.closest('button[data-a]');if(!b)return;const a=b.dataset.a,row=b.closest('.it'),id=row&&row.dataset.id,it=id&&buscar(id);
  if(a==='suspender'||a==='reactivar')return op({op:a,id});
  if(a==='quitar')return dlg(`<h3>¿Quitar «${esc(it.n)}» de la carta?</h3><p>Se puede deshacer desde el botón Deshacer.</p><div class="row"><button data-x>Cancelar</button><button class="go" id="ok">Quitar</button></div>`,()=>$('#ok').onclick=()=>{$('#dlg').classList.remove('on');op({op:'quitar',id})});
- if(a==='precio'){const vs=it.v;const c=dlg(`<h3>Precio de ${esc(it.n)}</h3>${vs.length?`<select id="vn" style="width:100%;padding:12px;margin:0 0 10px;font:16px system-ui">${vs.map(v=>`<option>${esc(v.n)}</option>`).join('')}</select>`:''}<input id="pv" inputmode="numeric" placeholder="Nuevo precio, ej. 24000"><div class="row"><button data-x>Cancelar</button><button class="go" id="ok">Guardar</button></div>`,()=>{$('#pv').focus();$('#ok').onclick=()=>{const n=Number($('#pv').value.replace(/\D/g,''));if(!n)return toast('Escribí el precio');const v=$('#vn')&&$('#vn').value;$('#dlg').classList.remove('on');op({op:'precio',id,precio:n,variante:v})}});return}
- if(a==='modificar')return dlg(`<h3>Editar texto</h3><input id="nm" value="${esc(it.n)}" maxlength="80"><textarea id="ds" rows="3" maxlength="300" placeholder="Descripción">${esc(it.d||'')}</textarea><div class="row"><button data-x>Cancelar</button><button class="go" id="ok">Guardar</button></div>`,()=>$('#ok').onclick=()=>{$('#dlg').classList.remove('on');op({op:'modificar',id,nombre:$('#nm').value,desc:$('#ds').value})});
+ if(a==='plegar'){const s=b.dataset.s;abiertas.has(s)?abiertas.delete(s):abiertas.add(s);return pintar()}
+ if(a==='editar'){const pr=it.v.length?it.v.map((v,k)=>`<label style="display:block;font-size:14px;margin:0 0 4px">Precio · ${esc(v.n)}</label><input class="pv" data-k="${k}" inputmode="numeric" value="${esc(v.p)}">`).join(''):`<label style="display:block;font-size:14px;margin:0 0 4px">Precio</label><input class="pv" inputmode="numeric" value="${esc(it.p??'')}">`;
+  return dlg(`<h3>Editar plato</h3><label style="display:block;font-size:14px;margin:0 0 4px">Nombre</label><input id="nm" value="${esc(it.n)}" maxlength="80"><label style="display:block;font-size:14px;margin:0 0 4px">Descripción</label><textarea id="ds" rows="3" maxlength="300" placeholder="Descripción (opcional)">${esc(it.d||'')}</textarea>${pr}<div class="row"><button data-x>Cancelar</button><button class="go" id="ok">Guardar</button></div>`,()=>$('#ok').onclick=()=>{
+   const body={op:'editar',id};const nm=$('#nm').value.trim(),ds=$('#ds').value.trim();
+   if(!nm)return toast('El nombre no puede quedar vacío');
+   if(nm!==it.n)body.nombre=nm;if(ds!==(it.d||'').trim())body.desc=ds;
+   const num=x=>Number(String(x).replace(/\D/g,''));
+   if(it.v.length){const vp={};document.querySelectorAll('.pv').forEach(x=>{const k=+x.dataset.k,n=num(x.value);if(!n)return;if(n!==it.v[k].p)vp[it.v[k].n]=n});if(Object.keys(vp).length)body.vp=vp}
+   else{const n=num(document.querySelector('.pv').value);if(!n)return toast('Escribí el precio');if(n!==it.p)body.precio=n}
+   $('#dlg').classList.remove('on');if(Object.keys(body).length>2)op(body);else toast('No hay cambios')})}
  if(a==='agregar'){const s=b.dataset.s;dlg(`<h3>Agregar plato</h3><input id="nm" placeholder="Nombre" maxlength="80"><textarea id="ds" rows="2" maxlength="300" placeholder="Descripción (opcional)"></textarea><input id="pv" inputmode="numeric" placeholder="Precio, ej. 9500"><div class="row"><button data-x>Cancelar</button><button class="go" id="ok">Agregar</button></div>`,()=>{$('#nm').focus();$('#ok').onclick=()=>{const n=Number($('#pv').value.replace(/\D/g,''));if(!$('#nm').value.trim()||!n)return toast('Falta el nombre o el precio');$('#dlg').classList.remove('on');op({op:'agregar',seccion:s,nombre:$('#nm').value,desc:$('#ds').value,precio:n})}})}
 });
 cargar();
