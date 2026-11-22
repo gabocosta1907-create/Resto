@@ -1,0 +1,258 @@
+{
+ "version": "0.1",
+ "base": "https://resto.marianacaci.com/img/heros/",
+ "ratio": "5/3",
+ "alojadas": [
+  4,
+  12,
+  26,
+  104,
+  107,
+  110,
+  111,
+  112,
+  114,
+  121,
+  122,
+  137,
+  141,
+  147,
+  154,
+  157,
+  159,
+  163,
+  169,
+  171,
+  192,
+  194,
+  198,
+  199,
+  203,
+  204,
+  207
+ ],
+ "alt": {
+  "4": "Tres panettones individuales con glaseado y chocolate",
+  "12": "Tarta de crema pastelera y frutillas",
+  "26": "Tarta de chocolate con dulce de leche",
+  "104": "Limonadas de colores con hielo, frutas y pajitas",
+  "107": "Dos vasos de jugo de naranja sobre fondo oscuro",
+  "110": "Bartender terminando un aperitivo con piel de naranja",
+  "111": "Brindis con copas de espumante",
+  "112": "Brindis con cerveza tirada y una tabla de pollo",
+  "114": "Dos copas de gin tonic brindando",
+  "121": "Copas de espumante junto a bocaditos",
+  "122": "Hilera de copas de vino tinto, blanco y rosado",
+  "137": "Desayuno con omelette, pan, mermelada y yogur con arándanos",
+  "141": "Desayuno con medialunas, frutas, café y jugo de naranja",
+  "147": "Tostada con palta, huevo poché y remolacha",
+  "154": "Bruschettas con jamón crudo",
+  "157": "Dos tazas de café humeante sobre una mesa de madera",
+  "159": "Sándwich de huevo, panceta y queso sobre pan inglés",
+  "163": "Porción de tiramisú con cacao",
+  "169": "Mesa de desayuno con café, medialunas, huevos y jugo",
+  "171": "Taza de café sobre mármol",
+  "192": "Hamburguesa con papas fritas y cerveza",
+  "194": "Plato de espaguetis con salsa y queso rallado",
+  "198": "Cocinero terminando un plato con una hoja de hierba",
+  "199": "Pappardelle con ragú en un bowl negro",
+  "203": "Bife con vegetales asados y una copa de vino tinto",
+  "204": "Plato de carne con puré y salsas sobre mármol negro",
+  "207": "Cocinero terminando un plato de carne con hierbas"
+ },
+ "tipos": {
+  "desayuno_merienda": {
+   "claro": [
+    141,
+    134,
+    178
+   ],
+   "oscuro": [
+    169,
+    184,
+    157
+   ]
+  },
+  "brunch": {
+   "claro": [
+    137,
+    145,
+    183
+   ],
+   "oscuro": [
+    147,
+    181,
+    136
+   ]
+  },
+  "cafeteria": {
+   "claro": [
+    171,
+    182,
+    115
+   ],
+   "oscuro": [
+    157,
+    162,
+    176
+   ]
+  },
+  "pasteleria": {
+   "claro": [
+    4,
+    14,
+    29,
+    49,
+    59,
+    129
+   ],
+   "oscuro": [
+    163,
+    172,
+    81
+   ]
+  },
+  "postres": {
+   "claro": [
+    26,
+    9,
+    174,
+    12
+   ],
+   "oscuro": [
+    163,
+    172,
+    173
+   ]
+  },
+  "tartas_ensaladas": {
+   "claro": [],
+   "oscuro": []
+  },
+  "entradas": {
+   "claro": [
+    154,
+    146
+   ],
+   "oscuro": [
+    147,
+    181
+   ]
+  },
+  "sandwiches": {
+   "claro": [
+    159,
+    98,
+    183
+   ],
+   "oscuro": [
+    192,
+    195
+   ]
+  },
+  "pastas": {
+   "claro": [
+    194
+   ],
+   "oscuro": [
+    199
+   ]
+  },
+  "carnes_pollo_pescado": {
+   "claro": [
+    203,
+    202,
+    197
+   ],
+   "oscuro": [
+    204,
+    203,
+    200
+   ]
+  },
+  "especialidades_casa": {
+   "claro": [
+    198,
+    196,
+    201
+   ],
+   "oscuro": [
+    207,
+    205,
+    206
+   ]
+  },
+  "menu": {
+   "claro": [
+    203,
+    123
+   ],
+   "oscuro": [
+    204,
+    123
+   ]
+  },
+  "picada": {
+   "claro": [
+    146,
+    121
+   ],
+   "oscuro": [
+    154,
+    146
+   ]
+  },
+  "bebidas_sin_alcohol": {
+   "claro": [
+    104,
+    106,
+    103
+   ],
+   "oscuro": [
+    107,
+    109,
+    105
+   ]
+  },
+  "cerveza": {
+   "claro": [
+    112
+   ],
+   "oscuro": [
+    112
+   ]
+  },
+  "vino": {
+   "claro": [
+    114,
+    122
+   ],
+   "oscuro": [
+    122,
+    123,
+    114
+   ]
+  },
+  "espumantes": {
+   "claro": [
+    121,
+    111
+   ],
+   "oscuro": [
+    111,
+    121
+   ]
+  },
+  "aperitivos": {
+   "claro": [
+    114,
+    110
+   ],
+   "oscuro": [
+    110,
+    114,
+    122
+   ]
+  }
+ }
+}

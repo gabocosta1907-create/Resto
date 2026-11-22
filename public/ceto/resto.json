@@ -92,7 +92,13 @@
      "nombre": "Licuado de naranja o durazno y tostado de jamón y queso",
      "precio": 12000
     }
-   ]
+   ],
+   "foto": {
+    "src": "https://resto.marianacaci.com/img/heros/h169.jpg",
+    "alt": "Mesa de desayuno con café, medialunas, huevos y jugo",
+    "ratio": "5/3",
+    "ref": true
+   }
   },
   {
    "id": "brunch",
@@ -126,7 +132,13 @@
      "desc": "con queso crema, palta y rúcula acompañado de papas rústicas",
      "precio": 24000
     }
-   ]
+   ],
+   "foto": {
+    "src": "https://resto.marianacaci.com/img/heros/h147.jpg",
+    "alt": "Tostada con palta, huevo poché y remolacha",
+    "ratio": "5/3",
+    "ref": true
+   }
   },
   {
    "id": "cafeteria",
@@ -167,7 +179,13 @@
      "nombre": "Tazón de chocolate",
      "precio": 4000
     }
-   ]
+   ],
+   "foto": {
+    "src": "https://resto.marianacaci.com/img/heros/h157.jpg",
+    "alt": "Dos tazas de café humeante sobre una mesa de madera",
+    "ratio": "5/3",
+    "ref": true
+   }
   },
   {
    "id": "pasteleria",
@@ -233,7 +251,13 @@
      "nombre": "Crumble de manzana",
      "precio": 12000
     }
-   ]
+   ],
+   "foto": {
+    "src": "https://resto.marianacaci.com/img/heros/h163.jpg",
+    "alt": "Porción de tiramisú con cacao",
+    "ratio": "5/3",
+    "ref": true
+   }
   },
   {
    "id": "entradas",
@@ -266,7 +290,13 @@
      "desc": "jamón crudo y vegetales",
      "precio": 19000
     }
-   ]
+   ],
+   "foto": {
+    "src": "https://resto.marianacaci.com/img/heros/h154.jpg",
+    "alt": "Bruschettas con jamón crudo",
+    "ratio": "5/3",
+    "ref": true
+   }
   },
   {
    "id": "tartas-y-ensaladas",
@@ -387,7 +417,13 @@
      "desc": "jamón crudo, muzzarella, rúcula, tomates confitados y pesto de albahaca con guarnición",
      "precio": 17000
     }
-   ]
+   ],
+   "foto": {
+    "src": "https://resto.marianacaci.com/img/heros/h192.jpg",
+    "alt": "Hamburguesa con papas fritas y cerveza",
+    "ratio": "5/3",
+    "ref": true
+   }
   },
   {
    "id": "pastas",
@@ -424,7 +460,13 @@
      "nombre": "Lasagna de carne y verdura",
      "precio": 19000
     }
-   ]
+   ],
+   "foto": {
+    "src": "https://resto.marianacaci.com/img/heros/h199.jpg",
+    "alt": "Pappardelle con ragú en un bowl negro",
+    "ratio": "5/3",
+    "ref": true
+   }
   },
   {
    "id": "pizzas",
@@ -534,7 +576,13 @@
      "nombre": "Salmón rosado con salsa de 3 quesos y papas españolas",
      "precio": 39000
     }
-   ]
+   ],
+   "foto": {
+    "src": "https://resto.marianacaci.com/img/heros/h207.jpg",
+    "alt": "Cocinero terminando un plato de carne con hierbas",
+    "ratio": "5/3",
+    "ref": true
+   }
   },
   {
    "id": "carne-pollo-y-pescado",
@@ -576,7 +624,13 @@
      "nombre": "Salmón grillé con papas españolas o ensalada",
      "precio": 39000
     }
-   ]
+   ],
+   "foto": {
+    "src": "https://resto.marianacaci.com/img/heros/h204.jpg",
+    "alt": "Plato de carne con puré y salsas sobre mármol negro",
+    "ratio": "5/3",
+    "ref": true
+   }
   },
   {
    "id": "picada-para-dos",
@@ -588,7 +642,13 @@
      "desc": "Jamón cocido, jamón crudo, lomito, salamín, aceitunas, quesos seleccionados, pan de campo y papas rústicas",
      "precio": 32000
     }
-   ]
+   ],
+   "foto": {
+    "src": "https://resto.marianacaci.com/img/heros/h121.jpg",
+    "alt": "Copas de espumante junto a bocaditos",
+    "ratio": "5/3",
+    "ref": true
+   }
   },
   {
    "id": "menu",
@@ -650,7 +710,13 @@
      "nombre": "Filet de merluza a la romana con puré",
      "precio": 23000
     }
-   ]
+   ],
+   "foto": {
+    "src": "https://resto.marianacaci.com/img/heros/h203.jpg",
+    "alt": "Bife con vegetales asados y una copa de vino tinto",
+    "ratio": "5/3",
+    "ref": true
+   }
   },
   {
    "id": "menu-infantil",
@@ -702,7 +768,13 @@
      "nombre": "Flan casero con crema y dulce de leche",
      "precio": 8000
     }
-   ]
+   ],
+   "foto": {
+    "src": "https://resto.marianacaci.com/img/heros/h26.jpg",
+    "alt": "Tarta de chocolate con dulce de leche",
+    "ratio": "5/3",
+    "ref": true
+   }
   },
   {
    "id": "bebidas-sin-alcohol",
@@ -738,7 +810,13 @@
      "nombre": "Limonada con menta y jengibre",
      "precio": 3000
     }
-   ]
+   ],
+   "foto": {
+    "src": "https://resto.marianacaci.com/img/heros/h107.jpg",
+    "alt": "Dos vasos de jugo de naranja sobre fondo oscuro",
+    "ratio": "5/3",
+    "ref": true
+   }
   },
   {
    "id": "cerveza-artesanal",
@@ -754,7 +832,13 @@
      "nombre": "IPA Session",
      "precio": 6500
     }
-   ]
+   ],
+   "foto": {
+    "src": "https://resto.marianacaci.com/img/heros/h112.jpg",
+    "alt": "Brindis con cerveza tirada y una tabla de pollo",
+    "ratio": "5/3",
+    "ref": true
+   }
   },
   {
    "id": "vino-boutique-aniceto",
@@ -789,7 +873,13 @@
      "nombre": "Sauvignon Blanc",
      "precio": 21000
     }
-   ]
+   ],
+   "foto": {
+    "src": "https://resto.marianacaci.com/img/heros/h122.jpg",
+    "alt": "Hilera de copas de vino tinto, blanco y rosado",
+    "ratio": "5/3",
+    "ref": true
+   }
   },
   {
    "id": "espumantes",
@@ -810,7 +900,13 @@
      "nombre": "Chandon 187 Extra Brut",
      "precio": 12000
     }
-   ]
+   ],
+   "foto": {
+    "src": "https://resto.marianacaci.com/img/heros/h111.jpg",
+    "alt": "Brindis con copas de espumante",
+    "ratio": "5/3",
+    "ref": true
+   }
   },
   {
    "id": "aperitivos",
@@ -837,7 +933,13 @@
      "nombre": "Caipiroska",
      "precio": 11000
     }
-   ]
+   ],
+   "foto": {
+    "src": "https://resto.marianacaci.com/img/heros/h110.jpg",
+    "alt": "Bartender terminando un aperitivo con piel de naranja",
+    "ratio": "5/3",
+    "ref": true
+   }
   }
  ]
 }
