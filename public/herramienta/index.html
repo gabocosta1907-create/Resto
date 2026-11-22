@@ -13,7 +13,7 @@ h2{font-size:15px;letter-spacing:.06em;text-transform:uppercase;color:var(--ac);
 .it .n{font-weight:600}.it .s{font-size:13.5px;opacity:.7;grid-column:1/3}
 .it.off .n{opacity:.5;text-decoration:line-through}
 .sw{min-width:112px;min-height:44px;border-radius:99px;border:2px solid var(--ok);background:#fff;color:var(--ok);font:700 14px system-ui;padding:0 14px}
-.off .sw{border-color:var(--no);color:var(--no);background:#fff5f3}
+.sw{border-color:#2B2B2B;color:#2B2B2B}.off .sw{border-color:var(--ok);color:var(--ok)}.tag{display:inline-block;margin-top:4px;font:700 11px system-ui;letter-spacing:.04em;color:var(--no)}
 .acc{grid-column:1/3;display:flex;gap:8px;flex-wrap:wrap}
 .acc button,.add button,.dlg button{min-height:42px;border-radius:10px;border:1px solid var(--line);background:#fff;font:600 14px system-ui;padding:0 14px;color:var(--tx)}
 .acc .q{color:var(--no)}
@@ -44,7 +44,7 @@ function lista(s){const e=est;const its=(s.items||[]).filter(i=>!(e.bajas||[]).i
 function pintar(){
  let h=`<header><b>${esc(base.resto.nombre||'Mi carta')}</b><button id="und">Deshacer</button></header><main>`;
  base.secciones.filter(s=>!s.oculta).forEach(s=>{h+=`<h2>${esc(s.titulo)}</h2>`;
-  lista(s).forEach(i=>{h+=`<div class="it${i.off?' off':''}" data-id="${esc(i.id)}"><div><div class="n">${esc(i.n)}</div></div><button class="sw" data-a="${i.off?'reactivar':'suspender'}">${i.off?'No disponible':'Disponible'}</button>
+  lista(s).forEach(i=>{h+=`<div class="it${i.off?' off':''}" data-id="${esc(i.id)}"><div><div class="n">${esc(i.n)}</div>${i.off?'<div class="tag">SUSPENDIDO · no se ve disponible en la carta</div>':''}</div><button class="sw" data-a="${i.off?'reactivar':'suspender'}">${i.off?'Reactivar':'Suspender'}</button>
    <div class="s">${i.v.length?i.v.map(v=>esc(v.n)+' '+fmt(v.p)).join(' · '):(i.p!=null?fmt(i.p):'')}</div>
    <div class="acc"><button data-a="precio">Precio</button><button data-a="modificar">Editar texto</button><button class="q" data-a="quitar">Quitar</button></div></div>`});
   h+=`<div class="add"><button data-a="agregar" data-s="${esc(s.id)}">+ Agregar plato en ${esc(s.titulo)}</button></div>`});
