@@ -41,6 +41,10 @@ let PED=null,PEDCTX=null;
  const mesa=m||(()=>{try{return sessionStorage.getItem('gratto_m')}catch(_){return null}})();
  if(R.pedido&&mesa)PEDCTX={mesa:String(mesa).replace(/[^\w-]/g,'').slice(0,6),comercio:dir.replace(/[^\w-]/g,'')||'carta',demo:qs.has('demo'),servidor:qs.has('local')?'':(()=>{const q=qs.get('srv');return q&&/^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(q)?q:(R.servidor||'')})()}}
 
+// Capa de estado del comercio (opt-in: resto.estado = slug). Suspensiones, precios, altas y bajas hechas con la herramienta de apoyo.
+if(R.estado)try{const r=await fetch('/api/estado/'+encodeURIComponent(R.estado),{cache:'no-cache'});if(r.ok){const e=await r.json();
+ cfg.secciones.forEach(s=>{s.items=(s.items||[]).filter(i=>!(e.bajas||[]).includes(i.id)).map(i=>{const o=(e.items||{})[i.id];if(!o)return i;const n={...i};if(o.nombre)n.nombre=o.nombre;if(o.desc!==undefined)n.desc=o.desc;if(o.precio!=null)n.precio=o.precio;if(o.vp&&n.variantes)n.variantes=n.variantes.map(v=>o.vp[v.n]!=null?{...v,p:o.vp[v.n]}:v);if(o.off)n.agotado=true;return n});
+  (e.altas||[]).filter(a=>a.seccion===s.id).forEach(a=>s.items.push({id:a.id,nombre:a.nombre,desc:a.desc,precio:a.precio}))})}}catch(_){}
 const SECS=cfg.secciones.filter(s=>!s.oculta);
 const H=SECS.map(s=>({id:s.id,titulo:s.titulo,corto:s.corto||s.titulo,s}));
 if(M){const j=M.despuesDe&&M.despuesDe!=='final'?H.findIndex(h=>h.id===M.despuesDe):-1,m={id:'marian',titulo:M.titulo,corto:M.corto||M.titulo,marian:true};j>=0?H.splice(j+1,0,m):H.push(m)}
