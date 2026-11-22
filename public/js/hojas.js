@@ -24,7 +24,7 @@ try{const r=await fetch(base+'resto.json');if(!r.ok)throw 0;cfg=await r.json();
 if(!cfg||!cfg.secciones){app.innerHTML='<div class="carga"><p>No pudimos cargar la carta.</p><button class="btn-v" id="reintentar" style="width:auto;padding:0 28px">Reintentar</button></div>';$('#reintentar').onclick=()=>location.reload();return}
 const R=cfg.resto,M=cfg.marian,T=R.tema,root=document.documentElement.style;
 [['bg',T.fondo],['tx',T.texto],['ac',T.acento],['cab',T.cabecera],['cabtx',T.cabeceraTexto],['pi',T.piedra||T.cabecera]].forEach(([k,v])=>root.setProperty('--'+k,v));
-root.setProperty('--ft',`'${T.titulos}',serif`);root.setProperty('--fb',`'${T.cuerpo}',sans-serif`);root.setProperty('--wt',T.pesoTitulos||500);document.documentElement.classList.toggle('fina',T.escala==='fina');if(T.nombreTam)root.setProperty('--nm',T.nombreTam+'px');
+root.setProperty('--ft',`'${T.titulos}',serif`);root.setProperty('--fb',`'${T.cuerpo}',sans-serif`);root.setProperty('--wt',T.pesoTitulos||500);document.documentElement.classList.toggle('fina',T.escala==='fina');if(T.nombreTam)root.setProperty('--nm',T.nombreTam+'px');if(T.precioTam)root.setProperty('--pr',T.precioTam+'px');
 const fam=(n,w)=>`family=${n.replace(/ /g,'+')}:wght@${w}`;
 // El bloque de Marian usa siempre la identidad de Marian.
 $('#gf').href=`https://fonts.googleapis.com/css2?${[fam(T.titulos,T.pesoTitulos||500),fam(T.cuerpo,'400;500;600'),fam('Instrumental Serif','400'),fam('Nunito','400;600'),fam('Nunito Sans','700')].join('&')}&display=swap`;
