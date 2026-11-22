@@ -17,7 +17,8 @@
    "piedra": "#7F9794",
    "titulos": "Newsreader",
    "pesoTitulos": 400,
-   "cuerpo": "DM Sans"
+   "cuerpo": "DM Sans",
+   "escala": "fina"
   },
   "listado": "conciso",
   "mapa": "https://www.google.com/maps/place/Ceto/@-34.5690036,-58.5759053,12z/data=!4m12!1m2!2m1!1sceto!3m8!1s0x95bcb50052d387b7:0x1701d268bad7df01!8m2!3d-34.5690036!4d-58.4317097!9m1!1b1!15sCgRjZXRvkgEKcmVzdGF1cmFudOABAA!16s%2Fg%2F11zfj06v9k",
@@ -96,7 +97,7 @@
    "foto": {
     "src": "https://resto.marianacaci.com/img/heros/h169.jpg",
     "alt": "Mesa de desayuno con café, medialunas, huevos y jugo",
-    "ratio": "5/3",
+    "ratio": "5/2",
     "ref": true
    }
   },
@@ -136,7 +137,7 @@
    "foto": {
     "src": "https://resto.marianacaci.com/img/heros/h147.jpg",
     "alt": "Tostada con palta, huevo poché y remolacha",
-    "ratio": "5/3",
+    "ratio": "5/2",
     "ref": true
    }
   },
@@ -183,7 +184,7 @@
    "foto": {
     "src": "https://resto.marianacaci.com/img/heros/h157.jpg",
     "alt": "Dos tazas de café humeante sobre una mesa de madera",
-    "ratio": "5/3",
+    "ratio": "5/2",
     "ref": true
    }
   },
@@ -255,7 +256,7 @@
    "foto": {
     "src": "https://resto.marianacaci.com/img/heros/h163.jpg",
     "alt": "Porción de tiramisú con cacao",
-    "ratio": "5/3",
+    "ratio": "5/2",
     "ref": true
    }
   },
@@ -294,7 +295,7 @@
    "foto": {
     "src": "https://resto.marianacaci.com/img/heros/h154.jpg",
     "alt": "Bruschettas con jamón crudo",
-    "ratio": "5/3",
+    "ratio": "5/2",
     "ref": true
    }
   },
@@ -421,7 +422,7 @@
    "foto": {
     "src": "https://resto.marianacaci.com/img/heros/h192.jpg",
     "alt": "Hamburguesa con papas fritas y cerveza",
-    "ratio": "5/3",
+    "ratio": "5/2",
     "ref": true
    }
   },
@@ -464,7 +465,7 @@
    "foto": {
     "src": "https://resto.marianacaci.com/img/heros/h199.jpg",
     "alt": "Pappardelle con ragú en un bowl negro",
-    "ratio": "5/3",
+    "ratio": "5/2",
     "ref": true
    }
   },
@@ -580,7 +581,7 @@
    "foto": {
     "src": "https://resto.marianacaci.com/img/heros/h207.jpg",
     "alt": "Cocinero terminando un plato de carne con hierbas",
-    "ratio": "5/3",
+    "ratio": "5/2",
     "ref": true
    }
   },
@@ -628,7 +629,7 @@
    "foto": {
     "src": "https://resto.marianacaci.com/img/heros/h204.jpg",
     "alt": "Plato de carne con puré y salsas sobre mármol negro",
-    "ratio": "5/3",
+    "ratio": "5/2",
     "ref": true
    }
   },
@@ -646,7 +647,7 @@
    "foto": {
     "src": "https://resto.marianacaci.com/img/heros/h121.jpg",
     "alt": "Copas de espumante junto a bocaditos",
-    "ratio": "5/3",
+    "ratio": "5/2",
     "ref": true
    }
   },
@@ -714,7 +715,7 @@
    "foto": {
     "src": "https://resto.marianacaci.com/img/heros/h203.jpg",
     "alt": "Bife con vegetales asados y una copa de vino tinto",
-    "ratio": "5/3",
+    "ratio": "5/2",
     "ref": true
    }
   },
@@ -772,7 +773,7 @@
    "foto": {
     "src": "https://resto.marianacaci.com/img/heros/h26.jpg",
     "alt": "Tarta de chocolate con dulce de leche",
-    "ratio": "5/3",
+    "ratio": "5/2",
     "ref": true
    }
   },
@@ -814,7 +815,7 @@
    "foto": {
     "src": "https://resto.marianacaci.com/img/heros/h107.jpg",
     "alt": "Dos vasos de jugo de naranja sobre fondo oscuro",
-    "ratio": "5/3",
+    "ratio": "5/2",
     "ref": true
    }
   },
@@ -836,7 +837,7 @@
    "foto": {
     "src": "https://resto.marianacaci.com/img/heros/h112.jpg",
     "alt": "Brindis con cerveza tirada y una tabla de pollo",
-    "ratio": "5/3",
+    "ratio": "5/2",
     "ref": true
    }
   },
@@ -877,7 +878,7 @@
    "foto": {
     "src": "https://resto.marianacaci.com/img/heros/h122.jpg",
     "alt": "Hilera de copas de vino tinto, blanco y rosado",
-    "ratio": "5/3",
+    "ratio": "5/2",
     "ref": true
    }
   },
@@ -904,7 +905,7 @@
    "foto": {
     "src": "https://resto.marianacaci.com/img/heros/h111.jpg",
     "alt": "Brindis con copas de espumante",
-    "ratio": "5/3",
+    "ratio": "5/2",
     "ref": true
    }
   },
@@ -937,7 +938,7 @@
    "foto": {
     "src": "https://resto.marianacaci.com/img/heros/h110.jpg",
     "alt": "Bartender terminando un aperitivo con piel de naranja",
-    "ratio": "5/3",
+    "ratio": "5/2",
     "ref": true
    }
   }
