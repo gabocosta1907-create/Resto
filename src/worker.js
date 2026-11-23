@@ -140,7 +140,8 @@ async function equipo(env,req,p,q){
     return J({slug,on:!!(await env.ESTADO.get('ag:'+slug)),clave:!!env.ANTHROPIC_API_KEY});
   }
   if(req.method==='POST'&&p==='/api/equipo/token'){
-    const pb=await env.ESTADO.get('pub:'+slug,'json');if(!pb)return J({error:'carta no publicada'},404);
+    const pb=await env.ESTADO.get('pub:'+slug,'json');
+    if(!pb){if(!SLUG.test(slug))return J({error:'dirección inválida'},400);const r=await env.ASSETS.fetch(new URL(`/${slug}/resto.json`,req.url));if(!r.ok)return J({error:'no existe una carta con esa dirección'},404)}
     return J({ok:true,herramienta:await link(slug)});
   }
   return J({error:'no existe'},404);
