@@ -23,7 +23,7 @@ main{max-width:620px;margin:0 auto;padding:8px 16px 90px}
 .acc .q{color:var(--no)}
 .add{margin:10px 0 0}.add button{width:100%;border-style:dashed;color:var(--ac)}
 .dlg{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:flex-end;justify-content:center;z-index:9}
-.dlg.on{display:flex}.dlg .c{background:#fff;width:100%;max-width:620px;border-radius:18px 18px 0 0;padding:20px 16px 24px}
+.dlg.on{display:flex}.dlg .c{max-height:85vh;overflow:auto;background:#fff;width:100%;max-width:620px;border-radius:18px 18px 0 0;padding:20px 16px 24px}
 .dlg h3{margin:0 0 12px;font-size:18px}.dlg input,.dlg textarea{width:100%;font:16px system-ui;padding:12px;border:1px solid var(--line);border-radius:10px;margin:0 0 10px}
 .dlg .row{display:flex;gap:8px}.dlg .row button{flex:1}.dlg .go{background:#2B2B2B;color:#fff;border-color:#2B2B2B}
 .toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:#2B2B2B;color:#fff;padding:12px 18px;border-radius:12px;max-width:90%;z-index:10;display:none;font-size:15px}
@@ -84,26 +84,40 @@ app.addEventListener('click',e=>{
 function initAg(){
  const box=$('#ag'),SR=window.SpeechRecognition||window.webkitSpeechRecognition;box.hidden=false;
  box.innerHTML=`<form id="agf"><input id="agt" maxlength="300" placeholder="Decime qué cambiar. Ej: no queda salmón" autocomplete="off" enterkeyhint="send"><button type="button" id="agm" aria-label="Hablar" ${SR?'':'hidden'}>🎤</button><button class="go" id="agb">Enviar</button></form>`;
- let rec=null;
- $('#agm').onclick=()=>{
-  if(rec){rec.stop();return}
-  rec=new SR();rec.lang='es-AR';rec.interimResults=true;rec.continuous=false;
-  rec.onresult=ev=>{let t='';for(const r of ev.results)t+=r[0].transcript;$('#agt').value=t.slice(0,300)};
-  rec.onend=()=>{rec=null;$('#agm').classList.remove('rec')};
-  rec.onerror=ev=>toast(ev.error==='not-allowed'||ev.error==='service-not-allowed'?'Permití el micrófono para dictar':'No pude escuchar; probá de nuevo o escribilo');
-  $('#agm').classList.add('rec');try{rec.start()}catch(x){rec=null;$('#agm').classList.remove('rec')}};
- $('#agf').onsubmit=async ev=>{ev.preventDefault();if(rec)rec.stop();const t=$('#agt').value.trim();if(t.length<2)return;
+ let rec=null,voz=false,base='';
+ const TRIG=/[\s,.]*\b(listo|enviar|enviá|enviar ya|dale|mandalo|mandá|eso es todo)[\s.!]*$/i;
+ const mk=()=>{const r=new SR();r.lang='es-AR';r.continuous=false;return r};
+ const parar=()=>{voz=false;if(rec){try{rec.stop()}catch(x){}rec=null}$('#agm').classList.remove('rec')};
+ const enviar=async()=>{parar();const t=$('#agt').value.trim();if(t.length<2)return;
   const b=$('#agb');b.disabled=true;b.textContent='…';
-  try{const r=await api('/api/agente',{method:'POST',body:JSON.stringify({texto:t})});propuesta(r)}catch(e){toast(e.message)}
+  try{const r=await api('/api/agente',{method:'POST',body:JSON.stringify({texto:t})});propuesta(r,true)}catch(e){toast(e.message)}
   b.disabled=false;b.textContent='Enviar'};
+ const oir=()=>{
+  rec=mk();rec.interimResults=true;let ult='',err=false;
+  rec.onresult=ev=>{let t='';for(const r of ev.results)t+=r[0].transcript;ult=t;$('#agt').value=((base?base+' ':'')+t).slice(0,300)};
+  rec.onerror=ev=>{err=true;voz=false;toast(ev.error==='not-allowed'||ev.error==='service-not-allowed'?'Permití el micrófono para dictar':ev.error==='no-speech'?'No te escuché. Tocá el 🎤 y probá de nuevo':'No pude escuchar; probá de nuevo o escribilo')};
+  rec.onend=()=>{rec=null;const v=$('#agt').value;
+   if(TRIG.test(v)){$('#agt').value=v.replace(TRIG,'').trim();return enviar()}
+   if(voz&&!err){base=$('#agt').value.trim();setTimeout(()=>{if(voz)try{oir()}catch(x){parar()}},150)}else parar()};
+  try{rec.start()}catch(x){parar()}};
+ $('#agm').onclick=()=>{if(voz){parar();return}voz=true;base=$('#agt').value.trim();$('#agm').classList.add('rec');oir()};
+ $('#agf').onsubmit=ev=>{ev.preventDefault();enviar()};
+ // respuesta hablada a una pregunta o confirmación: se activa sólo si el comercio estaba usando la voz
+ window.agOirAclaracion=()=>{if(!SR)return;const prev=$('#agt').value.trim();let n=0;const go=()=>{if(n++>2||!$('#dlg').classList.contains('on'))return;const r=mk();let ok=false;
+  r.onresult=ev=>{const t=(ev.results[0][0].transcript||'').trim();if(!t)return;ok=true;$('#dlg').classList.remove('on');$('#agt').value=(prev+' '+t.replace(TRIG,'')).slice(0,300).trim();enviar()};
+  r.onend=()=>{if(!ok)setTimeout(go,150)};r.onerror=()=>{ok=true};try{r.start()}catch(x){}};go()};
+ window.agOirRespuesta=(si,no)=>{if(!SR)return;let n=0;const go=()=>{if(n++>2)return;const r=mk();let ok=false;
+  r.onresult=ev=>{const t=(ev.results[0][0].transcript||'').toLowerCase().trim();ok=true;
+   if(/^(s[ií]|dale|hacelo|hacela|confirm|listo|ok|de una|adelante)/.test(t))si();else if(/^(no|cancel|dej|par[aá]|nada)/.test(t))no();else{ok=false}};
+  r.onend=()=>{if(!ok&&$('#dlg').classList.contains('on'))setTimeout(go,150)};r.onerror=()=>{ok=true};try{r.start()}catch(x){}};go();window._agStop=()=>{n=9}};
 }
-function propuesta(r){
+function propuesta(r,porVoz){
  const ops=r.ops||[];
- if(!ops.length)return dlg(`<h3>Asistente</h3><p>${esc(r.mensaje||'No entendí. ¿Me lo decís de otra forma?')}</p><div class="row"><button class="go" data-x>Entendido</button></div>`);
- dlg(`<h3>¿Lo hago?</h3>${r.mensaje?'<p>'+esc(r.mensaje)+'</p>':''}<ul>${ops.map(o=>'<li>'+esc(o.txt)+'</li>').join('')}</ul><div class="row"><button data-x>No</button><button class="go" id="ok">Sí, hacerlo</button></div>`,()=>$('#ok').onclick=async()=>{
+ if(!ops.length)return dlg(`<h3>Asistente</h3><p>${esc(r.mensaje||'No entendí. ¿Me lo decís de otra forma?')}</p><div class="row"><button class="go" data-x>Entendido</button></div>`,()=>{if(porVoz&&window.agOirAclaracion)window.agOirAclaracion()});
+ dlg(`<h3>¿Lo hago?</h3>${r.mensaje?'<p>'+esc(r.mensaje)+'</p>':''}<ul>${ops.map(o=>'<li>'+esc(o.txt)+'</li>').join('')}</ul><div class="row"><button data-x>No</button><button class="go" id="ok">Sí, hacerlo</button></div>`,()=>{if(porVoz&&window.agOirRespuesta)window.agOirRespuesta(()=>$('#ok').click(),()=>document.querySelector('#dlg [data-x]').click());$('#ok').onclick=async()=>{
   $('#dlg').classList.remove('on');let n=0,falla='';
   for(const o of ops){const{txt,...b}=o;try{const x=await api('/api/op',{method:'POST',body:JSON.stringify(b)});est=x.estado;n++}catch(e){falla=e.message;break}}
-  pintar();$('#agt').value='';toast(falla?`Hice ${n} y falló uno: ${falla}`:(n===1?'Listo. Podés deshacerlo con «Deshacer».':`Listo: ${n} cambios. «Deshacer» los revierte de a uno.`))});
+  pintar();$('#agt').value='';toast(falla?`Hice ${n} y falló uno: ${falla}`:(n===1?'Listo. Podés deshacerlo con «Deshacer».':`Listo: ${n} cambios. «Deshacer» los revierte de a uno.`))}});
 }
 if(who.agente)initAg();
 cargar();
