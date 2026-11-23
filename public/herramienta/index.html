@@ -8,11 +8,24 @@ header{position:sticky;top:0;z-index:5;background:#2B2B2B;color:#fff;padding:12p
 header b{font-size:17px}header button{background:#fff;color:#2B2B2B;border:0;border-radius:99px;padding:9px 16px;font:600 14px system-ui;min-height:40px}
 header button:disabled{opacity:.4}
 main{max-width:620px;margin:0 auto;padding:8px 16px 90px}
-.cat{display:flex;align-items:center;gap:8px;margin:14px 0 0;padding:6px 0;border-bottom:2px solid var(--line)}
-.cat .tg{flex:1;display:flex;align-items:center;gap:10px;min-height:48px;background:none;border:0;text-align:left;font:700 15px system-ui;letter-spacing:.05em;text-transform:uppercase;color:var(--ac);padding:0}
-.cat .tg i{display:inline-block;width:10px;height:10px;border-right:2.5px solid currentColor;border-bottom:2.5px solid currentColor;transform:rotate(-45deg);transition:transform .15s}
-.cat.on .tg i{transform:rotate(45deg)}.cat .tg small{opacity:.6;font-weight:600;letter-spacing:0}
-.cat .ad{min-height:42px;border-radius:99px;border:1.5px dashed var(--ac);background:#fff;color:var(--ac);font:700 14px system-ui;padding:0 14px;white-space:nowrap}
+.pn{background:#fff;border:1px solid var(--line);border-radius:18px;margin:12px 0 0;box-shadow:0 1px 2px rgba(43,43,43,.04);overflow:hidden}
+.ph{width:100%;display:flex;align-items:center;gap:10px;min-height:58px;padding:0 16px;background:none;border:0;text-align:left;font:700 15px system-ui;letter-spacing:.04em;text-transform:uppercase;color:var(--tx)}
+.ph span{flex:1}.ph em{font:700 12.5px system-ui;font-style:normal;letter-spacing:0;background:#F1ECE2;color:var(--ac);border-radius:99px;padding:3px 10px}
+.ph em.al{background:var(--no);color:#fff}
+.ph i,.cat .tg i{display:inline-block;width:9px;height:9px;border-right:2.5px solid currentColor;border-bottom:2.5px solid currentColor;transform:rotate(-45deg);transition:transform .18s;opacity:.55}
+.pn.on>.ph i,.cat.on .tg i{transform:rotate(45deg)}
+.pn.on>.ph{border-bottom:1px solid var(--line)}.pb{padding:4px 16px 12px}.pb .vac{padding:14px 0;opacity:.6;font-size:15px}
+.cat{display:flex;align-items:center;gap:8px;padding:2px 0;border-bottom:1px solid var(--line)}.pb>.cat:last-of-type,.pb>.cat:last-child{border-bottom:0}
+.cat .tg{flex:1;display:flex;align-items:center;gap:10px;min-height:52px;background:none;border:0;text-align:left;font:700 15px system-ui;letter-spacing:.04em;text-transform:uppercase;color:var(--ac);padding:0}
+.cat .tg small{opacity:.6;font-weight:600;letter-spacing:0}
+.cat .ad{min-height:40px;border-radius:99px;border:1.5px dashed var(--ac);background:#fff;color:var(--ac);font:700 13.5px system-ui;padding:0 13px;white-space:nowrap}
+.cat.on{border-bottom:0}.cb{border-bottom:1px solid var(--line);margin-bottom:2px}
+.sus{display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid var(--line)}.sus:last-child{border-bottom:0}
+.sus div{flex:1;min-width:0}.sus b{display:block;font-weight:600}.sus small{opacity:.6}
+.sus button{min-height:42px;border-radius:99px;border:2px solid var(--ok);background:#fff;color:var(--ok);font:700 14px system-ui;padding:0 14px}
+.hi{padding:9px 0;border-bottom:1px solid var(--line);font-size:15px}.hi:last-child{border-bottom:0}.hi small{display:block;opacity:.55;font-size:12px;margin-bottom:2px}
+.hi.yo b{color:var(--ac)}.hi.ag b{color:var(--tx)}.hi.ok b{color:var(--ok)}.hi p{margin:0}
+.lim{margin:6px 0 0;background:none;border:0;color:var(--ac);font:600 13px system-ui;padding:8px 0}
 .it{display:grid;grid-template-columns:1fr auto;gap:6px 12px;padding:12px 0;border-bottom:1px solid var(--line);align-items:center}
 .it .n{font-weight:600}.it .s{font-size:13.5px;opacity:.7;grid-column:1/3}
 .it.off .n{opacity:.5;text-decoration:line-through}
@@ -28,10 +41,15 @@ main{max-width:620px;margin:0 auto;padding:8px 16px 90px}
 .dlg .row{display:flex;gap:8px}.dlg .row button{flex:1}.dlg .go{background:#2B2B2B;color:#fff;border-color:#2B2B2B}
 .toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:#2B2B2B;color:#fff;padding:12px 18px;border-radius:12px;max-width:90%;z-index:10;display:none;font-size:15px}
 .err{color:var(--no)}.cent{padding:60px 20px;text-align:center}
-.ag{position:fixed;left:0;right:0;bottom:0;z-index:6;background:#fff;border-top:1px solid var(--line);padding:10px 12px calc(10px + env(safe-area-inset-bottom))}
-.ag form{max-width:620px;margin:0 auto;display:flex;gap:8px}.ag input{flex:1;min-width:0;font:16px system-ui;padding:0 14px;min-height:46px;border:1px solid var(--line);border-radius:99px}
-.ag button{min-height:46px;border-radius:99px;border:1px solid var(--line);background:#fff;font:700 14px system-ui;padding:0 16px}.ag .go{background:#2B2B2B;color:#fff;border-color:#2B2B2B}
-.ag #agm{width:48px;padding:0;font-size:20px}.ag #agm.rec{background:var(--no);color:#fff;border-color:var(--no)}.ag:not([hidden])+.toast{bottom:86px}
+.ag{position:fixed;left:0;right:0;bottom:0;z-index:6;background:rgba(255,255,255,.96);backdrop-filter:blur(8px);border-top:1px solid var(--line);padding:10px 12px calc(10px + env(safe-area-inset-bottom))}
+.ag form{max-width:620px;margin:0 auto;display:flex;gap:8px;align-items:center}
+.ag input{flex:1;min-width:0;font:16px system-ui;padding:0 18px;min-height:50px;border:1px solid var(--line);border-radius:99px;background:#fff}
+.ag button{width:50px;height:50px;flex:none;display:grid;place-items:center;border-radius:50%;border:1px solid var(--line);background:#fff;color:var(--tx);padding:0}
+.ag button svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.ag .go{background:#2B2B2B;color:#fff;border-color:#2B2B2B}.ag .go.busy{opacity:.45}
+.ag #agm.rec{background:var(--no);color:#fff;border-color:var(--no);animation:pul 1.2s infinite}
+@keyframes pul{0%{box-shadow:0 0 0 0 rgba(179,64,47,.45)}100%{box-shadow:0 0 0 14px rgba(179,64,47,0)}}
+.ag:not([hidden])+.toast{bottom:92px}
 .dlg ul{margin:0 0 14px;padding-left:20px}.dlg li{margin:0 0 6px}.dlg p{margin:0 0 12px}
 </style></head><body>
 <div id="app"><div class="cent">Cargando…</div></div>
@@ -50,14 +68,26 @@ base=await (await fetch('/'+who.slug+'/resto.json')).json();
 async function cargar(){est=await (await fetch('/api/estado/'+who.slug,{cache:'no-cache'})).json();pintar()}
 function lista(s){const e=est;const its=(s.items||[]).filter(i=>!(e.bajas||[]).includes(i.id)).map(i=>{const o=(e.items||{})[i.id]||{};return {id:i.id,n:o.nombre||i.nombre,d:o.desc!==undefined?o.desc:i.desc,p:o.precio!=null?o.precio:i.precio,v:(i.variantes||[]).map(v=>({n:v.n,p:o.vp&&o.vp[v.n]!=null?o.vp[v.n]:v.p})),off:!!o.off}});
  (e.altas||[]).filter(a=>a.seccion===s.id).forEach(a=>its.push({id:a.id,n:a.nombre,d:a.desc,p:a.precio,v:[],off:false,nuevo:true}));return its}
-const abiertas=new Set();
+let panel=null,catAb=null,primera=true;
+const hoy=()=>new Date().toISOString().slice(0,10);
+let hist=[];const HK=()=>'resto_hist_'+who.slug;
+try{hist=(JSON.parse(localStorage.getItem(HK())||'[]')||[]).filter(x=>x.d===hoy())}catch(e){}
+const logh=(k,txt)=>{hist.push({d:hoy(),h:new Date().toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'}),k,txt:String(txt).slice(0,400)});hist=hist.slice(-40);try{localStorage.setItem(HK(),JSON.stringify(hist))}catch(e){}};
+const suspendidos=()=>{const o=[];base.secciones.filter(s=>!s.oculta).forEach(s=>lista(s).forEach(i=>{if(i.off)o.push({id:i.id,n:i.n,s:s.titulo})}));return o};
+const pn=(id,tit,badge,al,cont)=>`<section class="pn${panel===id?' on':''}"><button class="ph" data-a="panel" data-p="${id}" aria-expanded="${panel===id}"><span>${tit}</span>${badge!==''?`<em${al?' class="al"':''}>${badge}</em>`:''}<i></i></button>${panel===id?`<div class="pb">${cont}</div>`:''}</section>`;
 function pintar(){
+ const SU=suspendidos();
+ if(primera){primera=false;panel=SU.length?'susp':'carta'}
  let h=`<header><b>${esc(base.resto.nombre||'Mi carta')}</b><button id="und">Deshacer</button></header><main>`;
- base.secciones.filter(s=>!s.oculta).forEach(s=>{const L=lista(s),on=abiertas.has(s.id);
-  h+=`<div class="cat${on?' on':''}"><button class="tg" data-a="plegar" data-s="${esc(s.id)}" aria-expanded="${on}"><i></i><span>${esc(s.titulo)} <small>${L.length}</small></span></button><button class="ad" data-a="agregar" data-s="${esc(s.id)}">+ Agregar plato</button></div>`;
-  if(on)L.forEach(i=>{h+=`<div class="it${i.off?' off':''}" data-id="${esc(i.id)}"><div><div class="n">${esc(i.n)}</div>${i.off?'<div class="tag">SUSPENDIDO · se ve agotado en la carta</div>':''}</div><button class="sw" data-a="${i.off?'reactivar':'suspender'}">${i.off?'Reactivar':'Suspender'}</button>
+ h+=pn('susp','Suspendidos',SU.length,SU.length>0,SU.length?SU.map(x=>`<div class="sus" data-id="${esc(x.id)}"><div><b>${esc(x.n)}</b><small>${esc(x.s)}</small></div><button data-a="reactivar">Reactivar</button></div>`).join(''):'<div class="vac">No hay nada suspendido. Todo está disponible en la carta.</div>');
+ let cart='';
+ base.secciones.filter(s=>!s.oculta).forEach(s=>{const L=lista(s),on=catAb===s.id;
+  cart+=`<div class="cat${on?' on':''}"><button class="tg" data-a="plegar" data-s="${esc(s.id)}" aria-expanded="${on}"><i></i><span>${esc(s.titulo)} <small>${L.length}</small></span></button><button class="ad" data-a="agregar" data-s="${esc(s.id)}">+ Agregar</button></div>`;
+  if(on){cart+='<div class="cb">';L.forEach(i=>{cart+=`<div class="it${i.off?' off':''}" data-id="${esc(i.id)}"><div><div class="n">${esc(i.n)}</div>${i.off?'<div class="tag">SUSPENDIDO · se ve agotado en la carta</div>':''}</div><button class="sw" data-a="${i.off?'reactivar':'suspender'}">${i.off?'Reactivar':'Suspender'}</button>
    <div class="s">${i.v.length?i.v.map(v=>esc(v.n)+' '+fmt(v.p)).join(' · '):(i.p!=null?fmt(i.p):'')}</div>
-   <div class="acc"><button data-a="editar">Editar</button><button class="q" data-a="quitar">Quitar</button></div></div>`})});
+   <div class="acc"><button data-a="editar">Editar</button><button class="q" data-a="quitar">Quitar</button></div></div>`});cart+='</div>'}});
+ h+=pn('carta','Carta',base.secciones.filter(s=>!s.oculta).length+' categorías',false,cart);
+ if(who.agente)h+=pn('hist','Conversación con el Agente',hist.length||'',false,hist.length?hist.map(x=>`<div class="hi ${x.k}"><small>${esc(x.h)}</small><p>${x.k==='yo'?'<b>Vos:</b> ':x.k==='ok'?'<b>Hecho:</b> ':'<b>Agente:</b> '}${esc(x.txt)}</p></div>`).join('')+'<button class="lim" data-a="limpiar">Borrar conversación</button>':'<div class="vac">Todavía no hablaste con el Agente hoy.</div>');
  app.innerHTML=h+'</main>';
  $('#und').disabled=!(est.v>0);
 }
@@ -66,10 +96,12 @@ async function op(b){try{const r=await api('/api/op',{method:'POST',body:JSON.st
 const buscar=id=>{for(const s of base.secciones){const x=lista(s).find(i=>i.id===id);if(x)return x}};
 app.addEventListener('click',e=>{
  if(e.target.id==='und'){if(confirm('¿Deshacer el último cambio?'))op({op:'deshacer'});return}
- const b=e.target.closest('button[data-a]');if(!b)return;const a=b.dataset.a,row=b.closest('.it'),id=row&&row.dataset.id,it=id&&buscar(id);
+ const b=e.target.closest('button[data-a]');if(!b)return;const a=b.dataset.a,row=b.closest('.it,.sus'),id=row&&row.dataset.id,it=id&&buscar(id);
  if(a==='suspender'||a==='reactivar')return op({op:a,id});
  if(a==='quitar')return dlg(`<h3>¿Quitar «${esc(it.n)}» de la carta?</h3><p>Se puede deshacer desde el botón Deshacer.</p><div class="row"><button data-x>Cancelar</button><button class="go" id="ok">Quitar</button></div>`,()=>$('#ok').onclick=()=>{$('#dlg').classList.remove('on');op({op:'quitar',id})});
- if(a==='plegar'){const s=b.dataset.s;abiertas.has(s)?abiertas.delete(s):abiertas.add(s);return pintar()}
+ if(a==='plegar'){const s=b.dataset.s;catAb=catAb===s?null:s;return pintar()}
+ if(a==='panel'){const p=b.dataset.p;panel=panel===p?null:p;if(panel!=='carta')catAb=null;return pintar()}
+ if(a==='limpiar'){hist=[];try{localStorage.removeItem(HK())}catch(x){}return pintar()}
  if(a==='editar'){const pr=it.v.length?it.v.map((v,k)=>`<label style="display:block;font-size:14px;margin:0 0 4px">Precio · ${esc(v.n)}</label><input class="pv" data-k="${k}" inputmode="numeric" value="${esc(v.p)}">`).join(''):`<label style="display:block;font-size:14px;margin:0 0 4px">Precio</label><input class="pv" inputmode="numeric" value="${esc(it.p??'')}">`;
   return dlg(`<h3>Editar plato</h3><label style="display:block;font-size:14px;margin:0 0 4px">Nombre</label><input id="nm" value="${esc(it.n)}" maxlength="80"><label style="display:block;font-size:14px;margin:0 0 4px">Descripción</label><textarea id="ds" rows="3" maxlength="300" placeholder="Descripción (opcional)">${esc(it.d||'')}</textarea>${pr}<div class="row"><button data-x>Cancelar</button><button class="go" id="ok">Guardar</button></div>`,()=>$('#ok').onclick=()=>{
    const body={op:'editar',id};const nm=$('#nm').value.trim(),ds=$('#ds').value.trim();
@@ -83,19 +115,19 @@ app.addEventListener('click',e=>{
 });
 function initAg(){
  const box=$('#ag'),SR=window.SpeechRecognition||window.webkitSpeechRecognition;box.hidden=false;
- box.innerHTML=`<form id="agf"><input id="agt" maxlength="300" placeholder="Decime qué cambiar. Ej: no queda salmón" autocomplete="off" enterkeyhint="send"><button type="button" id="agm" aria-label="Hablar" ${SR?'':'hidden'}>🎤</button><button class="go" id="agb">Enviar</button></form>`;
+ box.innerHTML=`<form id="agf"><input id="agt" maxlength="300" placeholder="Decime qué cambiar. Ej: no queda salmón" autocomplete="off" enterkeyhint="send"><button type="button" id="agm" aria-label="Hablar" ${SR?'':'hidden'}><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button><button class="go" id="agb" aria-label="Enviar"><svg viewBox="0 0 24 24"><path d="M12 19V5M5.5 11.5 12 5l6.5 6.5"/></svg></button></form>`;
  let rec=null,voz=false,base='';
  const TRIG=/[\s,.]*\b(listo|enviar|enviá|enviar ya|dale|mandalo|mandá|eso es todo)[\s.!]*$/i;
  const mk=()=>{const r=new SR();r.lang='es-AR';r.continuous=false;return r};
  const parar=()=>{voz=false;if(rec){try{rec.stop()}catch(x){}rec=null}$('#agm').classList.remove('rec')};
  const enviar=async()=>{parar();const t=$('#agt').value.trim();if(t.length<2)return;
-  const b=$('#agb');b.disabled=true;b.textContent='…';
-  try{const r=await api('/api/agente',{method:'POST',body:JSON.stringify({texto:t})});propuesta(r,true)}catch(e){toast(e.message)}
-  b.disabled=false;b.textContent='Enviar'};
+  const b=$('#agb');b.disabled=true;b.classList.add('busy');
+  logh('yo',t);try{const r=await api('/api/agente',{method:'POST',body:JSON.stringify({texto:t})});logh('ag',(r.mensaje||'')+((r.ops||[]).length?' → Propongo: '+r.ops.map(o=>o.txt).join('; '):''));propuesta(r,true)}catch(e){toast(e.message)}
+  b.disabled=false;b.classList.remove('busy')};
  const oir=()=>{
   rec=mk();rec.interimResults=true;let ult='',err=false;
   rec.onresult=ev=>{let t='';for(const r of ev.results)t+=r[0].transcript;ult=t;$('#agt').value=((base?base+' ':'')+t).slice(0,300)};
-  rec.onerror=ev=>{err=true;voz=false;toast(ev.error==='not-allowed'||ev.error==='service-not-allowed'?'Permití el micrófono para dictar':ev.error==='no-speech'?'No te escuché. Tocá el 🎤 y probá de nuevo':'No pude escuchar; probá de nuevo o escribilo')};
+  rec.onerror=ev=>{err=true;voz=false;toast(ev.error==='not-allowed'||ev.error==='service-not-allowed'?'Permití el micrófono para dictar':ev.error==='no-speech'?'No te escuché. Tocá el micrófono y probá de nuevo':'No pude escuchar; probá de nuevo o escribilo')};
   rec.onend=()=>{rec=null;const v=$('#agt').value;
    if(TRIG.test(v)){$('#agt').value=v.replace(TRIG,'').trim();return enviar()}
    if(voz&&!err){base=$('#agt').value.trim();setTimeout(()=>{if(voz)try{oir()}catch(x){parar()}},150)}else parar()};
@@ -117,7 +149,7 @@ function propuesta(r,porVoz){
  dlg(`<h3>¿Lo hago?</h3>${r.mensaje?'<p>'+esc(r.mensaje)+'</p>':''}<ul>${ops.map(o=>'<li>'+esc(o.txt)+'</li>').join('')}</ul><div class="row"><button data-x>No</button><button class="go" id="ok">Sí, hacerlo</button></div>`,()=>{if(porVoz&&window.agOirRespuesta)window.agOirRespuesta(()=>$('#ok').click(),()=>document.querySelector('#dlg [data-x]').click());$('#ok').onclick=async()=>{
   $('#dlg').classList.remove('on');let n=0,falla='';
   for(const o of ops){const{txt,...b}=o;try{const x=await api('/api/op',{method:'POST',body:JSON.stringify(b)});est=x.estado;n++}catch(e){falla=e.message;break}}
-  pintar();$('#agt').value='';toast(falla?`Hice ${n} y falló uno: ${falla}`:(n===1?'Listo. Podés deshacerlo con «Deshacer».':`Listo: ${n} cambios. «Deshacer» los revierte de a uno.`))}});
+  logh('ok',falla?`${n} hecho(s); falló uno: ${falla}`:ops.map(o=>o.txt).join('; '));pintar();$('#agt').value='';toast(falla?`Hice ${n} y falló uno: ${falla}`:(n===1?'Listo. Podés deshacerlo con «Deshacer».':`Listo: ${n} cambios. «Deshacer» los revierte de a uno.`))}});
 }
 if(who.agente)initAg();
 cargar();
