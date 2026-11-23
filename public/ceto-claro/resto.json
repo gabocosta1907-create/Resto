@@ -1,947 +1,947 @@
 {
- "_nota": "Carta de Ceto Resto Bar generada con el Agente de cartas a partir de fotos de la carta impresa (ensayo ANICETO, 21/11/2026), revisada contra las fotos. Sin heros ni fotos de platos; la identidad (tema) es una propuesta provisoria tomada de las fotos, no del logo. Carta independiente: sin pedido ni Gratto.",
- "resto": {
-  "layout": "hojas",
-  "nombre": "CETO (prueba tono claro)",
-  "subtitulo": "Resto Bar",
-  "bajada": "",
-  "direccion": "Soldado de la Independencia 503 · Las Cañitas · Buenos Aires",
-  "horario": "",
-  "whatsapp": "",
-  "tema": {
-   "fondo": "#FAF8F3",
-   "texto": "#2B2B2B",
-   "acento": "#8A5A3C",
-   "cabecera": "#8A5A3C",
-   "cabeceraTexto": "#FAF8F3",
-   "piedra": "#B7B1A1",
-   "titulos": "Newsreader",
-   "pesoTitulos": 400,
-   "cuerpo": "DM Sans",
-   "escala": "fina"
+  "_nota": "Carta de Ceto Resto Bar generada con el Agente de cartas a partir de fotos de la carta impresa (ensayo ANICETO, 21/11/2026), revisada contra las fotos. Sin heros ni fotos de platos; la identidad (tema) es una propuesta provisoria tomada de las fotos, no del logo. Carta independiente: sin pedido ni Gratto.",
+  "resto": {
+    "layout": "hojas",
+    "nombre": "CETO (prueba tono claro)",
+    "subtitulo": "Resto Bar",
+    "bajada": "",
+    "direccion": "Soldado de la Independencia 503 · Las Cañitas · Buenos Aires",
+    "horario": "",
+    "whatsapp": "",
+    "tema": {
+      "fondo": "#FAF8F3",
+      "texto": "#2B2B2B",
+      "acento": "#8A5A3C",
+      "cabecera": "#8A5A3C",
+      "cabeceraTexto": "#FAF8F3",
+      "piedra": "#B7B1A1",
+      "titulos": "Newsreader",
+      "pesoTitulos": 400,
+      "cuerpo": "DM Sans",
+      "escala": "fina"
+    },
+    "listado": "conciso",
+    "mapa": "https://www.google.com/maps/place/Ceto/@-34.5690036,-58.5759053,12z/data=!4m12!1m2!2m1!1sceto!3m8!1s0x95bcb50052d387b7:0x1701d268bad7df01!8m2!3d-34.5690036!4d-58.4317097!9m1!1b1!15sCgRjZXRvkgEKcmVzdGF1cmFudOABAA!16s%2Fg%2F11zfj06v9k",
+    "resena": {
+      "titulo": "Dejanos tu opinión",
+      "texto": "Si te gustó, contanos en Google Maps. Tu reseña nos ayuda a seguir mejorando.",
+      "boton": "Dejar mi reseña"
+    },
+    "estado": "ceto-claro"
   },
-  "listado": "conciso",
-  "mapa": "https://www.google.com/maps/place/Ceto/@-34.5690036,-58.5759053,12z/data=!4m12!1m2!2m1!1sceto!3m8!1s0x95bcb50052d387b7:0x1701d268bad7df01!8m2!3d-34.5690036!4d-58.4317097!9m1!1b1!15sCgRjZXRvkgEKcmVzdGF1cmFudOABAA!16s%2Fg%2F11zfj06v9k",
-  "resena": {
-   "titulo": "Dejanos tu opinión",
-   "texto": "Si te gustó, contanos en Google Maps. Tu reseña nos ayuda a seguir mejorando.",
-   "boton": "Dejar mi reseña"
-  },
-  "estado": "ceto-claro"
- },
- "secciones": [
-  {
-   "id": "desayunos-y-meriendas",
-   "titulo": "Desayunos y meriendas",
-   "items": [
-    {
-     "id": "cafe-expreso-medialuna-grande-y-jugo-de-naranja-exprimido",
-     "nombre": "Café expreso, medialuna grande y jugo de naranja exprimido",
-     "precio": 7500
-    },
-    {
-     "id": "cafe-expreso-medialuna-grande-de-jamon-y-queso-y-jugo-de-naranja-exprimido",
-     "nombre": "Café expreso, medialuna grande de jamón y queso y jugo de naranja exprimido",
-     "precio": 10000
-    },
-    {
-     "id": "cafe-con-leche-o-te-con-dos-medialunas-grandes-tostadas-y-dip-de-queso-crema-con-huevo-revuelto",
-     "nombre": "Café con leche o té con dos medialunas grandes, tostadas y dip de queso crema con huevo revuelto",
-     "precio": 15000
-    },
-    {
-     "id": "yogur-entero-o-descremado-vainilla-o-frutilla",
-     "nombre": "Yogur entero o descremado: vainilla o frutilla",
-     "precio": 4500
-    },
-    {
-     "id": "yogur-griego",
-     "nombre": "Yogur griego",
-     "precio": 6000
-    },
-    {
-     "id": "cafe-con-leche-y-huevos-revueltos",
-     "nombre": "Café con leche y huevos revueltos",
-     "precio": 6000
-    },
-    {
-     "id": "cafe-con-una-medialuna",
-     "nombre": "Café con una medialuna",
-     "precio": 6500
-    },
-    {
-     "id": "cafe-con-leche-y-tostado-de-jamon-y-queso",
-     "nombre": "Café con leche y tostado de jamón y queso",
-     "precio": 12000
-    },
-    {
-     "id": "capuchino-y-medialuna-con-jamon-y-queso",
-     "nombre": "Capuchino y medialuna con jamón y queso",
-     "precio": 12000
-    },
-    {
-     "id": "cafe-con-leche-y-tostadas-con-queso-crema",
-     "nombre": "Café con leche y tostadas con queso crema",
-     "precio": 6500
-    },
-    {
-     "id": "cafe-con-leche-y-toston-con-queso-crema-huevo-revuelto-palta-y-bacon",
-     "nombre": "Café con leche y tostón con queso crema, huevo revuelto, palta y bacon",
-     "precio": 15000
-    },
-    {
-     "id": "licuado-de-naranja-o-durazno-y-tostado-de-jamon-y-queso",
-     "nombre": "Licuado de naranja o durazno y tostado de jamón y queso",
-     "precio": 12000
-    }
-   ],
-   "foto": {
-    "src": "https://resto.marianacaci.com/img/heros/h141.jpg",
-    "alt": "Desayuno con medialunas, frutas, café y jugo de naranja",
-    "ratio": "5/2",
-    "ref": true
-   }
-  },
-  {
-   "id": "brunch",
-   "titulo": "Brunch",
-   "items": [
-    {
-     "id": "tostado-de-jamon-cocido",
-     "nombre": "Tostado de jamón cocido",
-     "desc": "en pan de miga, árabe o de campo",
-     "precio": 7500
-    },
-    {
-     "id": "toston-con-huevo-palta-queso-crema-y-bacon",
-     "nombre": "Tostón con huevo, palta, queso crema y bacon",
-     "precio": 11000
-    },
-    {
-     "id": "gran-tostador-en-pan-de-campo",
-     "nombre": "Gran tostador en pan de campo",
-     "desc": "con jamón y muzzarella",
-     "precio": 12000
-    },
-    {
-     "id": "bagel-de-huevo-y-panceta",
-     "nombre": "Bagel de huevo y panceta",
-     "precio": 12000
-    },
-    {
-     "id": "bagel-de-trucha-ahumada",
-     "nombre": "Bagel de trucha ahumada",
-     "desc": "con queso crema, palta y rúcula acompañado de papas rústicas",
-     "precio": 24000
-    }
-   ],
-   "foto": {
-    "src": "https://resto.marianacaci.com/img/heros/h137.jpg",
-    "alt": "Desayuno con omelette, pan, mermelada y yogur con arándanos",
-    "ratio": "5/2",
-    "ref": true
-   }
-  },
-  {
-   "id": "cafeteria",
-   "titulo": "Cafetería",
-   "items": [
-    {
-     "id": "cafe-expreso",
-     "nombre": "Café expreso",
-     "precio": 3000
-    },
-    {
-     "id": "cafe-americano",
-     "nombre": "Café americano",
-     "precio": 4000
-    },
-    {
-     "id": "capuchino",
-     "nombre": "Capuchino",
-     "precio": 5000
-    },
-    {
-     "id": "lagrima",
-     "nombre": "Lágrima",
-     "precio": 4000
-    },
-    {
-     "id": "cafe-con-leche",
-     "nombre": "Café con leche",
-     "precio": 5500
-    },
-    {
-     "id": "variedad-de-te",
-     "nombre": "Variedad de té",
-     "precio": 4000
-    },
-    {
-     "id": "tazon-de-chocolate",
-     "nombre": "Tazón de chocolate",
-     "precio": 4000
-    }
-   ],
-   "foto": {
-    "src": "https://resto.marianacaci.com/img/heros/h171.jpg",
-    "alt": "Taza de café sobre mármol",
-    "ratio": "5/2",
-    "ref": true
-   }
-  },
-  {
-   "id": "pasteleria",
-   "titulo": "Pastelería",
-   "items": [
-    {
-     "id": "medialuna-grande",
-     "nombre": "Medialuna Grande",
-     "precio": 3600
-    },
-    {
-     "id": "cookie-vegana",
-     "nombre": "Cookie vegana",
-     "precio": 4500
-    },
-    {
-     "id": "croissant",
-     "nombre": "Croissant",
-     "precio": 4600
-    },
-    {
-     "id": "muffin-vegano",
-     "nombre": "Muffin vegano",
-     "precio": 5000
-    },
-    {
-     "id": "muffin-de-chocolate",
-     "nombre": "Muffin de chocolate",
-     "precio": 5000
-    },
-    {
-     "id": "budin-de-limon-naranja-o-banana",
-     "nombre": "Budín de limón, naranja o banana",
-     "precio": 5000
-    },
-    {
-     "id": "pasta-frola",
-     "nombre": "Pasta frola",
-     "precio": 5500
-    },
-    {
-     "id": "chocotorta",
-     "nombre": "Chocotorta",
-     "precio": 6000
-    },
-    {
-     "id": "lemon-pie",
-     "nombre": "Lemon pie",
-     "precio": 11000
-    },
-    {
-     "id": "torta-brownie",
-     "nombre": "Torta brownie",
-     "precio": 11000
-    },
-    {
-     "id": "marquise",
-     "nombre": "Marquise",
-     "precio": 11000
-    },
-    {
-     "id": "crumble-de-manzana",
-     "nombre": "Crumble de manzana",
-     "precio": 12000
-    }
-   ],
-   "foto": {
-    "src": "https://resto.marianacaci.com/img/heros/h4.jpg",
-    "alt": "Tres panettones individuales con glaseado y chocolate",
-    "ratio": "5/2",
-    "ref": true
-   }
-  },
-  {
-   "id": "entradas",
-   "titulo": "Entradas",
-   "items": [
-    {
-     "id": "hongos-con-queso-azul",
-     "nombre": "Hongos con queso azul",
-     "precio": 12000
-    },
-    {
-     "id": "sopa-de-calabaza",
-     "nombre": "Sopa de calabaza",
-     "precio": 12000
-    },
-    {
-     "id": "quesadilla-de-quesos-con-papines",
-     "nombre": "Quesadilla de quesos con papines",
-     "precio": 15500
-    },
-    {
-     "id": "quesadilla-de-carne-desmechada",
-     "nombre": "Quesadilla de carne desmechada",
-     "desc": "muzzarella, palta, morrón y tomate acompañado de papas",
-     "precio": 20900
-    },
-    {
-     "id": "tapeo-de-cubos-de-mix-de-quesos",
-     "nombre": "Tapeo de cubos de mix de quesos",
-     "desc": "jamón crudo y vegetales",
-     "precio": 19000
-    }
-   ],
-   "foto": {
-    "src": "https://resto.marianacaci.com/img/heros/h154.jpg",
-    "alt": "Bruschettas con jamón crudo",
-    "ratio": "5/2",
-    "ref": true
-   }
-  },
-  {
-   "id": "tartas-y-ensaladas",
-   "titulo": "Tartas y ensaladas",
-   "items": [
-    {
-     "id": "tarta-caprese-jamon-y-queso-calabaza-y-muzzarella-zapallitos",
-     "nombre": "Tarta caprese / jamón y queso / calabaza y muzzarella / zapallitos",
-     "precio": 12000
-    },
-    {
-     "id": "ensalada-de-papa-y-huevo",
-     "nombre": "Ensalada de papa y huevo",
-     "precio": 10000
-    },
-    {
-     "id": "ensalada-de-zanahoria-tomate-y-huevo",
-     "nombre": "Ensalada de zanahoria, tomate y huevo",
-     "precio": 12000
-    },
-    {
-     "id": "ensalada-caesar",
-     "nombre": "Ensalada Caesar",
-     "precio": 16000
-    },
-    {
-     "id": "ensalada-de-rucula-parmesano",
-     "nombre": "Ensalada de rúcula, parmesano",
-     "desc": "huevo, cherry, cubos de queso, aceitunas negras, pepinos y palta",
-     "precio": 16000
-    },
-    {
-     "id": "ensalada-de-atun",
-     "nombre": "Ensalada de atún",
-     "desc": "mix de hojas verdes, huevo, tomates cherry y aceitunas negras",
-     "precio": 17000
-    }
-   ]
-  },
-  {
-   "id": "wraps-y-woks",
-   "titulo": "Wraps y woks",
-   "items": [
-    {
-     "id": "milanesa-de-soja-con-ensalada",
-     "nombre": "Milanesa de soja con ensalada de tomate, lechuga y zanahoria",
-     "precio": 12000
-    },
-    {
-     "id": "wrap-caesar",
-     "nombre": "Wrap caesar",
-     "desc": "pechuga de pollo con vegetales frescos, queso parmesano y croutons en tortilla de trigo con aderezo caesar y papas españolas",
-     "precio": 10000
-    },
-    {
-     "id": "wrap-ceto",
-     "nombre": "Wrap ceto",
-     "desc": "carne braseada, muzzarella, rúcula, tomate, cebolla caramelizada y alioli con papas",
-     "precio": 12000
-    },
-    {
-     "id": "poke-de-pollo",
-     "nombre": "Poke de pollo",
-     "desc": "arroz de sushi, palta, pollo, queso crema, salsa teriyaki y semillas de sésamo",
-     "precio": 16000
-    },
-    {
-     "id": "poke-de-salmon-ahumado",
-     "nombre": "Poke de salmón ahumado",
-     "desc": "arroz de sushi, palta, salmón ahumado, queso crema, salsa teriyaki y semillas de sésamo",
-     "precio": 16000
-    },
-    {
-     "id": "wok-vegetariano",
-     "nombre": "Wok vegetariano",
-     "desc": "arroz, cebolla, morrón, zanahoria, zucchini, repollo, salsa de soja, semillas de sésamo, portobello",
-     "precio": 17000
-    },
-    {
-     "id": "wok-de-pollo-y-vegetales",
-     "nombre": "Wok de pollo y vegetales",
-     "desc": "con papas",
-     "precio": 17000
-    }
-   ]
-  },
-  {
-   "id": "sandwiches",
-   "titulo": "Sándwiches",
-   "items": [
-    {
-     "id": "sandwich-green",
-     "nombre": "Sándwich green",
-     "desc": "palta, huevo revuelto, queso crema, tomates cherry y mix de semillas con guarnición",
-     "precio": 14000
-    },
-    {
-     "id": "sandwich-crispy",
-     "nombre": "Sándwich crispy",
-     "desc": "pollo crocante, cheddar, panceta, lechuga, tomate, salsa de miel y mostaza con papas españolas",
-     "precio": 15000
-    },
-    {
-     "id": "sandwich-de-carne-braseada",
-     "nombre": "Sándwich de carne braseada",
-     "desc": "muzzarella, cebolla caramelizada, rúcula y alioli de ajo asado con papas españolas",
-     "precio": 16000
-    },
-    {
-     "id": "sandwich-ceto",
-     "nombre": "Sándwich ceto",
-     "desc": "roast beef, queso pategrás, pepinos agridulces, mostaza dijon, mayonesa casera con papas españolas",
-     "precio": 16000
-    },
-    {
-     "id": "sandwich-mediterraneo",
-     "nombre": "Sándwich mediterráneo",
-     "desc": "jamón crudo, muzzarella, rúcula, tomates confitados y pesto de albahaca con guarnición",
-     "precio": 17000
-    }
-   ],
-   "foto": {
-    "src": "https://resto.marianacaci.com/img/heros/h159.jpg",
-    "alt": "Sándwich de huevo, panceta y queso sobre pan inglés",
-    "ratio": "5/2",
-    "ref": true
-   }
-  },
-  {
-   "id": "pastas",
-   "titulo": "Pastas",
-   "sub": "Salsas: Fileto / Rosa / Cuatro Quesos / Boloñesa / Hongos",
-   "items": [
-    {
-     "id": "noquis-de-papa-o-calabaza",
-     "nombre": "Ñoquis de papa o calabaza",
-     "precio": 9500
-    },
-    {
-     "id": "tallarines-caseros-al-huevo",
-     "nombre": "Tallarines caseros al huevo",
-     "precio": 9500
-    },
-    {
-     "id": "malfatti-de-espinaca",
-     "nombre": "Malfatti de espinaca",
-     "precio": 13000
-    },
-    {
-     "id": "canelones-de-verdura",
-     "nombre": "Canelones de verdura",
-     "precio": 13000
-    },
-    {
-     "id": "sorrentinos-de-carne-braseada-y-muzzarella-o-de-verdura-y-ricota",
-     "nombre": "Sorrentinos de carne braseada y muzzarella o de verdura y ricota",
-     "precio": 16900
-    },
-    {
-     "id": "lasagna-de-carne-y-verdura",
-     "nombre": "Lasagna de carne y verdura",
-     "precio": 19000
-    }
-   ],
-   "foto": {
-    "src": "https://resto.marianacaci.com/img/heros/h194.jpg",
-    "alt": "Plato de espaguetis con salsa y queso rallado",
-    "ratio": "5/2",
-    "ref": true
-   }
-  },
-  {
-   "id": "pizzas",
-   "titulo": "Pizzas",
-   "items": [
-    {
-     "id": "napolitana",
-     "nombre": "Napolitana",
-     "precio": 22000
-    },
-    {
-     "id": "cuatro-quesos",
-     "nombre": "Cuatro quesos",
-     "precio": 22000
-    },
-    {
-     "id": "jamon-crudo-rucula-y-parmesano",
-     "nombre": "Jamón crudo, rúcula y parmesano",
-     "precio": 25000
-    },
-    {
-     "id": "napolitana-dos-copas-de-vino",
-     "nombre": "Napolitana + dos copas de vino",
-     "desc": "Promo",
-     "precio": 32000
-    },
-    {
-     "id": "jamon-crudo-rucula-y-parmesano-dos-copas-de-vino",
-     "nombre": "Jamón crudo, rúcula y parmesano + dos copas de vino",
-     "desc": "Promo",
-     "precio": 35000
-    },
-    {
-     "id": "napolitana-dos-copas-de-cerveza",
-     "nombre": "Napolitana + dos copas de cerveza",
-     "desc": "Promo",
-     "precio": 29000
-    },
-    {
-     "id": "jamon-crudo-rucula-y-parmesano-dos-copas-de-cerveza",
-     "nombre": "Jamón crudo, rúcula y parmesano + dos copas de cerveza",
-     "desc": "Promo",
-     "precio": 32000
-    }
-   ]
-  },
-  {
-   "id": "empanadas",
-   "titulo": "Empanadas",
-   "items": [
-    {
-     "id": "carne-o-caprese",
-     "nombre": "Carne ó Caprese",
-     "precio": 4000
-    },
-    {
-     "id": "dos-empanadas-copa-de-vino",
-     "nombre": "Dos empanadas + copa de vino",
-     "desc": "Promo",
-     "precio": 14000
-    }
-   ]
-  },
-  {
-   "id": "especialidades-de-la-casa",
-   "titulo": "Especialidades de la casa",
-   "items": [
-    {
-     "id": "espinacas-a-la-crema",
-     "nombre": "Espinacas a la crema",
-     "precio": 9000
-    },
-    {
-     "id": "pastel-de-papas-casa",
-     "nombre": "Pastel de papas",
-     "precio": 12000
-    },
-    {
-     "id": "guiso-de-lentejas",
-     "nombre": "Guiso de lentejas",
-     "precio": 14000
-    },
-    {
-     "id": "filet-de-merluza-a-la-romana-con-papas-fritas-o-pure-de-papas",
-     "nombre": "Filet de merluza a la romana con papas fritas o puré de papas",
-     "precio": 17000
-    },
-    {
-     "id": "hamburguesa-en-pan-casero",
-     "nombre": "Hamburguesa en pan casero",
-     "desc": "con cheddar, panceta y papas rústicas",
-     "precio": 19000
-    },
-    {
-     "id": "trucha-con-risotto-de-quinoa-en-miso-dulce",
-     "nombre": "Trucha con risotto de quinoa en miso dulce",
-     "desc": "con papas noisette",
-     "precio": 24000
-    },
-    {
-     "id": "salmon-rosado-con-salsa-de-espinacas-y-bonato",
-     "nombre": "Salmón rosado con salsa de espinacas y boñato",
-     "precio": 39000
-    },
-    {
-     "id": "salmon-rosado-con-salsa-de-3-quesos-y-papas-espanolas",
-     "nombre": "Salmón rosado con salsa de 3 quesos y papas españolas",
-     "precio": 39000
-    }
-   ],
-   "foto": {
-    "src": "https://resto.marianacaci.com/img/heros/h198.jpg",
-    "alt": "Cocinero terminando un plato con una hoja de hierba",
-    "ratio": "5/2",
-    "ref": true
-   }
-  },
-  {
-   "id": "carne-pollo-y-pescado",
-   "titulo": "Carne, pollo y pescado",
-   "items": [
-    {
-     "id": "pechuga-al-horno-con-papas-espanolas-o-ensalada",
-     "nombre": "Pechuga al horno con papas españolas o ensalada",
-     "precio": 16000
-    },
-    {
-     "id": "pollo-al-verdeo-con-papas-noisette",
-     "nombre": "Pollo al verdeo con papas noisette",
-     "precio": 21000
-    },
-    {
-     "id": "milanesas-de-peceto-napolitanas",
-     "nombre": "Milanesas de peceto napolitanas",
-     "desc": "con papas rústicas, ensalada o puré de calabaza",
-     "precio": 22000
-    },
-    {
-     "id": "vacio-al-horno-con-papas-rusticas-o-ensalada",
-     "nombre": "Vacío al horno con papas rústicas o ensalada",
-     "precio": 23000
-    },
-    {
-     "id": "bife-de-chorizo-con-papas",
-     "nombre": "Bife de chorizo con papas",
-     "precio": 26000
-    },
-    {
-     "id": "matambre-de-carne-tiernizado-a-la-pizza-con-papas-espanolas",
-     "nombre": "Matambre de carne tiernizado a la pizza con papas españolas",
-     "precio": 28000
-    },
-    {
-     "id": "salmon-grille-con-papas-espanolas-o-ensalada",
-     "nombre": "Salmón grillé con papas españolas o ensalada",
-     "precio": 39000
-    }
-   ],
-   "foto": {
-    "src": "https://resto.marianacaci.com/img/heros/h203.jpg",
-    "alt": "Bife con vegetales asados y una copa de vino tinto",
-    "ratio": "5/2",
-    "ref": true
-   }
-  },
-  {
-   "id": "picada-para-dos",
-   "titulo": "Picada para dos",
-   "items": [
-    {
-     "id": "picada-para-dos",
-     "nombre": "Picada para dos",
-     "desc": "Jamón cocido, jamón crudo, lomito, salamín, aceitunas, quesos seleccionados, pan de campo y papas rústicas",
-     "precio": 32000
-    }
-   ],
-   "foto": {
-    "src": "https://resto.marianacaci.com/img/heros/h121.jpg",
-    "alt": "Copas de espumante junto a bocaditos",
-    "ratio": "5/2",
-    "ref": true
-   }
-  },
-  {
-   "id": "menu",
-   "titulo": "Menú",
-   "sub": "Todos los platos vienen con: Flan casero con crema y dulce de leche, panqueque con dulce de leche, chocotorta y ensalada de frutas.",
-   "items": [
-    {
-     "id": "noquis-de-papa-o-calabaza-con-salsa-a-eleccion",
-     "nombre": "Ñoquis de papa o calabaza con salsa a elección",
-     "precio": 16000
-    },
-    {
-     "id": "fideos-cinta-con-salsa-a-eleccion",
-     "nombre": "Fideos cinta con salsa a elección",
-     "precio": 16000
-    },
-    {
-     "id": "canelones-de-verdura-con-salsa-a-eleccion",
-     "nombre": "Canelones de verdura con salsa a elección",
-     "precio": 18000
-    },
-    {
-     "id": "sorrentinos-de-carne-braseada-fileto",
-     "nombre": "Sorrentinos de carne braseada, fileto",
-     "precio": 21000
-    },
-    {
-     "id": "sorrentinos-de-verdura-ricota-y-nuez-fileto",
-     "nombre": "Sorrentinos de verdura, ricota y nuez, fileto",
-     "precio": 21000
-    },
-    {
-     "id": "pechuga-de-pollo-con-papas",
-     "nombre": "Pechuga de pollo con papas",
-     "precio": 18000
-    },
-    {
-     "id": "pastel-de-papas-menu",
-     "nombre": "Pastel de papas",
-     "precio": 16000
-    },
-    {
-     "id": "milanesa-napolitana-de-peceto-con-papas",
-     "nombre": "Milanesa napolitana de peceto con papas",
-     "precio": 26000
-    },
-    {
-     "id": "vacio-braseado-con-papas",
-     "nombre": "Vacío braseado con papas",
-     "precio": 28000
-    },
-    {
-     "id": "matambre-a-la-pizza-con-papas",
-     "nombre": "Matambre a la pizza con papas",
-     "precio": 35000
-    },
-    {
-     "id": "filet-de-merluza-a-la-romana-con-pure",
-     "nombre": "Filet de merluza a la romana con puré",
-     "precio": 23000
-    }
-   ],
-   "foto": {
-    "src": "https://resto.marianacaci.com/img/heros/h204.jpg",
-    "alt": "Plato de carne con puré y salsas sobre mármol negro",
-    "ratio": "5/2",
-    "ref": true
-   }
-  },
-  {
-   "id": "menu-infantil",
-   "titulo": "Menú infantil",
-   "items": [
-    {
-     "id": "spaguetti-con-salsa-a-eleccion",
-     "nombre": "Spaguetti con salsa a elección",
-     "precio": 7000
-    },
-    {
-     "id": "nuggets-de-pollo-con-papas-fritas",
-     "nombre": "Nuggets de pollo con papas fritas",
-     "precio": 8000
-    },
-    {
-     "id": "milanesa-con-papas-fritas",
-     "nombre": "Milanesa con papas fritas",
-     "precio": 10900
-    }
-   ]
-  },
-  {
-   "id": "postres",
-   "titulo": "Postres",
-   "items": [
-    {
-     "id": "panqueque-con-dulce-de-leche",
-     "nombre": "Panqueque con dulce de leche",
-     "precio": 5500
-    },
-    {
-     "id": "ensalada-de-frutas",
-     "nombre": "Ensalada de frutas",
-     "precio": 6000
-    },
-    {
-     "id": "helado-de-chocolate-o-crema-americana",
-     "nombre": "Helado de chocolate o crema americana",
-     "precio": 7500
-    },
-    {
-     "id": "tiramisu",
-     "nombre": "Tiramisú",
-     "precio": 8000
-    },
-    {
-     "id": "flan-casero-con-crema-y-dulce-de-leche",
-     "nombre": "Flan casero con crema y dulce de leche",
-     "precio": 8000
-    }
-   ],
-   "foto": {
-    "src": "https://resto.marianacaci.com/img/heros/h26.jpg",
-    "alt": "Tarta de chocolate con dulce de leche",
-    "ratio": "5/2",
-    "ref": true
-   }
-  },
-  {
-   "id": "bebidas-sin-alcohol",
-   "titulo": "Bebidas sin alcohol",
-   "items": [
-    {
-     "id": "gaseosa-agua-saborizada-linea-coca-cola",
-     "nombre": "Gaseosa/Agua saborizada línea Coca-Cola",
-     "precio": 4000
-    },
-    {
-     "id": "agua-con-o-sin-gas",
-     "nombre": "Agua con o sin gas",
-     "precio": 3000
-    },
-    {
-     "id": "licuado-de-durazno-y-naranja",
-     "nombre": "Licuado de durazno y naranja",
-     "precio": 3500
-    },
-    {
-     "id": "licuado-de-banana",
-     "nombre": "Licuado de banana",
-     "precio": 3500
-    },
-    {
-     "id": "jugo-de-naranja-o-pomelo-exprimido",
-     "nombre": "Jugo de naranja o pomelo exprimido",
-     "precio": 3000
-    },
-    {
-     "id": "limonada-con-menta-y-jengibre",
-     "nombre": "Limonada con menta y jengibre",
-     "precio": 3000
-    }
-   ],
-   "foto": {
-    "src": "https://resto.marianacaci.com/img/heros/h104.jpg",
-    "alt": "Limonadas de colores con hielo, frutas y pajitas",
-    "ratio": "5/2",
-    "ref": true
-   }
-  },
-  {
-   "id": "cerveza-artesanal",
-   "titulo": "Cerveza artesanal",
-   "items": [
-    {
-     "id": "pilsen",
-     "nombre": "Pilsen",
-     "precio": 5500
-    },
-    {
-     "id": "ipa-session",
-     "nombre": "IPA Session",
-     "precio": 6500
-    }
-   ],
-   "foto": {
-    "src": "https://resto.marianacaci.com/img/heros/h112.jpg",
-    "alt": "Brindis con cerveza tirada y una tabla de pollo",
-    "ratio": "5/2",
-    "ref": true
-   }
-  },
-  {
-   "id": "vino-boutique-aniceto",
-   "titulo": "Vino boutique Aniceto",
-   "items": [
-    {
-     "id": "malbec",
-     "nombre": "Malbec",
-     "variantes": [
-      {
-       "n": "Botella",
-       "p": 21000
-      },
-      {
-       "n": "Copa",
-       "p": 7500
+  "secciones": [
+    {
+      "id": "desayunos-y-meriendas",
+      "titulo": "Desayunos y meriendas",
+      "items": [
+        {
+          "id": "cafe-expreso-medialuna-grande-y-jugo-de-naranja-exprimido",
+          "nombre": "Café expreso, medialuna grande y jugo de naranja exprimido",
+          "precio": 7500
+        },
+        {
+          "id": "cafe-expreso-medialuna-grande-de-jamon-y-queso-y-jugo-de-naranja-exprimido",
+          "nombre": "Café expreso, medialuna grande de jamón y queso y jugo de naranja exprimido",
+          "precio": 10000
+        },
+        {
+          "id": "cafe-con-leche-o-te-con-dos-medialunas-grandes-tostadas-y-dip-de-queso-crema-con-huevo-revuelto",
+          "nombre": "Café con leche o té con dos medialunas grandes, tostadas y dip de queso crema con huevo revuelto",
+          "precio": 15000
+        },
+        {
+          "id": "yogur-entero-o-descremado-vainilla-o-frutilla",
+          "nombre": "Yogur entero o descremado: vainilla o frutilla",
+          "precio": 4500
+        },
+        {
+          "id": "yogur-griego",
+          "nombre": "Yogur griego",
+          "precio": 6000
+        },
+        {
+          "id": "cafe-con-leche-y-huevos-revueltos",
+          "nombre": "Café con leche y huevos revueltos",
+          "precio": 6000
+        },
+        {
+          "id": "cafe-con-una-medialuna",
+          "nombre": "Café con una medialuna",
+          "precio": 6500
+        },
+        {
+          "id": "cafe-con-leche-y-tostado-de-jamon-y-queso",
+          "nombre": "Café con leche y tostado de jamón y queso",
+          "precio": 12000
+        },
+        {
+          "id": "capuchino-y-medialuna-con-jamon-y-queso",
+          "nombre": "Capuchino y medialuna con jamón y queso",
+          "precio": 12000
+        },
+        {
+          "id": "cafe-con-leche-y-tostadas-con-queso-crema",
+          "nombre": "Café con leche y tostadas con queso crema",
+          "precio": 6500
+        },
+        {
+          "id": "cafe-con-leche-y-toston-con-queso-crema-huevo-revuelto-palta-y-bacon",
+          "nombre": "Café con leche y tostón con queso crema, huevo revuelto, palta y bacon",
+          "precio": 15000
+        },
+        {
+          "id": "licuado-de-naranja-o-durazno-y-tostado-de-jamon-y-queso",
+          "nombre": "Licuado de naranja o durazno y tostado de jamón y queso",
+          "precio": 12000
+        }
+      ],
+      "foto": {
+        "src": "https://resto.marianacaci.com/img/heros/h141.jpg",
+        "alt": "Desayuno con medialunas, frutas, café y jugo de naranja",
+        "ratio": "5/2",
+        "ref": true
       }
-     ]
     },
     {
-     "id": "malbec-reserva",
-     "nombre": "Malbec Reserva",
-     "precio": 24000
+      "id": "brunch",
+      "titulo": "Brunch",
+      "items": [
+        {
+          "id": "tostado-de-jamon-cocido",
+          "nombre": "Tostado de jamón cocido",
+          "desc": "en pan de miga, árabe o de campo",
+          "precio": 7500
+        },
+        {
+          "id": "toston-con-huevo-palta-queso-crema-y-bacon",
+          "nombre": "Tostón con huevo, palta, queso crema y bacon",
+          "precio": 11000
+        },
+        {
+          "id": "gran-tostador-en-pan-de-campo",
+          "nombre": "Gran tostador en pan de campo",
+          "desc": "con jamón y muzzarella",
+          "precio": 12000
+        },
+        {
+          "id": "bagel-de-huevo-y-panceta",
+          "nombre": "Bagel de huevo y panceta",
+          "precio": 12000
+        },
+        {
+          "id": "bagel-de-trucha-ahumada",
+          "nombre": "Bagel de trucha ahumada",
+          "desc": "con queso crema, palta y rúcula acompañado de papas rústicas",
+          "precio": 24000
+        }
+      ],
+      "foto": {
+        "src": "https://resto.marianacaci.com/img/heros/h137.jpg",
+        "alt": "Desayuno con omelette, pan, mermelada y yogur con arándanos",
+        "ratio": "5/2",
+        "ref": true
+      }
     },
     {
-     "id": "cabernet-franc-reserva",
-     "nombre": "Cabernet Franc Reserva",
-     "precio": 24000
+      "id": "cafeteria",
+      "titulo": "Cafetería",
+      "items": [
+        {
+          "id": "cafe-expreso",
+          "nombre": "Café expreso",
+          "precio": 3000
+        },
+        {
+          "id": "cafe-americano",
+          "nombre": "Café americano",
+          "precio": 4000
+        },
+        {
+          "id": "capuchino",
+          "nombre": "Capuchino",
+          "precio": 5000
+        },
+        {
+          "id": "lagrima",
+          "nombre": "Lágrima",
+          "precio": 4000
+        },
+        {
+          "id": "cafe-con-leche",
+          "nombre": "Café con leche",
+          "precio": 5500
+        },
+        {
+          "id": "variedad-de-te",
+          "nombre": "Variedad de té",
+          "precio": 4000
+        },
+        {
+          "id": "tazon-de-chocolate",
+          "nombre": "Tazón de chocolate",
+          "precio": 4000
+        }
+      ],
+      "foto": {
+        "src": "https://resto.marianacaci.com/img/heros/h171.jpg",
+        "alt": "Taza de café sobre mármol",
+        "ratio": "5/2",
+        "ref": true
+      }
     },
     {
-     "id": "sauvignon-blanc",
-     "nombre": "Sauvignon Blanc",
-     "precio": 21000
+      "id": "pasteleria",
+      "titulo": "Pastelería",
+      "items": [
+        {
+          "id": "medialuna-grande",
+          "nombre": "Medialuna Grande",
+          "precio": 3600
+        },
+        {
+          "id": "cookie-vegana",
+          "nombre": "Cookie vegana",
+          "precio": 4500
+        },
+        {
+          "id": "croissant",
+          "nombre": "Croissant",
+          "precio": 4600
+        },
+        {
+          "id": "muffin-vegano",
+          "nombre": "Muffin vegano",
+          "precio": 5000
+        },
+        {
+          "id": "muffin-de-chocolate",
+          "nombre": "Muffin de chocolate",
+          "precio": 5000
+        },
+        {
+          "id": "budin-de-limon-naranja-o-banana",
+          "nombre": "Budín de limón, naranja o banana",
+          "precio": 5000
+        },
+        {
+          "id": "pasta-frola",
+          "nombre": "Pasta frola",
+          "precio": 5500
+        },
+        {
+          "id": "chocotorta",
+          "nombre": "Chocotorta",
+          "precio": 6000
+        },
+        {
+          "id": "lemon-pie",
+          "nombre": "Lemon pie",
+          "precio": 11000
+        },
+        {
+          "id": "torta-brownie",
+          "nombre": "Torta brownie",
+          "precio": 11000
+        },
+        {
+          "id": "marquise",
+          "nombre": "Marquise",
+          "precio": 11000
+        },
+        {
+          "id": "crumble-de-manzana",
+          "nombre": "Crumble de manzana",
+          "precio": 12000
+        }
+      ],
+      "foto": {
+        "src": "https://resto.marianacaci.com/img/heros/h4.jpg",
+        "alt": "Tres panettones individuales con glaseado y chocolate",
+        "ratio": "5/2",
+        "ref": true
+      }
+    },
+    {
+      "id": "entradas",
+      "titulo": "Entradas",
+      "items": [
+        {
+          "id": "hongos-con-queso-azul",
+          "nombre": "Hongos con queso azul",
+          "precio": 12000
+        },
+        {
+          "id": "sopa-de-calabaza",
+          "nombre": "Sopa de calabaza",
+          "precio": 12000
+        },
+        {
+          "id": "quesadilla-de-quesos-con-papines",
+          "nombre": "Quesadilla de quesos con papines",
+          "precio": 15500
+        },
+        {
+          "id": "quesadilla-de-carne-desmechada",
+          "nombre": "Quesadilla de carne desmechada",
+          "desc": "muzzarella, palta, morrón y tomate acompañado de papas",
+          "precio": 20900
+        },
+        {
+          "id": "tapeo-de-cubos-de-mix-de-quesos",
+          "nombre": "Tapeo de cubos de mix de quesos",
+          "desc": "jamón crudo y vegetales",
+          "precio": 19000
+        }
+      ],
+      "foto": {
+        "src": "https://resto.marianacaci.com/img/heros/h154.jpg",
+        "alt": "Bruschettas con jamón crudo",
+        "ratio": "5/2",
+        "ref": true
+      }
+    },
+    {
+      "id": "tartas-y-ensaladas",
+      "titulo": "Tartas y ensaladas",
+      "items": [
+        {
+          "id": "tarta-caprese-jamon-y-queso-calabaza-y-muzzarella-zapallitos",
+          "nombre": "Tarta caprese / jamón y queso / calabaza y muzzarella / zapallitos",
+          "precio": 12000
+        },
+        {
+          "id": "ensalada-de-papa-y-huevo",
+          "nombre": "Ensalada de papa y huevo",
+          "precio": 10000
+        },
+        {
+          "id": "ensalada-de-zanahoria-tomate-y-huevo",
+          "nombre": "Ensalada de zanahoria, tomate y huevo",
+          "precio": 12000
+        },
+        {
+          "id": "ensalada-caesar",
+          "nombre": "Ensalada Caesar",
+          "precio": 16000
+        },
+        {
+          "id": "ensalada-de-rucula-parmesano",
+          "nombre": "Ensalada de rúcula, parmesano",
+          "desc": "huevo, cherry, cubos de queso, aceitunas negras, pepinos y palta",
+          "precio": 16000
+        },
+        {
+          "id": "ensalada-de-atun",
+          "nombre": "Ensalada de atún",
+          "desc": "mix de hojas verdes, huevo, tomates cherry y aceitunas negras",
+          "precio": 17000
+        }
+      ]
+    },
+    {
+      "id": "wraps-y-woks",
+      "titulo": "Wraps y woks",
+      "items": [
+        {
+          "id": "milanesa-de-soja-con-ensalada",
+          "nombre": "Milanesa de soja con ensalada de tomate, lechuga y zanahoria",
+          "precio": 12000
+        },
+        {
+          "id": "wrap-caesar",
+          "nombre": "Wrap caesar",
+          "desc": "pechuga de pollo con vegetales frescos, queso parmesano y croutons en tortilla de trigo con aderezo caesar y papas españolas",
+          "precio": 10000
+        },
+        {
+          "id": "wrap-ceto",
+          "nombre": "Wrap ceto",
+          "desc": "carne braseada, muzzarella, rúcula, tomate, cebolla caramelizada y alioli con papas",
+          "precio": 12000
+        },
+        {
+          "id": "poke-de-pollo",
+          "nombre": "Poke de pollo",
+          "desc": "arroz de sushi, palta, pollo, queso crema, salsa teriyaki y semillas de sésamo",
+          "precio": 16000
+        },
+        {
+          "id": "poke-de-salmon-ahumado",
+          "nombre": "Poke de salmón ahumado",
+          "desc": "arroz de sushi, palta, salmón ahumado, queso crema, salsa teriyaki y semillas de sésamo",
+          "precio": 16000
+        },
+        {
+          "id": "wok-vegetariano",
+          "nombre": "Wok vegetariano",
+          "desc": "arroz, cebolla, morrón, zanahoria, zucchini, repollo, salsa de soja, semillas de sésamo, portobello",
+          "precio": 17000
+        },
+        {
+          "id": "wok-de-pollo-y-vegetales",
+          "nombre": "Wok de pollo y vegetales",
+          "desc": "con papas",
+          "precio": 17000
+        }
+      ]
+    },
+    {
+      "id": "sandwiches",
+      "titulo": "Sándwiches",
+      "items": [
+        {
+          "id": "sandwich-green",
+          "nombre": "Sándwich green",
+          "desc": "palta, huevo revuelto, queso crema, tomates cherry y mix de semillas con guarnición",
+          "precio": 14000
+        },
+        {
+          "id": "sandwich-crispy",
+          "nombre": "Sándwich crispy",
+          "desc": "pollo crocante, cheddar, panceta, lechuga, tomate, salsa de miel y mostaza con papas españolas",
+          "precio": 15000
+        },
+        {
+          "id": "sandwich-de-carne-braseada",
+          "nombre": "Sándwich de carne braseada",
+          "desc": "muzzarella, cebolla caramelizada, rúcula y alioli de ajo asado con papas españolas",
+          "precio": 16000
+        },
+        {
+          "id": "sandwich-ceto",
+          "nombre": "Sándwich ceto",
+          "desc": "roast beef, queso pategrás, pepinos agridulces, mostaza dijon, mayonesa casera con papas españolas",
+          "precio": 16000
+        },
+        {
+          "id": "sandwich-mediterraneo",
+          "nombre": "Sándwich mediterráneo",
+          "desc": "jamón crudo, muzzarella, rúcula, tomates confitados y pesto de albahaca con guarnición",
+          "precio": 17000
+        }
+      ],
+      "foto": {
+        "src": "https://resto.marianacaci.com/img/heros/h159.jpg",
+        "alt": "Sándwich de huevo, panceta y queso sobre pan inglés",
+        "ratio": "5/2",
+        "ref": true
+      }
+    },
+    {
+      "id": "pastas",
+      "titulo": "Pastas",
+      "sub": "Salsas: Fileto / Rosa / Cuatro Quesos / Boloñesa / Hongos",
+      "items": [
+        {
+          "id": "noquis-de-papa-o-calabaza",
+          "nombre": "Ñoquis de papa o calabaza",
+          "precio": 9500
+        },
+        {
+          "id": "tallarines-caseros-al-huevo",
+          "nombre": "Tallarines caseros al huevo",
+          "precio": 9500
+        },
+        {
+          "id": "malfatti-de-espinaca",
+          "nombre": "Malfatti de espinaca",
+          "precio": 13000
+        },
+        {
+          "id": "canelones-de-verdura",
+          "nombre": "Canelones de verdura",
+          "precio": 13000
+        },
+        {
+          "id": "sorrentinos-de-carne-braseada-y-muzzarella-o-de-verdura-y-ricota",
+          "nombre": "Sorrentinos de carne braseada y muzzarella o de verdura y ricota",
+          "precio": 16900
+        },
+        {
+          "id": "lasagna-de-carne-y-verdura",
+          "nombre": "Lasagna de carne y verdura",
+          "precio": 19000
+        }
+      ],
+      "foto": {
+        "src": "https://resto.marianacaci.com/img/heros/h194.jpg",
+        "alt": "Plato de espaguetis con salsa y queso rallado",
+        "ratio": "5/2",
+        "ref": true
+      }
+    },
+    {
+      "id": "pizzas",
+      "titulo": "Pizzas",
+      "items": [
+        {
+          "id": "napolitana",
+          "nombre": "Napolitana",
+          "precio": 22000
+        },
+        {
+          "id": "cuatro-quesos",
+          "nombre": "Cuatro quesos",
+          "precio": 22000
+        },
+        {
+          "id": "jamon-crudo-rucula-y-parmesano",
+          "nombre": "Jamón crudo, rúcula y parmesano",
+          "precio": 25000
+        },
+        {
+          "id": "napolitana-dos-copas-de-vino",
+          "nombre": "Napolitana + dos copas de vino",
+          "desc": "Promo",
+          "precio": 32000
+        },
+        {
+          "id": "jamon-crudo-rucula-y-parmesano-dos-copas-de-vino",
+          "nombre": "Jamón crudo, rúcula y parmesano + dos copas de vino",
+          "desc": "Promo",
+          "precio": 35000
+        },
+        {
+          "id": "napolitana-dos-copas-de-cerveza",
+          "nombre": "Napolitana + dos copas de cerveza",
+          "desc": "Promo",
+          "precio": 29000
+        },
+        {
+          "id": "jamon-crudo-rucula-y-parmesano-dos-copas-de-cerveza",
+          "nombre": "Jamón crudo, rúcula y parmesano + dos copas de cerveza",
+          "desc": "Promo",
+          "precio": 32000
+        }
+      ]
+    },
+    {
+      "id": "empanadas",
+      "titulo": "Empanadas",
+      "items": [
+        {
+          "id": "carne-o-caprese",
+          "nombre": "Carne ó Caprese",
+          "precio": 4000
+        },
+        {
+          "id": "dos-empanadas-copa-de-vino",
+          "nombre": "Dos empanadas + copa de vino",
+          "desc": "Promo",
+          "precio": 14000
+        }
+      ]
+    },
+    {
+      "id": "especialidades-de-la-casa",
+      "titulo": "Especialidades de la casa",
+      "items": [
+        {
+          "id": "espinacas-a-la-crema",
+          "nombre": "Espinacas a la crema",
+          "precio": 9000
+        },
+        {
+          "id": "pastel-de-papas-casa",
+          "nombre": "Pastel de papas",
+          "precio": 12000
+        },
+        {
+          "id": "guiso-de-lentejas",
+          "nombre": "Guiso de lentejas",
+          "precio": 14000
+        },
+        {
+          "id": "filet-de-merluza-a-la-romana-con-papas-fritas-o-pure-de-papas",
+          "nombre": "Filet de merluza a la romana con papas fritas o puré de papas",
+          "precio": 17000
+        },
+        {
+          "id": "hamburguesa-en-pan-casero",
+          "nombre": "Hamburguesa en pan casero",
+          "desc": "con cheddar, panceta y papas rústicas",
+          "precio": 19000
+        },
+        {
+          "id": "trucha-con-risotto-de-quinoa-en-miso-dulce",
+          "nombre": "Trucha con risotto de quinoa en miso dulce",
+          "desc": "con papas noisette",
+          "precio": 24000
+        },
+        {
+          "id": "salmon-rosado-con-salsa-de-espinacas-y-bonato",
+          "nombre": "Salmón rosado con salsa de espinacas y boñato",
+          "precio": 39000
+        },
+        {
+          "id": "salmon-rosado-con-salsa-de-3-quesos-y-papas-espanolas",
+          "nombre": "Salmón rosado con salsa de 3 quesos y papas españolas",
+          "precio": 39000
+        }
+      ],
+      "foto": {
+        "src": "https://resto.marianacaci.com/img/heros/h198.jpg",
+        "alt": "Cocinero terminando un plato con una hoja de hierba",
+        "ratio": "5/2",
+        "ref": true
+      }
+    },
+    {
+      "id": "carne-pollo-y-pescado",
+      "titulo": "Carne, pollo y pescado",
+      "items": [
+        {
+          "id": "pechuga-al-horno-con-papas-espanolas-o-ensalada",
+          "nombre": "Pechuga al horno con papas españolas o ensalada",
+          "precio": 16000
+        },
+        {
+          "id": "pollo-al-verdeo-con-papas-noisette",
+          "nombre": "Pollo al verdeo con papas noisette",
+          "precio": 21000
+        },
+        {
+          "id": "milanesas-de-peceto-napolitanas",
+          "nombre": "Milanesas de peceto napolitanas",
+          "desc": "con papas rústicas, ensalada o puré de calabaza",
+          "precio": 22000
+        },
+        {
+          "id": "vacio-al-horno-con-papas-rusticas-o-ensalada",
+          "nombre": "Vacío al horno con papas rústicas o ensalada",
+          "precio": 23000
+        },
+        {
+          "id": "bife-de-chorizo-con-papas",
+          "nombre": "Bife de chorizo con papas",
+          "precio": 26000
+        },
+        {
+          "id": "matambre-de-carne-tiernizado-a-la-pizza-con-papas-espanolas",
+          "nombre": "Matambre de carne tiernizado a la pizza con papas españolas",
+          "precio": 28000
+        },
+        {
+          "id": "salmon-grille-con-papas-espanolas-o-ensalada",
+          "nombre": "Salmón grillé con papas españolas o ensalada",
+          "precio": 39000
+        }
+      ],
+      "foto": {
+        "src": "https://resto.marianacaci.com/img/heros/h203.jpg",
+        "alt": "Bife con vegetales asados y una copa de vino tinto",
+        "ratio": "5/2",
+        "ref": true
+      }
+    },
+    {
+      "id": "picada-para-dos",
+      "titulo": "Picada para dos",
+      "items": [
+        {
+          "id": "picada-para-dos",
+          "nombre": "Picada para dos",
+          "desc": "Jamón cocido, jamón crudo, lomito, salamín, aceitunas, quesos seleccionados, pan de campo y papas rústicas",
+          "precio": 32000
+        }
+      ],
+      "foto": {
+        "src": "https://resto.marianacaci.com/img/heros/h121.jpg",
+        "alt": "Copas de espumante junto a bocaditos",
+        "ratio": "5/2",
+        "ref": true
+      }
+    },
+    {
+      "id": "menu",
+      "titulo": "Menú",
+      "sub": "Todos los platos vienen con: Flan casero con crema y dulce de leche, panqueque con dulce de leche, chocotorta y ensalada de frutas.",
+      "items": [
+        {
+          "id": "noquis-de-papa-o-calabaza-con-salsa-a-eleccion",
+          "nombre": "Ñoquis de papa o calabaza con salsa a elección",
+          "precio": 16000
+        },
+        {
+          "id": "fideos-cinta-con-salsa-a-eleccion",
+          "nombre": "Fideos cinta con salsa a elección",
+          "precio": 16000
+        },
+        {
+          "id": "canelones-de-verdura-con-salsa-a-eleccion",
+          "nombre": "Canelones de verdura con salsa a elección",
+          "precio": 18000
+        },
+        {
+          "id": "sorrentinos-de-carne-braseada-fileto",
+          "nombre": "Sorrentinos de carne braseada, fileto",
+          "precio": 21000
+        },
+        {
+          "id": "sorrentinos-de-verdura-ricota-y-nuez-fileto",
+          "nombre": "Sorrentinos de verdura, ricota y nuez, fileto",
+          "precio": 21000
+        },
+        {
+          "id": "pechuga-de-pollo-con-papas",
+          "nombre": "Pechuga de pollo con papas",
+          "precio": 18000
+        },
+        {
+          "id": "pastel-de-papas-menu",
+          "nombre": "Pastel de papas",
+          "precio": 16000
+        },
+        {
+          "id": "milanesa-napolitana-de-peceto-con-papas",
+          "nombre": "Milanesa napolitana de peceto con papas",
+          "precio": 26000
+        },
+        {
+          "id": "vacio-braseado-con-papas",
+          "nombre": "Vacío braseado con papas",
+          "precio": 28000
+        },
+        {
+          "id": "matambre-a-la-pizza-con-papas",
+          "nombre": "Matambre a la pizza con papas",
+          "precio": 35000
+        },
+        {
+          "id": "filet-de-merluza-a-la-romana-con-pure",
+          "nombre": "Filet de merluza a la romana con puré",
+          "precio": 23000
+        }
+      ],
+      "foto": {
+        "src": "https://resto.marianacaci.com/img/heros/h204.jpg",
+        "alt": "Plato de carne con puré y salsas sobre mármol negro",
+        "ratio": "5/2",
+        "ref": true
+      }
+    },
+    {
+      "id": "menu-infantil",
+      "titulo": "Menú infantil",
+      "items": [
+        {
+          "id": "spaguetti-con-salsa-a-eleccion",
+          "nombre": "Spaguetti con salsa a elección",
+          "precio": 7000
+        },
+        {
+          "id": "nuggets-de-pollo-con-papas-fritas",
+          "nombre": "Nuggets de pollo con papas fritas",
+          "precio": 8000
+        },
+        {
+          "id": "milanesa-con-papas-fritas",
+          "nombre": "Milanesa con papas fritas",
+          "precio": 10900
+        }
+      ]
+    },
+    {
+      "id": "postres",
+      "titulo": "Postres",
+      "items": [
+        {
+          "id": "panqueque-con-dulce-de-leche",
+          "nombre": "Panqueque con dulce de leche",
+          "precio": 5500
+        },
+        {
+          "id": "ensalada-de-frutas",
+          "nombre": "Ensalada de frutas",
+          "precio": 6000
+        },
+        {
+          "id": "helado-de-chocolate-o-crema-americana",
+          "nombre": "Helado de chocolate o crema americana",
+          "precio": 7500
+        },
+        {
+          "id": "tiramisu",
+          "nombre": "Tiramisú",
+          "precio": 8000
+        },
+        {
+          "id": "flan-casero-con-crema-y-dulce-de-leche",
+          "nombre": "Flan casero con crema y dulce de leche",
+          "precio": 8000
+        }
+      ],
+      "foto": {
+        "src": "https://resto.marianacaci.com/img/heros/h26.jpg",
+        "alt": "Tarta de chocolate con dulce de leche",
+        "ratio": "5/2",
+        "ref": true
+      }
+    },
+    {
+      "id": "bebidas-sin-alcohol",
+      "titulo": "Bebidas sin alcohol",
+      "items": [
+        {
+          "id": "gaseosa-agua-saborizada-linea-coca-cola",
+          "nombre": "Gaseosa/Agua saborizada línea Coca-Cola",
+          "precio": 4000
+        },
+        {
+          "id": "agua-con-o-sin-gas",
+          "nombre": "Agua con o sin gas",
+          "precio": 3000
+        },
+        {
+          "id": "licuado-de-durazno-y-naranja",
+          "nombre": "Licuado de durazno y naranja",
+          "precio": 3500
+        },
+        {
+          "id": "licuado-de-banana",
+          "nombre": "Licuado de banana",
+          "precio": 3500
+        },
+        {
+          "id": "jugo-de-naranja-o-pomelo-exprimido",
+          "nombre": "Jugo de naranja o pomelo exprimido",
+          "precio": 3000
+        },
+        {
+          "id": "limonada-con-menta-y-jengibre",
+          "nombre": "Limonada con menta y jengibre",
+          "precio": 3000
+        }
+      ],
+      "foto": {
+        "src": "https://resto.marianacaci.com/img/heros/h104.jpg",
+        "alt": "Limonadas de colores con hielo, frutas y pajitas",
+        "ratio": "5/2",
+        "ref": true
+      }
+    },
+    {
+      "id": "cerveza-artesanal",
+      "titulo": "Cerveza artesanal",
+      "items": [
+        {
+          "id": "pilsen",
+          "nombre": "Pilsen",
+          "precio": 5500
+        },
+        {
+          "id": "ipa-session",
+          "nombre": "IPA Session",
+          "precio": 6500
+        }
+      ],
+      "foto": {
+        "src": "https://resto.marianacaci.com/img/heros/h112.jpg",
+        "alt": "Brindis con cerveza tirada y una tabla de pollo",
+        "ratio": "5/2",
+        "ref": true
+      }
+    },
+    {
+      "id": "vino-boutique-aniceto",
+      "titulo": "Vino boutique Aniceto",
+      "items": [
+        {
+          "id": "malbec",
+          "nombre": "Malbec",
+          "variantes": [
+            {
+              "n": "Botella",
+              "p": 21000
+            },
+            {
+              "n": "Copa",
+              "p": 7500
+            }
+          ]
+        },
+        {
+          "id": "malbec-reserva",
+          "nombre": "Malbec Reserva",
+          "precio": 24000
+        },
+        {
+          "id": "cabernet-franc-reserva",
+          "nombre": "Cabernet Franc Reserva",
+          "precio": 24000
+        },
+        {
+          "id": "sauvignon-blanc",
+          "nombre": "Sauvignon Blanc",
+          "precio": 21000
+        }
+      ],
+      "foto": {
+        "src": "https://resto.marianacaci.com/img/heros/h122.jpg",
+        "alt": "Hilera de copas de vino tinto, blanco y rosado",
+        "ratio": "5/2",
+        "ref": true
+      }
+    },
+    {
+      "id": "espumantes",
+      "titulo": "Espumantes",
+      "items": [
+        {
+          "id": "espumante-aniceto-brut-nature",
+          "nombre": "Espumante Aniceto Brut Nature",
+          "precio": 25000
+        },
+        {
+          "id": "espumante-blanca-rose",
+          "nombre": "Espumante Blanca Rosé",
+          "precio": 25000
+        },
+        {
+          "id": "chandon-187-extra-brut",
+          "nombre": "Chandon 187 Extra Brut",
+          "precio": 12000
+        }
+      ],
+      "foto": {
+        "src": "https://resto.marianacaci.com/img/heros/h111.jpg",
+        "alt": "Brindis con copas de espumante",
+        "ratio": "5/2",
+        "ref": true
+      }
+    },
+    {
+      "id": "aperitivos",
+      "titulo": "Aperitivos",
+      "items": [
+        {
+          "id": "fernet-branca-con-coca-cola",
+          "nombre": "Fernet Branca con Coca-Cola",
+          "precio": 8000
+        },
+        {
+          "id": "aperol-spritz-con-chandon",
+          "nombre": "Aperol Spritz con Chandon",
+          "precio": 11000
+        },
+        {
+          "id": "gin-tonic-beefeater",
+          "nombre": "Gin Tonic Beefeater",
+          "desc": "con pepino y lima o con pomelo",
+          "precio": 11000
+        },
+        {
+          "id": "caipiroska",
+          "nombre": "Caipiroska",
+          "precio": 11000
+        }
+      ],
+      "foto": {
+        "src": "https://resto.marianacaci.com/img/heros/h110.jpg",
+        "alt": "Bartender terminando un aperitivo con piel de naranja",
+        "ratio": "5/2",
+        "ref": true
+      }
     }
-   ],
-   "foto": {
-    "src": "https://resto.marianacaci.com/img/heros/h114.jpg",
-    "alt": "Dos copas de gin tonic brindando",
-    "ratio": "5/2",
-    "ref": true
-   }
-  },
-  {
-   "id": "espumantes",
-   "titulo": "Espumantes",
-   "items": [
-    {
-     "id": "espumante-aniceto-brut-nature",
-     "nombre": "Espumante Aniceto Brut Nature",
-     "precio": 25000
-    },
-    {
-     "id": "espumante-blanca-rose",
-     "nombre": "Espumante Blanca Rosé",
-     "precio": 25000
-    },
-    {
-     "id": "chandon-187-extra-brut",
-     "nombre": "Chandon 187 Extra Brut",
-     "precio": 12000
-    }
-   ],
-   "foto": {
-    "src": "https://resto.marianacaci.com/img/heros/h111.jpg",
-    "alt": "Brindis con copas de espumante",
-    "ratio": "5/2",
-    "ref": true
-   }
-  },
-  {
-   "id": "aperitivos",
-   "titulo": "Aperitivos",
-   "items": [
-    {
-     "id": "fernet-branca-con-coca-cola",
-     "nombre": "Fernet Branca con Coca-Cola",
-     "precio": 8000
-    },
-    {
-     "id": "aperol-spritz-con-chandon",
-     "nombre": "Aperol Spritz con Chandon",
-     "precio": 11000
-    },
-    {
-     "id": "gin-tonic-beefeater",
-     "nombre": "Gin Tonic Beefeater",
-     "desc": "con pepino y lima o con pomelo",
-     "precio": 11000
-    },
-    {
-     "id": "caipiroska",
-     "nombre": "Caipiroska",
-     "precio": 11000
-    }
-   ],
-   "foto": {
-    "src": "https://resto.marianacaci.com/img/heros/h110.jpg",
-    "alt": "Bartender terminando un aperitivo con piel de naranja",
-    "ratio": "5/2",
-    "ref": true
-   }
-  }
- ]
+  ]
 }
