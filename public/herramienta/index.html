@@ -68,7 +68,7 @@ base=await (await fetch('/'+who.slug+'/resto.json')).json();
 async function cargar(){est=await (await fetch('/api/estado/'+who.slug,{cache:'no-cache'})).json();pintar()}
 function lista(s){const e=est;const its=(s.items||[]).filter(i=>!(e.bajas||[]).includes(i.id)).map(i=>{const o=(e.items||{})[i.id]||{};return {id:i.id,n:o.nombre||i.nombre,d:o.desc!==undefined?o.desc:i.desc,p:o.precio!=null?o.precio:i.precio,v:(i.variantes||[]).map(v=>({n:v.n,p:o.vp&&o.vp[v.n]!=null?o.vp[v.n]:v.p})),off:!!o.off}});
  (e.altas||[]).filter(a=>a.seccion===s.id).forEach(a=>its.push({id:a.id,n:a.nombre,d:a.desc,p:a.precio,v:[],off:false,nuevo:true}));return its}
-let panel=null,catAb=null,primera=true;
+let panel='susp',catAb=null;
 const hoy=()=>new Date().toISOString().slice(0,10);
 let hist=[];const HK=()=>'resto_hist_'+who.slug;
 try{hist=(JSON.parse(localStorage.getItem(HK())||'[]')||[]).filter(x=>x.d===hoy())}catch(e){}
@@ -77,7 +77,6 @@ const suspendidos=()=>{const o=[];base.secciones.filter(s=>!s.oculta).forEach(s=
 const pn=(id,tit,badge,al,cont)=>`<section class="pn${panel===id?' on':''}"><button class="ph" data-a="panel" data-p="${id}" aria-expanded="${panel===id}"><span>${tit}</span>${badge!==''?`<em${al?' class="al"':''}>${badge}</em>`:''}<i></i></button>${panel===id?`<div class="pb">${cont}</div>`:''}</section>`;
 function pintar(){
  const SU=suspendidos();
- if(primera){primera=false;panel=SU.length?'susp':'carta'}
  let h=`<header><b>${esc(base.resto.nombre||'Mi carta')}</b><button id="und">Deshacer</button></header><main>`;
  h+=pn('susp','Suspendidos',SU.length,SU.length>0,SU.length?SU.map(x=>`<div class="sus" data-id="${esc(x.id)}"><div><b>${esc(x.n)}</b><small>${esc(x.s)}</small></div><button data-a="reactivar">Reactivar</button></div>`).join(''):'<div class="vac">No hay nada suspendido. Todo está disponible en la carta.</div>');
  let cart='';
@@ -100,7 +99,7 @@ app.addEventListener('click',e=>{
  if(a==='suspender'||a==='reactivar')return op({op:a,id});
  if(a==='quitar')return dlg(`<h3>¿Quitar «${esc(it.n)}» de la carta?</h3><p>Se puede deshacer desde el botón Deshacer.</p><div class="row"><button data-x>Cancelar</button><button class="go" id="ok">Quitar</button></div>`,()=>$('#ok').onclick=()=>{$('#dlg').classList.remove('on');op({op:'quitar',id})});
  if(a==='plegar'){const s=b.dataset.s;catAb=catAb===s?null:s;return pintar()}
- if(a==='panel'){const p=b.dataset.p;panel=panel===p?null:p;if(panel!=='carta')catAb=null;return pintar()}
+ if(a==='panel'){const p=b.dataset.p;if(panel===p)return;panel=p;if(p!=='carta')catAb=null;return pintar()}
  if(a==='limpiar'){hist=[];try{localStorage.removeItem(HK())}catch(x){}return pintar()}
  if(a==='editar'){const pr=it.v.length?it.v.map((v,k)=>`<label style="display:block;font-size:14px;margin:0 0 4px">Precio · ${esc(v.n)}</label><input class="pv" data-k="${k}" inputmode="numeric" value="${esc(v.p)}">`).join(''):`<label style="display:block;font-size:14px;margin:0 0 4px">Precio</label><input class="pv" inputmode="numeric" value="${esc(it.p??'')}">`;
   return dlg(`<h3>Editar plato</h3><label style="display:block;font-size:14px;margin:0 0 4px">Nombre</label><input id="nm" value="${esc(it.n)}" maxlength="80"><label style="display:block;font-size:14px;margin:0 0 4px">Descripción</label><textarea id="ds" rows="3" maxlength="300" placeholder="Descripción (opcional)">${esc(it.d||'')}</textarea>${pr}<div class="row"><button data-x>Cancelar</button><button class="go" id="ok">Guardar</button></div>`,()=>$('#ok').onclick=()=>{
