@@ -28,9 +28,14 @@ main{max-width:620px;margin:0 auto;padding:8px 16px 90px}
 .dlg .row{display:flex;gap:8px}.dlg .row button{flex:1}.dlg .go{background:#2B2B2B;color:#fff;border-color:#2B2B2B}
 .toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:#2B2B2B;color:#fff;padding:12px 18px;border-radius:12px;max-width:90%;z-index:10;display:none;font-size:15px}
 .err{color:var(--no)}.cent{padding:60px 20px;text-align:center}
+.ag{position:fixed;left:0;right:0;bottom:0;z-index:6;background:#fff;border-top:1px solid var(--line);padding:10px 12px calc(10px + env(safe-area-inset-bottom))}
+.ag form{max-width:620px;margin:0 auto;display:flex;gap:8px}.ag input{flex:1;min-width:0;font:16px system-ui;padding:0 14px;min-height:46px;border:1px solid var(--line);border-radius:99px}
+.ag button{min-height:46px;border-radius:99px;border:1px solid var(--line);background:#fff;font:700 14px system-ui;padding:0 16px}.ag .go{background:#2B2B2B;color:#fff;border-color:#2B2B2B}
+.ag #agm{width:48px;padding:0;font-size:20px}.ag #agm.rec{background:var(--no);color:#fff;border-color:var(--no)}.ag:not([hidden])+.toast{bottom:86px}
+.dlg ul{margin:0 0 14px;padding-left:20px}.dlg li{margin:0 0 6px}.dlg p{margin:0 0 12px}
 </style></head><body>
 <div id="app"><div class="cent">Cargando…</div></div>
-<div class="dlg" id="dlg"><div class="c" id="dc"></div></div><div class="toast" id="toast"></div>
+<div class="dlg" id="dlg"><div class="c" id="dc"></div></div><div class="ag" id="ag" hidden></div><div class="toast" id="toast"></div>
 <script>
 (async()=>{
 const $=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -76,6 +81,31 @@ app.addEventListener('click',e=>{
    $('#dlg').classList.remove('on');if(Object.keys(body).length>2)op(body);else toast('No hay cambios')})}
  if(a==='agregar'){const s=b.dataset.s;dlg(`<h3>Agregar plato</h3><input id="nm" placeholder="Nombre" maxlength="80"><textarea id="ds" rows="2" maxlength="300" placeholder="Descripción (opcional)"></textarea><input id="pv" inputmode="numeric" placeholder="Precio, ej. 9500"><div class="row"><button data-x>Cancelar</button><button class="go" id="ok">Agregar</button></div>`,()=>{$('#nm').focus();$('#ok').onclick=()=>{const n=Number($('#pv').value.replace(/\D/g,''));if(!$('#nm').value.trim()||!n)return toast('Falta el nombre o el precio');$('#dlg').classList.remove('on');op({op:'agregar',seccion:s,nombre:$('#nm').value,desc:$('#ds').value,precio:n})}})}
 });
+function initAg(){
+ const box=$('#ag'),SR=window.SpeechRecognition||window.webkitSpeechRecognition;box.hidden=false;
+ box.innerHTML=`<form id="agf"><input id="agt" maxlength="300" placeholder="Decime qué cambiar. Ej: no queda salmón" autocomplete="off" enterkeyhint="send"><button type="button" id="agm" aria-label="Hablar" ${SR?'':'hidden'}>🎤</button><button class="go" id="agb">Enviar</button></form>`;
+ let rec=null;
+ $('#agm').onclick=()=>{
+  if(rec){rec.stop();return}
+  rec=new SR();rec.lang='es-AR';rec.interimResults=true;rec.continuous=false;
+  rec.onresult=ev=>{let t='';for(const r of ev.results)t+=r[0].transcript;$('#agt').value=t.slice(0,300)};
+  rec.onend=()=>{rec=null;$('#agm').classList.remove('rec')};
+  rec.onerror=ev=>toast(ev.error==='not-allowed'||ev.error==='service-not-allowed'?'Permití el micrófono para dictar':'No pude escuchar; probá de nuevo o escribilo');
+  $('#agm').classList.add('rec');try{rec.start()}catch(x){rec=null;$('#agm').classList.remove('rec')}};
+ $('#agf').onsubmit=async ev=>{ev.preventDefault();if(rec)rec.stop();const t=$('#agt').value.trim();if(t.length<2)return;
+  const b=$('#agb');b.disabled=true;b.textContent='…';
+  try{const r=await api('/api/agente',{method:'POST',body:JSON.stringify({texto:t})});propuesta(r)}catch(e){toast(e.message)}
+  b.disabled=false;b.textContent='Enviar'};
+}
+function propuesta(r){
+ const ops=r.ops||[];
+ if(!ops.length)return dlg(`<h3>Asistente</h3><p>${esc(r.mensaje||'No entendí. ¿Me lo decís de otra forma?')}</p><div class="row"><button class="go" data-x>Entendido</button></div>`);
+ dlg(`<h3>¿Lo hago?</h3>${r.mensaje?'<p>'+esc(r.mensaje)+'</p>':''}<ul>${ops.map(o=>'<li>'+esc(o.txt)+'</li>').join('')}</ul><div class="row"><button data-x>No</button><button class="go" id="ok">Sí, hacerlo</button></div>`,()=>$('#ok').onclick=async()=>{
+  $('#dlg').classList.remove('on');let n=0,falla='';
+  for(const o of ops){const{txt,...b}=o;try{const x=await api('/api/op',{method:'POST',body:JSON.stringify(b)});est=x.estado;n++}catch(e){falla=e.message;break}}
+  pintar();$('#agt').value='';toast(falla?`Hice ${n} y falló uno: ${falla}`:(n===1?'Listo. Podés deshacerlo con «Deshacer».':`Listo: ${n} cambios. «Deshacer» los revierte de a uno.`))});
+}
+if(who.agente)initAg();
 cargar();
 })();
 </script></body></html>
