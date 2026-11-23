@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow"><meta name="theme-color" content="#2B2B2B"><title>Equipo · publicar carta</title>
+<style>
+:root{--bg:#F4F2EC;--tx:#222;--ac:#8A5A3C;--line:#DDD8CB;--ok:#3F7D4E;--no:#B3402F}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+header{background:#2B2B2B;color:#fff;padding:14px 16px;font-weight:700}
+main{max-width:640px;margin:0 auto;padding:14px 16px 80px}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;margin:14px 0}
+h2{margin:0 0 10px;font-size:17px}h2 span{display:inline-block;width:26px;height:26px;border-radius:50%;background:#2B2B2B;color:#fff;text-align:center;line-height:26px;font-size:14px;margin-right:8px}
+label{display:block;font-size:13px;margin:10px 0 4px;color:#555}
+input[type=text],select,input[type=file]{width:100%;font:16px system-ui;padding:11px;border:1px solid var(--line);border-radius:10px;background:#fff}
+.row{display:flex;gap:8px;flex-wrap:wrap}.row>*{flex:1;min-width:120px}
+.btn{min-height:46px;border-radius:10px;border:0;background:#2B2B2B;color:#fff;font:700 15px system-ui;padding:0 18px}
+.btn.s{background:#fff;color:#222;border:1px solid var(--line)}.btn:disabled{opacity:.35}
+.col{display:flex;gap:10px;align-items:center}.col input[type=color]{width:46px;height:42px;border:1px solid var(--line);border-radius:8px;padding:2px;background:#fff}
+.sw{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.ok{color:var(--ok)}.er{color:var(--no)}.av{color:#9a6b00}.mut{color:#666;font-size:14px}
+ul{margin:6px 0;padding-left:20px}a{color:var(--ac);font-weight:600}
+.qr{display:inline-block;padding:10px;background:#fff;border:1px solid var(--line);border-radius:10px;margin:6px 8px 6px 0;text-align:center;font-size:13px}.qr img{display:block;margin:0 auto 4px}
+.box{background:#FFF7E0;border:1px solid #E7CF86;border-radius:10px;padding:10px 12px;font-size:14px;margin:8px 0}
+.pub{display:flex;justify-content:space-between;gap:8px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}.pub:first-of-type{border-top:0}
+</style></head><body>
+<header>Equipo · publicar una carta</header>
+<main id="m"><div class="card">Cargando…</div></main>
+<script src="qr.js"></script>
+<script>
+(async()=>{
+const $=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let tok='';try{const h=new URLSearchParams(location.hash.slice(1)).get('t');if(h){localStorage.setItem('resto_eq',h);history.replaceState(null,'',location.pathname)}tok=localStorage.getItem('resto_eq')||''}catch(e){}
+const api=async(p,b)=>{const r=await fetch(p,{method:b?'POST':'GET',headers:{authorization:'Bearer '+tok,'content-type':'application/json'},body:b?JSON.stringify(b):undefined});const j=await r.json().catch(()=>({}));if(!r.ok){const e=new Error(j.error||'Error');e.det=j.errores;throw e}return j};
+const m=$('#m');
+let yo;try{yo=await api('/api/yo');if(yo.rol!=='equipo')throw 0}catch(e){m.innerHTML='<div class="card"><b>Acceso solo para el equipo.</b><p class="mut">Abrí el link de equipo que te dieron.</p></div>';return}
+const PRE={
+ 'Claro cálido':{fondo:'#FAF8F3',texto:'#2B2B2B',acento:'#8A5A3C',cabecera:'#8A5A3C',cabeceraTexto:'#FAF8F3',piedra:'#B7B1A1'},
+ 'Claro neutro':{fondo:'#FFFFFF',texto:'#1F1F1F',acento:'#1F6F5C',cabecera:'#1F6F5C',cabeceraTexto:'#FFFFFF',piedra:'#A9B8B2'},
+ 'Oscuro petróleo':{fondo:'#14282B',texto:'#EDE6D3',acento:'#D4A055',cabecera:'#D4A055',cabeceraTexto:'#14282B',piedra:'#7F9794'},
+ 'Oscuro grafito':{fondo:'#1C1C1E',texto:'#F2F2F2',acento:'#E0A458',cabecera:'#E0A458',cabeceraTexto:'#1C1C1E',piedra:'#8A8A8E'}};
+const FU=['Newsreader','DM Sans','Playfair Display','Cormorant Garamond','Inter','Lora','Fraunces','Work Sans'];
+const slugify=s=>s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,40);
+let P=null,borr=null;
+const CK=['fondo','texto','acento','cabecera','cabeceraTexto'];
+m.innerHTML=`
+<div class="card"><h2><span>1</span>Carta del Agente</h2><input type="file" id="f" accept=".json,application/json"><div id="inf" class="mut" style="margin-top:8px">Subí el archivo JSON que exportó el Agente de cartas.</div></div>
+<div class="card" id="c2" style="display:none"><h2><span>2</span>Dirección y estilo</h2>
+ <label>Dirección (resto.marianacaci.com/…)</label><input type="text" id="sl" maxlength="40" autocapitalize="none">
+ <label>Estilo base</label><select id="pre">${Object.keys(PRE).map(k=>`<option>${k}</option>`).join('')}</select>
+ <div class="row" style="margin-top:6px">${CK.map(k=>`<div><label>${k}</label><div class="col"><input type="color" id="k_${k}"></div></div>`).join('')}</div>
+ <div class="row"><div><label>Tipografía de títulos</label><select id="ft">${FU.map(f=>`<option>${f}</option>`).join('')}</select></div><div><label>Tipografía de cuerpo</label><select id="fb">${FU.map(f=>`<option${f==='DM Sans'?' selected':''}>${f}</option>`).join('')}</select></div></div>
+</div>
+<div class="card" id="c3" style="display:none"><h2><span>3</span>Vista previa y publicación</h2><button class="btn" id="bp">Crear vista previa</button><div id="vp"></div></div>
+<div class="card"><h2>Cartas publicadas</h2><div id="lst" class="mut">Cargando…</div></div>`;
+function aplicarPre(){const p=PRE[$('#pre').value];CK.forEach(k=>$('#k_'+k).value=p[k]);P&&(P._piedra=p.piedra)}
+$('#pre').onchange=aplicarPre;aplicarPre();
+$('#ft').value='Newsreader';
+$('#f').onchange=async e=>{
+ borr=null;$('#vp').innerHTML='';
+ try{P=JSON.parse(await e.target.files[0].text());if(!P.resto||!P.secciones)throw 0}catch(x){P=null;$('#inf').innerHTML='<span class="er">Ese archivo no es una carta del Agente.</span>';$('#c2').style.display=$('#c3').style.display='none';return}
+ const n=P.secciones.reduce((a,s)=>a+(s.items||[]).length,0),du=P.secciones.reduce((a,s)=>a+(s.items||[]).filter(i=>i.dudoso).length,0),h=P.secciones.filter(s=>s.foto).length;
+ $('#inf').innerHTML=`<b>${esc(P.resto.nombre)}</b> · ${P.secciones.length} secciones · ${n} platos · ${h} con hero${P.resto.mapa?' · con Google Maps':''}${du?`<div class="av">⚠ ${du} plato(s) dudoso(s) sin resolver. Revisalos antes de publicar.</div>`:''}`;
+ $('#sl').value=slugify(P.resto.nombre||'');$('#c2').style.display=$('#c3').style.display='block'};
+function paquete(){const p=JSON.parse(JSON.stringify(P));p.resto.tema={escala:'fina',pesoTitulos:400,titulos:$('#ft').value,cuerpo:$('#fb').value,piedra:PRE[$('#pre').value].piedra};CK.forEach(k=>p.resto.tema[k]=$('#k_'+k).value.toUpperCase());return p}
+const errs=e=>`<div class="er"><b>${esc(e.message)}</b>${e.det?'<ul>'+e.det.slice(0,12).map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul>':''}</div>`;
+$('#bp').onclick=async()=>{
+ const b=$('#bp');b.disabled=true;$('#vp').innerHTML='Creando…';
+ try{borr=await api('/api/equipo/borrador',{slug:$('#sl').value.trim(),paquete:paquete()});
+  $('#vp').innerHTML=`<p class="ok"><b>Vista previa lista</b> · ${borr.secciones} secciones, ${borr.platos} platos.</p>${(borr.avisos||[]).length?'<div class="av"><ul>'+borr.avisos.map(a=>'<li>'+esc(a)+'</li>').join('')+'</ul></div>':''}<p><a href="${borr.vista}" target="_blank" rel="noopener">Abrir vista previa ↗</a> <span class="mut">(link privado, dura 7 días)</span></p><div class="row"><button class="btn" id="pu">Publicar</button><button class="btn s" id="rp">Rehacer vista previa</button></div>`;
+  $('#rp').onclick=()=>$('#bp').click();
+  $('#pu').onclick=async()=>{if(!confirm('¿Publicar la carta en resto.marianacaci.com/'+$('#sl').value.trim()+'/ ?'))return;$('#pu').disabled=true;
+   try{const r=await api('/api/equipo/publicar',{slug:$('#sl').value.trim(),n:borr.n});publicada(r)}catch(e){$('#vp').insertAdjacentHTML('beforeend',errs(e));$('#pu').disabled=false}}
+ }catch(e){$('#vp').innerHTML=errs(e)}b.disabled=false};
+function qr(url,tit){const q=qrcode(0,'M');q.addData(url);q.make();return `<div class="qr">${q.createImgTag(5,8)}${esc(tit)}</div>`}
+function publicada(r){
+ const url=location.origin+r.url,her=r.herramienta?location.origin+r.herramienta:null;
+ $('#vp').innerHTML=`<p class="ok"><b>Publicada.</b></p><p>Carta: <a href="${esc(url)}" target="_blank" rel="noopener">${esc(url)}</a></p>${qr(url,'Carta (para las mesas)')}
+ ${her?`<div class="box"><b>Herramienta del comercio</b> — este link se muestra una sola vez. Entregáselo al responsable del local y no lo publiques.<br><br><input type="text" readonly value="${esc(her)}" onclick="this.select()"></div>${qr(her,'Herramienta (privado)')}`:'<p class="mut">Esta carta ya tenía link de herramienta. Si hace falta uno nuevo, usá «Link nuevo de herramienta» abajo.</p>'}`;
+ listar()}
+async function listar(){
+ try{const l=await api('/api/equipo/cartas');$('#lst').innerHTML=l.length?l.map(c=>`<div class="pub"><div><b>${esc(c.nombre||c.slug)}</b><br><a href="/${esc(c.slug)}/" target="_blank" rel="noopener">/${esc(c.slug)}/</a> <span class="mut">· versión ${c.n}</span></div><div class="row" style="flex:0 0 auto"><button class="btn s" data-r="${esc(c.slug)}" ${c.prev?'':'disabled'}>Revertir</button><button class="btn s" data-t="${esc(c.slug)}">Link nuevo de herramienta</button></div></div>`).join(''):'Todavía no hay cartas publicadas desde acá.'}catch(e){$('#lst').innerHTML=errs(e)}}
+$('#lst').onclick=async e=>{const r=e.target.dataset.r,t=e.target.dataset.t;
+ if(r&&confirm('¿Volver a la versión anterior de /'+r+'/ ?')){try{await api('/api/equipo/revertir',{slug:r});listar()}catch(x){alert(x.message)}}
+ if(t&&confirm('Esto invalida el link de herramienta actual de /'+t+'/ . ¿Generar uno nuevo?')){try{const j=await api('/api/equipo/token',{slug:t});const u=location.origin+j.herramienta;$('#lst').insertAdjacentHTML('afterbegin',`<div class="box"><b>Link nuevo de /${esc(t)}/</b> (se muestra una vez)<br><input type="text" readonly value="${esc(u)}" onclick="this.select()">${qr(u,'Herramienta (privado)')}</div>`)}catch(x){alert(x.message)}}};
+listar();
+})();
+</script></body></html>
