@@ -132,7 +132,7 @@ async function equipo(env,req,p,q){
   }
   if(req.method==='POST'&&p==='/api/equipo/agente'){
     if(!SLUG.test(slug))return J({error:'dirección inválida'},400);
-    if(b.on===true)await env.ESTADO.put('ag:'+slug,'1');else if(b.on===false)await env.ESTADO.delete('ag:'+slug);else return J({error:'falta on true/false'},400);
+    if(b.on===true)await env.ESTADO.delete('agoff:'+slug);else if(b.on===false)await env.ESTADO.put('agoff:'+slug,'1');else return J({error:'falta on true/false'},400);
     return J({ok:true,slug,on:b.on,clave:!!env.ANTHROPIC_API_KEY});
   }
   if(req.method==='POST'&&p==='/api/equipo/portal'){
@@ -145,7 +145,7 @@ async function equipo(env,req,p,q){
     if(!SLUG.test(slug))return J({error:'dirección inválida'},400);
     const vinc=!!(await env.ESTADO.get('pm:'+slug));let sonda=null;
     if(vinc&&env.RESTO_SVC_KEY){const c=await portal(env,'/api/svc/catalogo');sonda={http:c.status,productos:Array.isArray(c.j.productos)?c.j.productos.length:null,error:c.ok?null:(c.j.error||'sin detalle')}}
-    return J({slug,on:!!(await env.ESTADO.get('ag:'+slug)),clave:!!env.ANTHROPIC_API_KEY,portal:vinc,claveportal:!!env.RESTO_SVC_KEY,sonda});
+    return J({slug,on:await agOn(env,slug),clave:!!env.ANTHROPIC_API_KEY,portal:vinc,claveportal:!!env.RESTO_SVC_KEY,sonda});
   }
   if(req.method==='POST'&&p==='/api/equipo/token'){
     const pb=await env.ESTADO.get('pub:'+slug,'json');
@@ -202,7 +202,7 @@ const fichaCat=pr=>{const o={producto:pr.nombre,cat:pr.cat,versiones:pr.versione
   if((pr.caracteristicas||[]).length)o.caracteristicas=pr.caracteristicas.slice(0,12).map(c=>c.etiqueta+': '+c.valor);
   return o};
 async function agente(env,req,slug){
-  if(!env.ANTHROPIC_API_KEY||!(await env.ESTADO.get('ag:'+slug)))return J({error:'el asistente no está activado para esta carta'},403);
+  if(!env.ANTHROPIC_API_KEY||!(await agOn(env,slug)))return J({error:'el asistente no está activado para esta carta'},403);
   let b;try{b=await req.json()}catch(e){return J({error:'pedido inválido'},400)}
   const texto=txt(b.texto,300);if(texto.length<2)return J({error:'escribí qué necesitás'},400);
   const dia=new Date().toISOString().slice(0,10),ck=`agu:${slug}:${dia}`,tope=Number(env.AGENTE_TOPE)||30;
@@ -278,6 +278,8 @@ async function agente(env,req,slug){
   return J({mensaje,ops,restantes:Math.max(0,tope-usado-1)});
 }
 
+// El asistente viene activo; el equipo puede cortarlo por comercio (agoff:<slug>).
+async function agOn(env,slug){return !(await env.ESTADO.get('agoff:'+slug))}
 export default{
   async fetch(req,env){
     const u=new URL(req.url),p=u.pathname;
@@ -295,10 +297,10 @@ export default{
       const q=await quien(env,req);
       if(!q)return J({error:'sin acceso'},401);
       const slug=q.slug;
-      if(req.method==='GET'&&p==='/api/yo')return J({slug,rol:q.rol,agente:!!(env.ANTHROPIC_API_KEY&&await env.ESTADO.get('ag:'+slug))});
+      if(req.method==='GET'&&p==='/api/yo')return J({slug,rol:q.rol,agente:!!(env.ANTHROPIC_API_KEY&&await agOn(env,slug))});
       if(req.method==='POST'&&p==='/api/agente')return agente(env,req,slug);
       if(req.method==='POST'&&p==='/api/portal/acceso'){
-        if(!env.RESTO_SVC_KEY||!(await env.ESTADO.get('ag:'+slug)))return J({error:'el acceso a Marian no está activado para esta carta'},403);
+        if(!env.RESTO_SVC_KEY||!(await agOn(env,slug)))return J({error:'el acceso a Marian no está activado para esta carta'},403);
         const mail=await env.ESTADO.get('pm:'+slug);if(!mail)return J({error:'esta carta no está vinculada a un comercio del portal'},403);
         const ck='acc:'+slug+':'+new Date().toISOString().slice(0,10),n=Number(await env.ESTADO.get(ck))||0;
         if(n>=20)return J({error:'ya abriste Marian muchas veces hoy; entrá desde el portal'},429);
@@ -308,7 +310,7 @@ export default{
         return J({ok:true,url:PORTAL(env)+r.j.ruta});
       }
       if(req.method==='POST'&&p==='/api/reposicion'){
-        if(!env.RESTO_SVC_KEY||!(await env.ESTADO.get('ag:'+slug)))return J({error:'el pedido a Marian no está activado para esta carta'},403);
+        if(!env.RESTO_SVC_KEY||!(await agOn(env,slug)))return J({error:'el pedido a Marian no está activado para esta carta'},403);
         const mail=await env.ESTADO.get('pm:'+slug);if(!mail)return J({error:'esta carta no está vinculada a un comercio del portal'},403);
         let b;try{b=await req.json()}catch(e){return J({error:'pedido inválido'},400)}
         const ls=(Array.isArray(b.lineas)?b.lineas:[]).slice(0,15).map(l=>({pres:Math.floor(Number(l&&l.pres)),cantidad:Math.floor(Number(l&&l.cantidad))})).filter(l=>l.pres>0&&l.cantidad>0&&l.cantidad<=1000);
