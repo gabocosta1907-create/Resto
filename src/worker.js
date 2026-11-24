@@ -103,8 +103,13 @@ async function equipo(env,req,p,q){
   const slug=String(b.slug||new URL(req.url).searchParams.get('slug')||'');
   const link=async s=>{const tok=aleatorio(32);const old=await env.ESTADO.get('ct:'+s);if(old)await env.ESTADO.delete('tok:'+old);const h=await sha(tok);await env.ESTADO.put('tok:'+h,JSON.stringify({slug:s,rol:'comercio'}));await env.ESTADO.put('ct:'+s,h);return '/herramienta/#t='+tok};
   if(req.method==='GET'&&p==='/api/equipo/cartas'){
-    const l=await env.ESTADO.list({prefix:'pub:'});const out=[];
-    for(const k of l.keys){const s=k.name.slice(4);const pb=await env.ESTADO.get(k.name,'json');const c=await env.ESTADO.get(`cv:${s}:${pb.n}`,'json');out.push({slug:s,n:pb.n,prev:pb.prev||null,nombre:c&&c.resto.nombre})}
+    // Comercios: cartas publicadas desde Equipo + cartas fijas con herramienta entregada (ct:).
+    const pubs={};for(const k of (await env.ESTADO.list({prefix:'pub:'})).keys)pubs[k.name.slice(4)]=await env.ESTADO.get(k.name,'json');
+    const sl=new Set(Object.keys(pubs));for(const k of (await env.ESTADO.list({prefix:'ct:'})).keys)sl.add(k.name.slice(3));
+    const out=[];
+    for(const s of sl){if(!SLUG.test(s))continue;const pb=pubs[s];let c=null;
+      try{c=pb?await env.ESTADO.get(`cv:${s}:${pb.n}`,'json'):await carta(env,req,s)}catch(x){}
+      out.push({slug:s,n:pb?pb.n:null,prev:pb&&pb.prev||null,nombre:c&&c.resto&&c.resto.nombre,fija:!pb,asistente:await agOn(env,s),marian:!!(await env.ESTADO.get('pm:'+s))})}
     return J(out);
   }
   if(req.method==='POST'&&p==='/api/equipo/borrador'){
@@ -132,7 +137,7 @@ async function equipo(env,req,p,q){
   }
   if(req.method==='POST'&&p==='/api/equipo/agente'){
     if(!SLUG.test(slug))return J({error:'dirección inválida'},400);
-    if(b.on===true)await env.ESTADO.put('ag:'+slug,'1');else if(b.on===false)await env.ESTADO.delete('ag:'+slug);else return J({error:'falta on true/false'},400);
+    if(b.on===true)await env.ESTADO.delete('agoff:'+slug);else if(b.on===false)await env.ESTADO.put('agoff:'+slug,'1');else return J({error:'falta on true/false'},400);
     return J({ok:true,slug,on:b.on,clave:!!env.ANTHROPIC_API_KEY});
   }
   if(req.method==='POST'&&p==='/api/equipo/portal'){
@@ -141,11 +146,18 @@ async function equipo(env,req,p,q){
     else{const m=txt(b.email,120).toLowerCase();if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(m))return J({error:'mail inválido'},400);await env.ESTADO.put('pm:'+slug,m)}
     return J({ok:true,slug,vinculado:!!(await env.ESTADO.get('pm:'+slug)),clave:!!env.RESTO_SVC_KEY});
   }
+  if(req.method==='GET'&&p==='/api/equipo/consultas'){
+    if(!SLUG.test(slug))return J({error:'dirección inválida'},400);
+    const h=hoyAR(),ayer=new Date(Date.now()-3*3600e3-864e5).toISOString().slice(0,10);
+    const L=[...((await env.ESTADO.get(`lg:${slug}:${ayer}`,'json'))||[]),...((await env.ESTADO.get(`lg:${slug}:${h}`,'json'))||[])];
+    const usado=Number(await env.ESTADO.get(`agu:${slug}:${h}`))||0,tope=Number(await env.ESTADO.get('agt:'+slug))||Number(env.AGENTE_TOPE)||100;
+    return J({slug,hoy:usado,tope,consultas:L.slice(-60).reverse(),tokens:L.reduce((a,x)=>[a[0]+(x.u?x.u[0]:0),a[1]+(x.u?x.u[1]:0)],[0,0])});
+  }
   if(req.method==='GET'&&p==='/api/equipo/agente'){
     if(!SLUG.test(slug))return J({error:'dirección inválida'},400);
     const vinc=!!(await env.ESTADO.get('pm:'+slug));let sonda=null;
     if(vinc&&env.RESTO_SVC_KEY){const c=await portal(env,'/api/svc/catalogo');sonda={http:c.status,productos:Array.isArray(c.j.productos)?c.j.productos.length:null,error:c.ok?null:(c.j.error||'sin detalle')}}
-    return J({slug,on:!!(await env.ESTADO.get('ag:'+slug)),clave:!!env.ANTHROPIC_API_KEY,portal:vinc,claveportal:!!env.RESTO_SVC_KEY,sonda});
+    return J({slug,on:await agOn(env,slug),clave:!!env.ANTHROPIC_API_KEY,portal:vinc,claveportal:!!env.RESTO_SVC_KEY,sonda});
   }
   if(req.method==='POST'&&p==='/api/equipo/token'){
     const pb=await env.ESTADO.get('pub:'+slug,'json');
@@ -158,7 +170,7 @@ async function equipo(env,req,p,q){
 
 // ───────── Agente de Apoyo (lenguaje natural) — dormido por comercio ─────────
 // Solo PROPONE operaciones; no ejecuta nada. El celular las confirma y las manda a /api/op.
-const AG_OPS=['suspender','reactivar','precio','quitar','agregar','modificar','reposicion'];
+const AG_OPS=['suspender','reactivar','precio','quitar','agregar','modificar','reposicion','abrir_portal'];
 const AG_TOOL={name:'responder',description:'Respuesta al comercio: un mensaje corto y, si corresponde, las operaciones propuestas.',input_schema:{type:'object',required:['mensaje','ops'],properties:{
   mensaje:{type:'string',description:'Mensaje corto en español rioplatense. Si falta información o hay ambigüedad, es la pregunta. Si no se puede hacer lo pedido, lo explica en una frase.'},
   ops:{type:'array',maxItems:5,description:'Operaciones a proponer. Vacío si preguntás o no se puede.',items:{type:'object',required:['op'],properties:{
@@ -185,16 +197,27 @@ async function portal(env,path,body){
   }catch(x){return{ok:false,status:0,j:{error:'sin respuesta del portal'}}}finally{clearTimeout(to)}
 }
 const AG_REPO=`
-PEDIDOS A MARIAN (esta carta tiene vínculo con el portal mayorista)
-- SÍ podés ayudar a reponer mercadería que provee Marian. Usá la operación "reposicion" con "lineas" [{pres, cantidad}], con ids de versión de la lista "Catálogo de Marian" que te doy. Una sola operación "reposicion" con todas las líneas.
-- Si el producto no está en ese catálogo, decí que Marian no lo tiene cargado; no inventes ni sustituyas por otro.
-- Si el producto tiene varias versiones y no dijo cuál, o falta la cantidad, preguntá. Tené en cuenta mínimo, múltiplo y máximo de cada versión; si lo pedido no cumple, preguntá.
-- Esto no envía el pedido: queda armado como borrador en el portal y el comercio lo revisa y lo envía allá.`;
+MARIAN (esta carta tiene vínculo con el portal mayorista de Marian). Con Marian podés hacer cuatro cosas:
+1. REPONER: armar el borrador de un pedido con la operación "reposicion" y "lineas" [{pres, cantidad}], con ids de la lista "Catálogo de Marian". Una sola operación con todas las líneas.
+   - Si dice "lo de siempre", "lo mismo que la última vez" o algo parecido, usá "Lo que este comercio suele pedir a Marian" (versiones, veces que las pidió y última cantidad). Proponé esas versiones con su última cantidad y decí en el mensaje qué incluiste. Si no hay historial, decilo y preguntá qué necesita.
+   - Si el producto no está en el catálogo, decí que Marian no lo tiene cargado; no inventes ni sustituyas por otro.
+   - Si el producto tiene varias versiones y no dijo cuál, o falta la cantidad, preguntá. Respetá mínimo, múltiplo y máximo de cada versión; si lo pedido no cumple, preguntá.
+2. CONSULTAR EL CATÁLOGO ("¿qué más tiene Marian?", "¿qué tortas hay?", "¿cuánto sale X?"): respondé en el mensaje, sin operaciones, con nombres, versiones y precios del catálogo, agrupados por categoría ("cat"). Corto: hasta 6 líneas; si hay más, ofrecé seguir por categoría.
+3. DESCUBRIR PRODUCTOS ("¿tienen algo sin TACC?", "¿hay algún postre vegano?", "¿qué hay de nuevo?", "¿qué lleva la selva negra?"): respondé en el mensaje, sin operaciones, usando SOLO los datos del catálogo: "descripcion", "ingredientes", "caracteristicas", "conservacion", "recomendaciones" y la fecha "creado" (para novedades: lo cargado más recientemente).
+   - Para sin TACC, vegano, alérgenos o cualquier restricción alimentaria contestá SOLO si el dato figura explícito para ese producto. Nunca lo deduzcas del nombre, de la categoría ni de los ingredientes: es un tema de salud. Si no figura, decí que Marian todavía no tiene cargado ese dato y que lo consulte con Marian antes de ofrecerlo.
+   - Si ningún producto cumple, decilo y contá qué datos sí hay.
+   - Los pedidos se entregan en 48 a 72 horas. No tenés stock ni fechas exactas: si te las piden, decí que lo confirma Marian.
+4. ABRIR MARIAN ("abrime la pantalla de Marian", "quiero ver mi pedido", "quiero enviar el pedido"): proponé la operación "abrir_portal", sin más datos. Desde ahí el comercio revisa y envía.
+Nada de esto envía pedidos: el pedido queda como borrador y lo envía el comercio en el portal.`;
+const fichaCat=pr=>{const o={producto:pr.nombre,cat:pr.cat,versiones:pr.versiones.map(v=>({pres:v.id,nombre:v.nombre,precio:v.precio,minimo:v.minimo,multiplo:v.multiplo,maximo:v.maximo,unidad:v.unidad}))};
+  for(const k of ['creado','descripcion','ingredientes','conservacion','recomendaciones'])if(pr[k])o[k]=pr[k];
+  if((pr.caracteristicas||[]).length)o.caracteristicas=pr.caracteristicas.slice(0,12).map(c=>c.etiqueta+': '+c.valor);
+  return o};
 async function agente(env,req,slug){
-  if(!env.ANTHROPIC_API_KEY||!(await env.ESTADO.get('ag:'+slug)))return J({error:'el asistente no está activado para esta carta'},403);
+  if(!env.ANTHROPIC_API_KEY||!(await agOn(env,slug)))return J({error:'el asistente no está activado para esta carta'},403);
   let b;try{b=await req.json()}catch(e){return J({error:'pedido inválido'},400)}
   const texto=txt(b.texto,300);if(texto.length<2)return J({error:'escribí qué necesitás'},400);
-  const dia=new Date().toISOString().slice(0,10),ck=`agu:${slug}:${dia}`,tope=Number(env.AGENTE_TOPE)||30;
+  const dia=hoyAR(),ck=`agu:${slug}:${dia}`,tope=Number(await env.ESTADO.get('agt:'+slug))||Number(env.AGENTE_TOPE)||100;
   const usado=Number(await env.ESTADO.get(ck))||0;if(usado>=tope)return J({error:'llegaste al límite de pedidos por hoy; usá los botones o escribinos'},429);
   const base=await carta(env,req,slug);if(!base)return J({error:'carta no encontrada'},404);
   const e=(await env.ESTADO.get('est:'+slug,'json'))||vacio();
@@ -206,9 +229,11 @@ async function agente(env,req,slug){
   const secs=(base.secciones||[]).map(s=>({id:s.id,titulo:s.titulo}));
   let ctx='Secciones: '+JSON.stringify(secs)+'\nPlatos: '+JSON.stringify(lista.slice(0,400));
   const vinc=!!(env.RESTO_SVC_KEY&&await env.ESTADO.get('pm:'+slug));let cat=null,prec={};
-  if(vinc){const c=await portal(env,'/api/svc/catalogo');if(c.ok&&Array.isArray(c.j.productos)){cat=c.j.productos;
-    cat.forEach(pr=>pr.versiones.forEach(v=>prec[v.id]={n:pr.nombre+' '+v.nombre,p:v.precio}));
-    ctx+='\nCatálogo de Marian: '+JSON.stringify(cat.map(pr=>({producto:pr.nombre,versiones:pr.versiones.map(v=>({pres:v.id,nombre:v.nombre,precio:v.precio,minimo:v.minimo,multiplo:v.multiplo,maximo:v.maximo,unidad:v.unidad}))})).slice(0,80))}}
+  if(vinc){const mail=await env.ESTADO.get('pm:'+slug);const [c,h]=await Promise.all([portal(env,'/api/svc/catalogo'),portal(env,'/api/svc/historial',{email:mail})]);
+    if(c.ok&&Array.isArray(c.j.productos)){cat=c.j.productos;
+      cat.forEach(pr=>pr.versiones.forEach(v=>prec[v.id]={n:pr.nombre+' '+v.nombre,p:v.precio}));
+      ctx+='\nCatálogo de Marian: '+JSON.stringify(cat.slice(0,80).map(fichaCat));
+      if(h.ok&&h.j&&Array.isArray(h.j.items))ctx+='\nLo que este comercio suele pedir a Marian ('+(h.j.pedidos||0)+' pedidos enviados antes): '+JSON.stringify(h.j.items.filter(x=>prec[x.pres]))}}
   let r;
   try{
     const ctl=new AbortController(),to=setTimeout(()=>ctl.abort(),20000);
@@ -218,13 +243,14 @@ async function agente(env,req,slug){
   }catch(x){return J({error:'el asistente no respondió; probá de nuevo o usá los botones'},502)}
   if(!r.ok)return J({error:'el asistente no está disponible ahora; usá los botones'},502);
   await env.ESTADO.put(ck,String(usado+1),{expirationTtl:172800});
-  let out;try{const j=await r.json();out=(j.content||[]).find(c=>c.type==='tool_use'&&c.name==='responder').input}catch(x){return J({error:'no entendí la respuesta del asistente; probá de nuevo'},502)}
+  let out,uso=null;try{const j=await r.json();uso=j.usage||null;out=(j.content||[]).find(c=>c.type==='tool_use'&&c.name==='responder').input}catch(x){return J({error:'no entendí la respuesta del asistente; probá de nuevo'},502)}
   const nom=id=>(idx[id]&&idx[id].nombre)||((e.altas||[]).find(a=>a.id===id)||{}).nombre||id;
   const peso=n=>'$'+Math.round(n).toLocaleString('es-AR');
   const ops=[],rech=[];
   for(const o of (Array.isArray(out.ops)?out.ops:[]).slice(0,5)){
-    if(!o||!AG_OPS.includes(o.op)||(o.op==='reposicion'&&!cat)){rech.push('operación desconocida');continue}
+    if(!o||!AG_OPS.includes(o.op)||((o.op==='reposicion'||o.op==='abrir_portal')&&!cat)){rech.push('operación desconocida');continue}
     const k={op:o.op};
+    if(o.op==='abrir_portal'){if(!ops.some(x=>x.op==='abrir_portal')){k.txt='Abrir la pantalla de Marian (entrás directo, sin ingresar nada)';ops.push(k)}continue}
     if(o.op==='reposicion'){
       if(ops.some(x=>x.op==='reposicion')){rech.push('un solo pedido a Marian por vez');continue}
       const ls=(Array.isArray(o.lineas)?o.lineas:[]).map(l=>({pres:Math.floor(Number(l&&l.pres)),cantidad:Math.floor(Number(l&&l.cantidad))})).filter(l=>prec[l.pres]&&l.cantidad>0&&l.cantidad<=1000);
@@ -261,9 +287,16 @@ async function agente(env,req,slug){
   let mensaje=txt(out.mensaje,300);
   if(rech.length&&!ops.length)mensaje='No pude armar eso con seguridad. ¿Me lo decís de otra forma o usás los botones?';
   else if(rech.length)mensaje=(mensaje?mensaje+' ':'')+'(Dejé afuera '+rech.length+' cosa(s) que no pude validar.)';
+  try{const lk=`lg:${slug}:${dia}`,L=(await env.ESTADO.get(lk,'json'))||[];
+    L.push({t:new Date().toISOString(),texto,mensaje,ops:ops.map(o=>o.txt),u:uso?[uso.input_tokens||0,uso.output_tokens||0]:null});
+    await env.ESTADO.put(lk,JSON.stringify(L.slice(-400)),{expirationTtl:2592000})}catch(x){}
   return J({mensaje,ops,restantes:Math.max(0,tope-usado-1)});
 }
 
+// Día en hora argentina (UTC-3), para los topes diarios.
+const hoyAR=()=>new Date(Date.now()-3*3600e3).toISOString().slice(0,10);
+// El asistente viene activo; el equipo puede cortarlo por comercio (agoff:<slug>).
+async function agOn(env,slug){return !(await env.ESTADO.get('agoff:'+slug))}
 export default{
   async fetch(req,env){
     const u=new URL(req.url),p=u.pathname;
@@ -281,10 +314,20 @@ export default{
       const q=await quien(env,req);
       if(!q)return J({error:'sin acceso'},401);
       const slug=q.slug;
-      if(req.method==='GET'&&p==='/api/yo')return J({slug,rol:q.rol,agente:!!(env.ANTHROPIC_API_KEY&&await env.ESTADO.get('ag:'+slug))});
+      if(req.method==='GET'&&p==='/api/yo')return J({slug,rol:q.rol,agente:!!(env.ANTHROPIC_API_KEY&&await agOn(env,slug))});
       if(req.method==='POST'&&p==='/api/agente')return agente(env,req,slug);
+      if(req.method==='POST'&&p==='/api/portal/acceso'){
+        if(!env.RESTO_SVC_KEY||!(await agOn(env,slug)))return J({error:'el acceso a Marian no está activado para esta carta'},403);
+        const mail=await env.ESTADO.get('pm:'+slug);if(!mail)return J({error:'esta carta no está vinculada a un comercio del portal'},403);
+        const ck='acc:'+slug+':'+hoyAR(),n=Number(await env.ESTADO.get(ck))||0;
+        if(n>=20)return J({error:'ya abriste Marian muchas veces hoy; entrá desde el portal'},429);
+        const r=await portal(env,'/api/svc/acceso',{email:mail});
+        if(!r.ok||!r.j.ruta)return J({error:'no pude abrir Marian ahora; probá de nuevo'},502);
+        await env.ESTADO.put(ck,String(n+1),{expirationTtl:172800});
+        return J({ok:true,url:PORTAL(env)+r.j.ruta});
+      }
       if(req.method==='POST'&&p==='/api/reposicion'){
-        if(!env.RESTO_SVC_KEY||!(await env.ESTADO.get('ag:'+slug)))return J({error:'el pedido a Marian no está activado para esta carta'},403);
+        if(!env.RESTO_SVC_KEY||!(await agOn(env,slug)))return J({error:'el pedido a Marian no está activado para esta carta'},403);
         const mail=await env.ESTADO.get('pm:'+slug);if(!mail)return J({error:'esta carta no está vinculada a un comercio del portal'},403);
         let b;try{b=await req.json()}catch(e){return J({error:'pedido inválido'},400)}
         const ls=(Array.isArray(b.lineas)?b.lineas:[]).slice(0,15).map(l=>({pres:Math.floor(Number(l&&l.pres)),cantidad:Math.floor(Number(l&&l.cantidad))})).filter(l=>l.pres>0&&l.cantidad>0&&l.cantidad<=1000);
