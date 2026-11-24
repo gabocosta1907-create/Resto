@@ -297,7 +297,7 @@ async function agente(env,req,slug){
 const hoyAR=()=>new Date(Date.now()-3*3600e3).toISOString().slice(0,10);
 // El asistente viene activo; el equipo puede cortarlo por comercio (agoff:<slug>).
 async function agOn(env,slug){return !(await env.ESTADO.get('agoff:'+slug))}
-export default{
+const app={
   async fetch(req,env){
     const u=new URL(req.url),p=u.pathname;
     if(!p.startsWith('/api/')){
@@ -414,5 +414,19 @@ export default{
       }
       return J({error:'no existe'},404);
     }catch(err){return J({error:'error interno'},500)}
+  }
+};
+
+// El Agente de cartas (agente.marianacaci.com) publica desde su propia pantalla: solo él puede llamar a /api/equipo/*,
+// y de todos modos hace falta el token del equipo.
+const ORIGEN_AGENTE='https://agente.marianacaci.com';
+export default{
+  async fetch(req,env){
+    const p=new URL(req.url).pathname,cross=p.startsWith('/api/equipo/')&&req.headers.get('origin')===ORIGEN_AGENTE;
+    const h={'access-control-allow-origin':ORIGEN_AGENTE,'access-control-allow-headers':'authorization,content-type','access-control-allow-methods':'GET,POST,OPTIONS','access-control-max-age':'600',vary:'Origin'};
+    if(cross&&req.method==='OPTIONS')return new Response(null,{status:204,headers:h});
+    const r=await app.fetch(req,env);
+    if(!cross)return r;
+    const o=new Response(r.body,r);for(const k in h)o.headers.set(k,h[k]);return o;
   }
 };
