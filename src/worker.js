@@ -104,7 +104,7 @@ async function equipo(env,req,p,q){
   const link=async s=>{const tok=aleatorio(32);const old=await env.ESTADO.get('ct:'+s);if(old)await env.ESTADO.delete('tok:'+old);const h=await sha(tok);await env.ESTADO.put('tok:'+h,JSON.stringify({slug:s,rol:'comercio'}));await env.ESTADO.put('ct:'+s,h);return '/herramienta/#t='+tok};
   if(req.method==='GET'&&p==='/api/equipo/cartas'){
     const l=await env.ESTADO.list({prefix:'pub:'});const out=[];
-    for(const k of l.keys){const s=k.name.slice(4);const pb=await env.ESTADO.get(k.name,'json');const c=await env.ESTADO.get(`cv:${s}:${pb.n}`,'json');out.push({slug:s,n:pb.n,prev:pb.prev||null,nombre:c&&c.resto.nombre})}
+    for(const k of l.keys){const s=k.name.slice(4);const pb=await env.ESTADO.get(k.name,'json');const c=await env.ESTADO.get(`cv:${s}:${pb.n}`,'json');out.push({slug:s,n:pb.n,prev:pb.prev||null,nombre:c&&c.resto.nombre,asistente:await agOn(env,s),marian:!!(await env.ESTADO.get('pm:'+s))})}
     return J(out);
   }
   if(req.method==='POST'&&p==='/api/equipo/borrador'){
