@@ -191,9 +191,16 @@ MARIAN (esta carta tiene vínculo con el portal mayorista de Marian). Con Marian
    - Si el producto no está en el catálogo, decí que Marian no lo tiene cargado; no inventes ni sustituyas por otro.
    - Si el producto tiene varias versiones y no dijo cuál, o falta la cantidad, preguntá. Respetá mínimo, múltiplo y máximo de cada versión; si lo pedido no cumple, preguntá.
 2. CONSULTAR EL CATÁLOGO ("¿qué más tiene Marian?", "¿qué tortas hay?", "¿cuánto sale X?"): respondé en el mensaje, sin operaciones, con nombres, versiones y precios del catálogo, agrupados por categoría ("cat"). Corto: hasta 6 líneas; si hay más, ofrecé seguir por categoría.
-3. CONSULTAR DISPONIBILIDAD ("¿tienen X para el viernes?", "¿con cuánta anticipación lo pido?"): respondé en el mensaje con "disponibilidad" y "dias" (días de anticipación) de cada versión. No tenés stock ni fechas de entrega confirmadas: si te lo piden, decí que lo confirma Marian al recibir el pedido. No inventes.
+3. DESCUBRIR PRODUCTOS ("¿tienen algo sin TACC?", "¿hay algún postre vegano?", "¿qué hay de nuevo?", "¿qué lleva la selva negra?"): respondé en el mensaje, sin operaciones, usando SOLO los datos del catálogo: "descripcion", "ingredientes", "caracteristicas", "conservacion", "recomendaciones" y la fecha "creado" (para novedades: lo cargado más recientemente).
+   - Para sin TACC, vegano, alérgenos o cualquier restricción alimentaria contestá SOLO si el dato figura explícito para ese producto. Nunca lo deduzcas del nombre, de la categoría ni de los ingredientes: es un tema de salud. Si no figura, decí que Marian todavía no tiene cargado ese dato y que lo consulte con Marian antes de ofrecerlo.
+   - Si ningún producto cumple, decilo y contá qué datos sí hay.
+   - Los pedidos se entregan en 48 a 72 horas. No tenés stock ni fechas exactas: si te las piden, decí que lo confirma Marian.
 4. ABRIR MARIAN ("abrime la pantalla de Marian", "quiero ver mi pedido", "quiero enviar el pedido"): proponé la operación "abrir_portal", sin más datos. Desde ahí el comercio revisa y envía.
 Nada de esto envía pedidos: el pedido queda como borrador y lo envía el comercio en el portal.`;
+const fichaCat=pr=>{const o={producto:pr.nombre,cat:pr.cat,versiones:pr.versiones.map(v=>({pres:v.id,nombre:v.nombre,precio:v.precio,minimo:v.minimo,multiplo:v.multiplo,maximo:v.maximo,unidad:v.unidad}))};
+  for(const k of ['creado','descripcion','ingredientes','conservacion','recomendaciones'])if(pr[k])o[k]=pr[k];
+  if((pr.caracteristicas||[]).length)o.caracteristicas=pr.caracteristicas.slice(0,12).map(c=>c.etiqueta+': '+c.valor);
+  return o};
 async function agente(env,req,slug){
   if(!env.ANTHROPIC_API_KEY||!(await env.ESTADO.get('ag:'+slug)))return J({error:'el asistente no está activado para esta carta'},403);
   let b;try{b=await req.json()}catch(e){return J({error:'pedido inválido'},400)}
@@ -213,7 +220,7 @@ async function agente(env,req,slug){
   if(vinc){const mail=await env.ESTADO.get('pm:'+slug);const [c,h]=await Promise.all([portal(env,'/api/svc/catalogo'),portal(env,'/api/svc/historial',{email:mail})]);
     if(c.ok&&Array.isArray(c.j.productos)){cat=c.j.productos;
       cat.forEach(pr=>pr.versiones.forEach(v=>prec[v.id]={n:pr.nombre+' '+v.nombre,p:v.precio}));
-      ctx+='\nCatálogo de Marian: '+JSON.stringify(cat.map(pr=>({producto:pr.nombre,cat:pr.cat,versiones:pr.versiones.map(v=>({pres:v.id,nombre:v.nombre,precio:v.precio,minimo:v.minimo,multiplo:v.multiplo,maximo:v.maximo,unidad:v.unidad,disponibilidad:v.disponibilidad,dias:v.dias}))})).slice(0,80));
+      ctx+='\nCatálogo de Marian: '+JSON.stringify(cat.slice(0,80).map(fichaCat));
       if(h.ok&&h.j&&Array.isArray(h.j.items))ctx+='\nLo que este comercio suele pedir a Marian ('+(h.j.pedidos||0)+' pedidos enviados antes): '+JSON.stringify(h.j.items.filter(x=>prec[x.pres]))}}
   let r;
   try{
