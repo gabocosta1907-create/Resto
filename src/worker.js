@@ -180,7 +180,7 @@ const PORTAL=env=>(env.PORTAL_URL||'https://marian2.marianacaci.com').replace(/\
 async function portal(env,path,body){
   const ctl=new AbortController(),to=setTimeout(()=>ctl.abort(),9000);
   try{
-    const r=await fetch(PORTAL(env)+path,{method:body?'POST':'GET',signal:ctl.signal,headers:{'x-svc-key':env.RESTO_SVC_KEY,'content-type':'application/json'},body:body?JSON.stringify(body):undefined});
+    const r=await fetch(PORTAL(env)+path,{method:body?'POST':'GET',signal:ctl.signal,headers:{'x-svc-key':String(env.RESTO_SVC_KEY||'').trim(),'content-type':'application/json'},body:body?JSON.stringify(body):undefined});
     let j={};try{j=await r.json()}catch(x){}return{ok:r.ok,status:r.status,j};
   }catch(x){return{ok:false,status:0,j:{error:'sin respuesta del portal'}}}finally{clearTimeout(to)}
 }
