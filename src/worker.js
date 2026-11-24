@@ -141,6 +141,13 @@ async function equipo(env,req,p,q){
     else{const m=txt(b.email,120).toLowerCase();if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(m))return J({error:'mail inválido'},400);await env.ESTADO.put('pm:'+slug,m)}
     return J({ok:true,slug,vinculado:!!(await env.ESTADO.get('pm:'+slug)),clave:!!env.RESTO_SVC_KEY});
   }
+  if(req.method==='GET'&&p==='/api/equipo/consultas'){
+    if(!SLUG.test(slug))return J({error:'dirección inválida'},400);
+    const h=hoyAR(),ayer=new Date(Date.now()-3*3600e3-864e5).toISOString().slice(0,10);
+    const L=[...((await env.ESTADO.get(`lg:${slug}:${ayer}`,'json'))||[]),...((await env.ESTADO.get(`lg:${slug}:${h}`,'json'))||[])];
+    const usado=Number(await env.ESTADO.get(`agu:${slug}:${h}`))||0,tope=Number(await env.ESTADO.get('agt:'+slug))||Number(env.AGENTE_TOPE)||100;
+    return J({slug,hoy:usado,tope,consultas:L.slice(-60).reverse(),tokens:L.reduce((a,x)=>[a[0]+(x.u?x.u[0]:0),a[1]+(x.u?x.u[1]:0)],[0,0])});
+  }
   if(req.method==='GET'&&p==='/api/equipo/agente'){
     if(!SLUG.test(slug))return J({error:'dirección inválida'},400);
     const vinc=!!(await env.ESTADO.get('pm:'+slug));let sonda=null;
@@ -205,7 +212,7 @@ async function agente(env,req,slug){
   if(!env.ANTHROPIC_API_KEY||!(await agOn(env,slug)))return J({error:'el asistente no está activado para esta carta'},403);
   let b;try{b=await req.json()}catch(e){return J({error:'pedido inválido'},400)}
   const texto=txt(b.texto,300);if(texto.length<2)return J({error:'escribí qué necesitás'},400);
-  const dia=new Date().toISOString().slice(0,10),ck=`agu:${slug}:${dia}`,tope=Number(env.AGENTE_TOPE)||30;
+  const dia=hoyAR(),ck=`agu:${slug}:${dia}`,tope=Number(await env.ESTADO.get('agt:'+slug))||Number(env.AGENTE_TOPE)||100;
   const usado=Number(await env.ESTADO.get(ck))||0;if(usado>=tope)return J({error:'llegaste al límite de pedidos por hoy; usá los botones o escribinos'},429);
   const base=await carta(env,req,slug);if(!base)return J({error:'carta no encontrada'},404);
   const e=(await env.ESTADO.get('est:'+slug,'json'))||vacio();
@@ -231,7 +238,7 @@ async function agente(env,req,slug){
   }catch(x){return J({error:'el asistente no respondió; probá de nuevo o usá los botones'},502)}
   if(!r.ok)return J({error:'el asistente no está disponible ahora; usá los botones'},502);
   await env.ESTADO.put(ck,String(usado+1),{expirationTtl:172800});
-  let out;try{const j=await r.json();out=(j.content||[]).find(c=>c.type==='tool_use'&&c.name==='responder').input}catch(x){return J({error:'no entendí la respuesta del asistente; probá de nuevo'},502)}
+  let out,uso=null;try{const j=await r.json();uso=j.usage||null;out=(j.content||[]).find(c=>c.type==='tool_use'&&c.name==='responder').input}catch(x){return J({error:'no entendí la respuesta del asistente; probá de nuevo'},502)}
   const nom=id=>(idx[id]&&idx[id].nombre)||((e.altas||[]).find(a=>a.id===id)||{}).nombre||id;
   const peso=n=>'$'+Math.round(n).toLocaleString('es-AR');
   const ops=[],rech=[];
@@ -275,9 +282,14 @@ async function agente(env,req,slug){
   let mensaje=txt(out.mensaje,300);
   if(rech.length&&!ops.length)mensaje='No pude armar eso con seguridad. ¿Me lo decís de otra forma o usás los botones?';
   else if(rech.length)mensaje=(mensaje?mensaje+' ':'')+'(Dejé afuera '+rech.length+' cosa(s) que no pude validar.)';
+  try{const lk=`lg:${slug}:${dia}`,L=(await env.ESTADO.get(lk,'json'))||[];
+    L.push({t:new Date().toISOString(),texto,mensaje,ops:ops.map(o=>o.txt),u:uso?[uso.input_tokens||0,uso.output_tokens||0]:null});
+    await env.ESTADO.put(lk,JSON.stringify(L.slice(-400)),{expirationTtl:2592000})}catch(x){}
   return J({mensaje,ops,restantes:Math.max(0,tope-usado-1)});
 }
 
+// Día en hora argentina (UTC-3), para los topes diarios.
+const hoyAR=()=>new Date(Date.now()-3*3600e3).toISOString().slice(0,10);
 // El asistente viene activo; el equipo puede cortarlo por comercio (agoff:<slug>).
 async function agOn(env,slug){return !(await env.ESTADO.get('agoff:'+slug))}
 export default{
@@ -302,7 +314,7 @@ export default{
       if(req.method==='POST'&&p==='/api/portal/acceso'){
         if(!env.RESTO_SVC_KEY||!(await agOn(env,slug)))return J({error:'el acceso a Marian no está activado para esta carta'},403);
         const mail=await env.ESTADO.get('pm:'+slug);if(!mail)return J({error:'esta carta no está vinculada a un comercio del portal'},403);
-        const ck='acc:'+slug+':'+new Date().toISOString().slice(0,10),n=Number(await env.ESTADO.get(ck))||0;
+        const ck='acc:'+slug+':'+hoyAR(),n=Number(await env.ESTADO.get(ck))||0;
         if(n>=20)return J({error:'ya abriste Marian muchas veces hoy; entrá desde el portal'},429);
         const r=await portal(env,'/api/svc/acceso',{email:mail});
         if(!r.ok||!r.j.ruta)return J({error:'no pude abrir Marian ahora; probá de nuevo'},502);
