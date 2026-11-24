@@ -158,7 +158,7 @@ async function equipo(env,req,p,q){
 
 // ───────── Agente de Apoyo (lenguaje natural) — dormido por comercio ─────────
 // Solo PROPONE operaciones; no ejecuta nada. El celular las confirma y las manda a /api/op.
-const AG_OPS=['suspender','reactivar','precio','quitar','agregar','modificar','reposicion'];
+const AG_OPS=['suspender','reactivar','precio','quitar','agregar','modificar','reposicion','abrir_portal'];
 const AG_TOOL={name:'responder',description:'Respuesta al comercio: un mensaje corto y, si corresponde, las operaciones propuestas.',input_schema:{type:'object',required:['mensaje','ops'],properties:{
   mensaje:{type:'string',description:'Mensaje corto en español rioplatense. Si falta información o hay ambigüedad, es la pregunta. Si no se puede hacer lo pedido, lo explica en una frase.'},
   ops:{type:'array',maxItems:5,description:'Operaciones a proponer. Vacío si preguntás o no se puede.',items:{type:'object',required:['op'],properties:{
@@ -185,11 +185,15 @@ async function portal(env,path,body){
   }catch(x){return{ok:false,status:0,j:{error:'sin respuesta del portal'}}}finally{clearTimeout(to)}
 }
 const AG_REPO=`
-PEDIDOS A MARIAN (esta carta tiene vínculo con el portal mayorista)
-- SÍ podés ayudar a reponer mercadería que provee Marian. Usá la operación "reposicion" con "lineas" [{pres, cantidad}], con ids de versión de la lista "Catálogo de Marian" que te doy. Una sola operación "reposicion" con todas las líneas.
-- Si el producto no está en ese catálogo, decí que Marian no lo tiene cargado; no inventes ni sustituyas por otro.
-- Si el producto tiene varias versiones y no dijo cuál, o falta la cantidad, preguntá. Tené en cuenta mínimo, múltiplo y máximo de cada versión; si lo pedido no cumple, preguntá.
-- Esto no envía el pedido: queda armado como borrador en el portal y el comercio lo revisa y lo envía allá.`;
+MARIAN (esta carta tiene vínculo con el portal mayorista de Marian). Con Marian podés hacer cuatro cosas:
+1. REPONER: armar el borrador de un pedido con la operación "reposicion" y "lineas" [{pres, cantidad}], con ids de la lista "Catálogo de Marian". Una sola operación con todas las líneas.
+   - Si dice "lo de siempre", "lo mismo que la última vez" o algo parecido, usá "Lo que este comercio suele pedir a Marian" (versiones, veces que las pidió y última cantidad). Proponé esas versiones con su última cantidad y decí en el mensaje qué incluiste. Si no hay historial, decilo y preguntá qué necesita.
+   - Si el producto no está en el catálogo, decí que Marian no lo tiene cargado; no inventes ni sustituyas por otro.
+   - Si el producto tiene varias versiones y no dijo cuál, o falta la cantidad, preguntá. Respetá mínimo, múltiplo y máximo de cada versión; si lo pedido no cumple, preguntá.
+2. CONSULTAR EL CATÁLOGO ("¿qué más tiene Marian?", "¿qué tortas hay?", "¿cuánto sale X?"): respondé en el mensaje, sin operaciones, con nombres, versiones y precios del catálogo, agrupados por categoría ("cat"). Corto: hasta 6 líneas; si hay más, ofrecé seguir por categoría.
+3. CONSULTAR DISPONIBILIDAD ("¿tienen X para el viernes?", "¿con cuánta anticipación lo pido?"): respondé en el mensaje con "disponibilidad" y "dias" (días de anticipación) de cada versión. No tenés stock ni fechas de entrega confirmadas: si te lo piden, decí que lo confirma Marian al recibir el pedido. No inventes.
+4. ABRIR MARIAN ("abrime la pantalla de Marian", "quiero ver mi pedido", "quiero enviar el pedido"): proponé la operación "abrir_portal", sin más datos. Desde ahí el comercio revisa y envía.
+Nada de esto envía pedidos: el pedido queda como borrador y lo envía el comercio en el portal.`;
 async function agente(env,req,slug){
   if(!env.ANTHROPIC_API_KEY||!(await env.ESTADO.get('ag:'+slug)))return J({error:'el asistente no está activado para esta carta'},403);
   let b;try{b=await req.json()}catch(e){return J({error:'pedido inválido'},400)}
@@ -206,9 +210,11 @@ async function agente(env,req,slug){
   const secs=(base.secciones||[]).map(s=>({id:s.id,titulo:s.titulo}));
   let ctx='Secciones: '+JSON.stringify(secs)+'\nPlatos: '+JSON.stringify(lista.slice(0,400));
   const vinc=!!(env.RESTO_SVC_KEY&&await env.ESTADO.get('pm:'+slug));let cat=null,prec={};
-  if(vinc){const c=await portal(env,'/api/svc/catalogo');if(c.ok&&Array.isArray(c.j.productos)){cat=c.j.productos;
-    cat.forEach(pr=>pr.versiones.forEach(v=>prec[v.id]={n:pr.nombre+' '+v.nombre,p:v.precio}));
-    ctx+='\nCatálogo de Marian: '+JSON.stringify(cat.map(pr=>({producto:pr.nombre,versiones:pr.versiones.map(v=>({pres:v.id,nombre:v.nombre,precio:v.precio,minimo:v.minimo,multiplo:v.multiplo,maximo:v.maximo,unidad:v.unidad}))})).slice(0,80))}}
+  if(vinc){const mail=await env.ESTADO.get('pm:'+slug);const [c,h]=await Promise.all([portal(env,'/api/svc/catalogo'),portal(env,'/api/svc/historial',{email:mail})]);
+    if(c.ok&&Array.isArray(c.j.productos)){cat=c.j.productos;
+      cat.forEach(pr=>pr.versiones.forEach(v=>prec[v.id]={n:pr.nombre+' '+v.nombre,p:v.precio}));
+      ctx+='\nCatálogo de Marian: '+JSON.stringify(cat.map(pr=>({producto:pr.nombre,cat:pr.cat,versiones:pr.versiones.map(v=>({pres:v.id,nombre:v.nombre,precio:v.precio,minimo:v.minimo,multiplo:v.multiplo,maximo:v.maximo,unidad:v.unidad,disponibilidad:v.disponibilidad,dias:v.dias}))})).slice(0,80));
+      if(h.ok&&h.j&&Array.isArray(h.j.items))ctx+='\nLo que este comercio suele pedir a Marian ('+(h.j.pedidos||0)+' pedidos enviados antes): '+JSON.stringify(h.j.items.filter(x=>prec[x.pres]))}}
   let r;
   try{
     const ctl=new AbortController(),to=setTimeout(()=>ctl.abort(),20000);
@@ -223,8 +229,9 @@ async function agente(env,req,slug){
   const peso=n=>'$'+Math.round(n).toLocaleString('es-AR');
   const ops=[],rech=[];
   for(const o of (Array.isArray(out.ops)?out.ops:[]).slice(0,5)){
-    if(!o||!AG_OPS.includes(o.op)||(o.op==='reposicion'&&!cat)){rech.push('operación desconocida');continue}
+    if(!o||!AG_OPS.includes(o.op)||((o.op==='reposicion'||o.op==='abrir_portal')&&!cat)){rech.push('operación desconocida');continue}
     const k={op:o.op};
+    if(o.op==='abrir_portal'){if(!ops.some(x=>x.op==='abrir_portal')){k.txt='Abrir la pantalla de Marian (entrás directo, sin ingresar nada)';ops.push(k)}continue}
     if(o.op==='reposicion'){
       if(ops.some(x=>x.op==='reposicion')){rech.push('un solo pedido a Marian por vez');continue}
       const ls=(Array.isArray(o.lineas)?o.lineas:[]).map(l=>({pres:Math.floor(Number(l&&l.pres)),cantidad:Math.floor(Number(l&&l.cantidad))})).filter(l=>prec[l.pres]&&l.cantidad>0&&l.cantidad<=1000);
@@ -283,6 +290,16 @@ export default{
       const slug=q.slug;
       if(req.method==='GET'&&p==='/api/yo')return J({slug,rol:q.rol,agente:!!(env.ANTHROPIC_API_KEY&&await env.ESTADO.get('ag:'+slug))});
       if(req.method==='POST'&&p==='/api/agente')return agente(env,req,slug);
+      if(req.method==='POST'&&p==='/api/portal/acceso'){
+        if(!env.RESTO_SVC_KEY||!(await env.ESTADO.get('ag:'+slug)))return J({error:'el acceso a Marian no está activado para esta carta'},403);
+        const mail=await env.ESTADO.get('pm:'+slug);if(!mail)return J({error:'esta carta no está vinculada a un comercio del portal'},403);
+        const ck='acc:'+slug+':'+new Date().toISOString().slice(0,10),n=Number(await env.ESTADO.get(ck))||0;
+        if(n>=20)return J({error:'ya abriste Marian muchas veces hoy; entrá desde el portal'},429);
+        const r=await portal(env,'/api/svc/acceso',{email:mail});
+        if(!r.ok||!r.j.ruta)return J({error:'no pude abrir Marian ahora; probá de nuevo'},502);
+        await env.ESTADO.put(ck,String(n+1),{expirationTtl:172800});
+        return J({ok:true,url:PORTAL(env)+r.j.ruta});
+      }
       if(req.method==='POST'&&p==='/api/reposicion'){
         if(!env.RESTO_SVC_KEY||!(await env.ESTADO.get('ag:'+slug)))return J({error:'el pedido a Marian no está activado para esta carta'},403);
         const mail=await env.ESTADO.get('pm:'+slug);if(!mail)return J({error:'esta carta no está vinculada a un comercio del portal'},403);
