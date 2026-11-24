@@ -119,23 +119,23 @@ function initAg(){
  const TRIG=/[\s,.]*\b(listo|enviar|enviá|enviar ya|dale|mandalo|mandá|eso es todo)[\s.!]*$/i;
  const mk=()=>{const r=new SR();r.lang='es-AR';r.continuous=false;return r};
  const parar=()=>{voz=false;if(rec){try{rec.stop()}catch(x){}rec=null}$('#agm').classList.remove('rec')};
- const enviar=async()=>{parar();const t=$('#agt').value.trim();if(t.length<2)return;
+ const enviar=async(pv)=>{parar();const t=$('#agt').value.trim();if(t.length<2)return;
   const b=$('#agb');b.disabled=true;b.classList.add('busy');
-  logh('yo',t);try{const r=await api('/api/agente',{method:'POST',body:JSON.stringify({texto:t})});logh('ag',(r.mensaje||'')+((r.ops||[]).length?' → Propongo: '+r.ops.map(o=>o.txt).join('; '):''));propuesta(r,true)}catch(e){toast(e.message)}
+  logh('yo',t);try{const r=await api('/api/agente',{method:'POST',body:JSON.stringify({texto:t})});logh('ag',(r.mensaje||'')+((r.ops||[]).length?' → Propongo: '+r.ops.map(o=>o.txt).join('; '):''));propuesta(r,!!pv)}catch(e){toast(e.message)}
   b.disabled=false;b.classList.remove('busy')};
  const oir=()=>{
   rec=mk();rec.interimResults=true;let ult='',err=false;
   rec.onresult=ev=>{let t='';for(const r of ev.results)t+=r[0].transcript;ult=t;$('#agt').value=((base?base+' ':'')+t).slice(0,300)};
   rec.onerror=ev=>{err=true;voz=false;toast(ev.error==='not-allowed'||ev.error==='service-not-allowed'?'Permití el micrófono para dictar':ev.error==='no-speech'?'No te escuché. Tocá el micrófono y probá de nuevo':'No pude escuchar; probá de nuevo o escribilo')};
   rec.onend=()=>{rec=null;const v=$('#agt').value;
-   if(TRIG.test(v)){$('#agt').value=v.replace(TRIG,'').trim();return enviar()}
+   if(TRIG.test(v)){$('#agt').value=v.replace(TRIG,'').trim();return enviar(true)}
    if(voz&&!err){base=$('#agt').value.trim();setTimeout(()=>{if(voz)try{oir()}catch(x){parar()}},150)}else parar()};
   try{rec.start()}catch(x){parar()}};
  $('#agm').onclick=()=>{if(voz){parar();return}voz=true;base=$('#agt').value.trim();$('#agm').classList.add('rec');oir()};
- $('#agf').onsubmit=ev=>{ev.preventDefault();enviar()};
+ $('#agf').onsubmit=ev=>{ev.preventDefault();enviar(false)};
  // respuesta hablada a una pregunta o confirmación: se activa sólo si el comercio estaba usando la voz
  window.agOirAclaracion=()=>{if(!SR)return;const prev=$('#agt').value.trim();let n=0;const go=()=>{if(n++>2||!$('#dlg').classList.contains('on'))return;const r=mk();let ok=false;
-  r.onresult=ev=>{const t=(ev.results[0][0].transcript||'').trim();if(!t)return;ok=true;$('#dlg').classList.remove('on');$('#agt').value=(prev+' '+t.replace(TRIG,'')).slice(0,300).trim();enviar()};
+  r.onresult=ev=>{const t=(ev.results[0][0].transcript||'').trim();if(!t)return;ok=true;$('#dlg').classList.remove('on');$('#agt').value=(prev+' '+t.replace(TRIG,'')).slice(0,300).trim();enviar(true)};
   r.onend=()=>{if(!ok)setTimeout(go,150)};r.onerror=()=>{ok=true};try{r.start()}catch(x){}};go()};
  window.agOirRespuesta=(si,no)=>{if(!SR)return;let n=0;const go=()=>{if(n++>2)return;const r=mk();let ok=false;
   r.onresult=ev=>{const t=(ev.results[0][0].transcript||'').toLowerCase().trim();ok=true;
@@ -144,7 +144,7 @@ function initAg(){
 }
 function propuesta(r,porVoz){
  const ops=r.ops||[];
- if(!ops.length)return dlg(`<h3>Asistente</h3><p>${esc(r.mensaje||'No entendí. ¿Me lo decís de otra forma?')}</p><div class="row"><button class="go" data-x>Entendido</button></div>`,()=>{if(porVoz&&window.agOirAclaracion)window.agOirAclaracion()});
+ if(!ops.length)return dlg(`<h3>Asistente</h3><p>${esc(r.mensaje||'No entendí. ¿Me lo decís de otra forma?')}</p><div class="row"><button class="go" data-x>Entendido</button></div>`,()=>{if(porVoz&&/\?/.test(r.mensaje||'')&&window.agOirAclaracion)window.agOirAclaracion()});
  dlg(`<h3>¿Lo hago?</h3>${r.mensaje?'<p>'+esc(r.mensaje)+'</p>':''}<ul>${ops.map(o=>'<li>'+esc(o.txt)+((o.avisos||[]).length?'<br><small style="color:#B3402F">Ojo: '+o.avisos.map(esc).join('; ')+'. Lo podés ajustar en el portal antes de enviar.</small>':'')+'</li>').join('')}</ul><div class="row"><button data-x>No</button><button class="go" id="ok">Sí, hacerlo</button></div>`,()=>{if(porVoz&&window.agOirRespuesta)window.agOirRespuesta(()=>$('#ok').click(),()=>document.querySelector('#dlg [data-x]').click());$('#ok').onclick=async()=>{
   $('#dlg').classList.remove('on');let n=0,falla='';
   let rep=null;for(const o of ops){const{txt,avisos,...b}=o;try{if(o.op==='reposicion'){rep=await api('/api/reposicion',{method:'POST',body:JSON.stringify({lineas:o.lineas})});n++}else{const x=await api('/api/op',{method:'POST',body:JSON.stringify(b)});est=x.estado;n++}}catch(e){falla=e.message;break}}

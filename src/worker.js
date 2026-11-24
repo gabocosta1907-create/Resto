@@ -143,7 +143,9 @@ async function equipo(env,req,p,q){
   }
   if(req.method==='GET'&&p==='/api/equipo/agente'){
     if(!SLUG.test(slug))return J({error:'dirección inválida'},400);
-    return J({slug,on:!!(await env.ESTADO.get('ag:'+slug)),clave:!!env.ANTHROPIC_API_KEY,portal:!!(await env.ESTADO.get('pm:'+slug)),claveportal:!!env.RESTO_SVC_KEY});
+    const vinc=!!(await env.ESTADO.get('pm:'+slug));let sonda=null;
+    if(vinc&&env.RESTO_SVC_KEY){const c=await portal(env,'/api/svc/catalogo');sonda={http:c.status,productos:Array.isArray(c.j.productos)?c.j.productos.length:null,error:c.ok?null:(c.j.error||'sin detalle')}}
+    return J({slug,on:!!(await env.ESTADO.get('ag:'+slug)),clave:!!env.ANTHROPIC_API_KEY,portal:vinc,claveportal:!!env.RESTO_SVC_KEY,sonda});
   }
   if(req.method==='POST'&&p==='/api/equipo/token'){
     const pb=await env.ESTADO.get('pub:'+slug,'json');
