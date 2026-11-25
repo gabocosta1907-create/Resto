@@ -129,7 +129,7 @@ async function equipo(env,req,p,q){
     const out=[];
     for(const s of sl){if(!SLUG.test(s))continue;const ow=await own(s);if(!A.admin&&!(ow&&ow.op===A.id))continue;const pb=pubs[s];let c=null;
       try{c=pb?await env.ESTADO.get(`cv:${s}:${pb.n}`,'json'):await carta(env,req,s)}catch(x){}
-      out.push({slug:s,n:pb?pb.n:null,prev:pb&&pb.prev||null,nombre:c&&c.resto&&c.resto.nombre,fija:!pb,asistente:await agOn(env,s),marian:!!(await env.ESTADO.get('pm:'+s)),pendiente:((await env.ESTADO.get('pmq:'+s,'json'))||{}).mail||null,op:ow&&ow.op?{id:ow.op,nombre:ow.nombre}:null})}
+      out.push({slug:s,n:pb?pb.n:null,prev:pb&&pb.prev||null,nombre:c&&c.resto&&c.resto.nombre,fija:!pb,asistente:await agOn(env,s),marian:!!(await env.ESTADO.get('pm:'+s)),marianMail:A.admin?(await env.ESTADO.get('pm:'+s))||null:undefined,pendiente:((await env.ESTADO.get('pmq:'+s,'json'))||{}).mail||null,op:ow&&ow.op?{id:ow.op,nombre:ow.nombre}:null})}
     return J(out);
   }
   if(req.method==='POST'&&p==='/api/equipo/borrador'){
