@@ -97,56 +97,88 @@ async function servirKV(env,req,p){
   return m[2]==='/resto.json'?jsonRes(c):plantilla(env,req,c);
 }
 
+// ───────── Operadores, operador responsable por comercio y bitácora ─────────
+// Quién actúa lo declara el Agente (cabecera x-actor) y solo se acepta con el token del equipo, que solo tiene el servidor del Agente.
+// Sin cabecera = el equipo/administrador (así sigue funcionando /equipo/).
+const OPID=/^[a-z0-9][a-z0-9-]{1,29}$/;
+async function actor(env,req){
+  const id=String(req.headers.get('x-actor')||'').trim();
+  if(!id||id==='admin')return{id:'admin',nombre:'Administrador',admin:true};
+  if(!OPID.test(id))return null;
+  const o=await env.ESTADO.get('op:'+id,'json');
+  return o&&o.activo?{id,nombre:o.nombre,admin:false}:null;
+}
+async function bit(env,A,accion,slug,det){
+  try{const t=new Date().toISOString();
+    await env.ESTADO.put('bit:'+String(9999999999999-Date.now()).padStart(13,'0')+':'+aleatorio(3),JSON.stringify({t,op:A.id,nombre:A.nombre,accion,slug:slug||null,det:det||null}),{expirationTtl:31536000})}catch(e){}
+}
+
 async function equipo(env,req,p,q){
   if(q.rol!=='equipo')return J({error:'solo el equipo'},403);
   let b={};if(req.method==='POST'){try{b=await req.json()}catch(e){return J({error:'pedido inválido'},400)}}
   const slug=String(b.slug||new URL(req.url).searchParams.get('slug')||'');
+  const A=await actor(env,req);if(!A)return J({error:'operador no válido o dado de baja'},403);
+  const own=async s=>await env.ESTADO.get('own:'+s,'json');
+  const puede=async s=>A.admin||(((await own(s))||{}).op===A.id);
+  const NOES=J({error:'esa carta no es tuya'},403),SOLOADM=J({error:'solo el administrador'},403);
   const link=async s=>{const tok=aleatorio(32);const old=await env.ESTADO.get('ct:'+s);if(old)await env.ESTADO.delete('tok:'+old);const h=await sha(tok);await env.ESTADO.put('tok:'+h,JSON.stringify({slug:s,rol:'comercio'}));await env.ESTADO.put('ct:'+s,h);return '/herramienta/#t='+tok};
   if(req.method==='GET'&&p==='/api/equipo/cartas'){
     // Comercios: cartas publicadas desde Equipo + cartas fijas con herramienta entregada (ct:).
     const pubs={};for(const k of (await env.ESTADO.list({prefix:'pub:'})).keys)pubs[k.name.slice(4)]=await env.ESTADO.get(k.name,'json');
     const sl=new Set(Object.keys(pubs));for(const k of (await env.ESTADO.list({prefix:'ct:'})).keys)sl.add(k.name.slice(3));
     const out=[];
-    for(const s of sl){if(!SLUG.test(s))continue;const pb=pubs[s];let c=null;
+    for(const s of sl){if(!SLUG.test(s))continue;const ow=await own(s);if(!A.admin&&!(ow&&ow.op===A.id))continue;const pb=pubs[s];let c=null;
       try{c=pb?await env.ESTADO.get(`cv:${s}:${pb.n}`,'json'):await carta(env,req,s)}catch(x){}
-      out.push({slug:s,n:pb?pb.n:null,prev:pb&&pb.prev||null,nombre:c&&c.resto&&c.resto.nombre,fija:!pb,asistente:await agOn(env,s),marian:!!(await env.ESTADO.get('pm:'+s))})}
+      out.push({slug:s,n:pb?pb.n:null,prev:pb&&pb.prev||null,nombre:c&&c.resto&&c.resto.nombre,fija:!pb,asistente:await agOn(env,s),marian:!!(await env.ESTADO.get('pm:'+s)),op:ow&&ow.op?{id:ow.op,nombre:ow.nombre}:null})}
     return J(out);
   }
   if(req.method==='POST'&&p==='/api/equipo/borrador'){
     if(!SLUG.test(slug)||['api','p','js','css','img','data','herramienta','equipo','plantilla'].includes(slug))return J({error:'dirección inválida (usá letras minúsculas, números y guiones)'},400);
     const pb=await env.ESTADO.get('pub:'+slug,'json');
+    {const ow=await own(slug);if(!A.admin&&(ow?ow.op!==A.id:!!pb))return J({error:'esa dirección es de otro operador o del equipo; elegí otra'},403)}
     if(!pb){const r=await env.ASSETS.fetch(new URL(`/${slug}/resto.json`,req.url));if(r.ok)return J({error:'esa dirección ya existe como carta fija; elegí otra'},409)}
     const L=limpiar(b.paquete,slug);if(L.er.length)return J({error:'La carta tiene errores',errores:L.er},422);
     const n=((await env.ESTADO.get('cn:'+slug,'json'))||0)+1;
     await env.ESTADO.put('cn:'+slug,JSON.stringify(n));await env.ESTADO.put(`cv:${slug}:${n}`,JSON.stringify(L.o));
+    if(!A.admin&&!(await own(slug)))await env.ESTADO.put('own:'+slug,JSON.stringify({op:A.id,nombre:A.nombre,hist:[{op:A.id,t:new Date().toISOString()}]}));
+    await bit(env,A,'carta.borrador',slug,{n});
     const tok=aleatorio(16);await env.ESTADO.put('pv:'+tok,JSON.stringify({slug,n}),{expirationTtl:604800});
     return J({ok:true,n,vista:`/p/${tok}/`,avisos:L.av,platos:L.ni,secciones:L.o.secciones.length});
   }
   if(req.method==='POST'&&p==='/api/equipo/publicar'){
     const n=Number(b.n);if(!SLUG.test(slug)||!Number.isInteger(n))return J({error:'faltan datos'},400);
+    if(!(await puede(slug)))return NOES;
     const c=await env.ESTADO.get(`cv:${slug}:${n}`,'json');if(!c)return J({error:'ese borrador no existe'},404);
     const pb=await env.ESTADO.get('pub:'+slug,'json');
     await env.ESTADO.put('pub:'+slug,JSON.stringify({n,prev:pb?pb.n:null,t:new Date().toISOString()}));
+    await bit(env,A,'carta.publicar',slug,{n});
     const nuevo=!(await env.ESTADO.get('ct:'+slug));
     return J({ok:true,url:'/'+slug+'/',herramienta:nuevo?await link(slug):null});
   }
   if(req.method==='POST'&&p==='/api/equipo/revertir'){
+    if(!A.admin)return SOLOADM;
     const pb=await env.ESTADO.get('pub:'+slug,'json');if(!pb||!pb.prev)return J({error:'no hay versión anterior'},409);
     await env.ESTADO.put('pub:'+slug,JSON.stringify({n:pb.prev,prev:pb.n,t:new Date().toISOString()}));
+    await bit(env,A,'carta.revertir',slug,{n:pb.prev});
     return J({ok:true,n:pb.prev});
   }
   if(req.method==='POST'&&p==='/api/equipo/agente'){
+    if(!A.admin)return SOLOADM;
     if(!SLUG.test(slug))return J({error:'dirección inválida'},400);
     if(b.on===true)await env.ESTADO.delete('agoff:'+slug);else if(b.on===false)await env.ESTADO.put('agoff:'+slug,'1');else return J({error:'falta on true/false'},400);
+    await bit(env,A,b.on?'asistente.habilitar':'asistente.cortar',slug);
     return J({ok:true,slug,on:b.on,clave:!!env.ANTHROPIC_API_KEY});
   }
   if(req.method==='POST'&&p==='/api/equipo/portal'){
+    if(!(await puede(slug)))return NOES;
     if(!SLUG.test(slug))return J({error:'dirección inválida'},400);
     if(b.email===null||b.email==='')await env.ESTADO.delete('pm:'+slug);
     else{const m=txt(b.email,120).toLowerCase();if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(m))return J({error:'mail inválido'},400);await env.ESTADO.put('pm:'+slug,m)}
+    await bit(env,A,(b.email===null||b.email==='')?'marian.desvincular':'marian.vincular',slug);
     return J({ok:true,slug,vinculado:!!(await env.ESTADO.get('pm:'+slug)),clave:!!env.RESTO_SVC_KEY});
   }
   if(req.method==='GET'&&p==='/api/equipo/consultas'){
+    if(!A.admin)return SOLOADM;
     if(!SLUG.test(slug))return J({error:'dirección inválida'},400);
     const h=hoyAR(),ayer=new Date(Date.now()-3*3600e3-864e5).toISOString().slice(0,10);
     const L=[...((await env.ESTADO.get(`lg:${slug}:${ayer}`,'json'))||[]),...((await env.ESTADO.get(`lg:${slug}:${h}`,'json'))||[])];
@@ -154,15 +186,64 @@ async function equipo(env,req,p,q){
     return J({slug,hoy:usado,tope,consultas:L.slice(-60).reverse(),tokens:L.reduce((a,x)=>[a[0]+(x.u?x.u[0]:0),a[1]+(x.u?x.u[1]:0)],[0,0])});
   }
   if(req.method==='GET'&&p==='/api/equipo/agente'){
+    if(!A.admin)return SOLOADM;
     if(!SLUG.test(slug))return J({error:'dirección inválida'},400);
     const vinc=!!(await env.ESTADO.get('pm:'+slug));let sonda=null;
     if(vinc&&env.RESTO_SVC_KEY){const c=await portal(env,'/api/svc/catalogo');sonda={http:c.status,productos:Array.isArray(c.j.productos)?c.j.productos.length:null,error:c.ok?null:(c.j.error||'sin detalle')}}
     return J({slug,on:await agOn(env,slug),clave:!!env.ANTHROPIC_API_KEY,portal:vinc,claveportal:!!env.RESTO_SVC_KEY,sonda});
   }
   if(req.method==='POST'&&p==='/api/equipo/token'){
+    if(!(await puede(slug)))return NOES;
     const pb=await env.ESTADO.get('pub:'+slug,'json');
     if(!pb){if(!SLUG.test(slug))return J({error:'dirección inválida'},400);const r=await env.ASSETS.fetch(new URL(`/${slug}/resto.json`,req.url));if(!r.ok)return J({error:'no existe una carta con esa dirección'},404)}
-    return J({ok:true,herramienta:await link(slug)});
+    {const h=await link(slug);await bit(env,A,'acceso.nuevo',slug);return J({ok:true,herramienta:h})}
+  }
+  if(p==='/api/equipo/op/quien'&&req.method==='POST'){
+    const k=String(b.clave||'').trim();if(k.length<20)return J({error:'no'},404);
+    const id=await env.ESTADO.get('opk:'+await sha(k));const o=id&&await env.ESTADO.get('op:'+id,'json');
+    if(!o||!o.activo)return J({error:'no'},404);
+    if(!o.ult||Date.now()-Date.parse(o.ult)>600000){o.ult=new Date().toISOString();await env.ESTADO.put('op:'+id,JSON.stringify(o))}
+    return J({id,nombre:o.nombre});
+  }
+  if(p==='/api/equipo/bitacora'&&req.method==='POST'){
+    if(b.accion!=='lectura')return J({error:'acción no permitida'},400);
+    await bit(env,A,'lectura',null,b.det&&typeof b.det==='object'?{n:Number(b.det.n)||null}:null);return J({ok:true});
+  }
+  if(p==='/api/equipo/operadores'||p==='/api/equipo/operadores/revocar'||p==='/api/equipo/reasignar'||p==='/api/equipo/bitacora'){
+    if(!A.admin)return SOLOADM;
+    if(p==='/api/equipo/operadores'&&req.method==='GET'){
+      const cuenta={};for(const k of (await env.ESTADO.list({prefix:'own:'})).keys){const o=await env.ESTADO.get(k.name,'json');if(o&&o.op)cuenta[o.op]=(cuenta[o.op]||0)+1}
+      const out=[];for(const k of (await env.ESTADO.list({prefix:'op:'})).keys){const o=await env.ESTADO.get(k.name,'json');if(o)out.push({id:o.id,nombre:o.nombre,activo:!!o.activo,creado:o.creado,ult:o.ult||null,comercios:cuenta[o.id]||0})}
+      return J(out);
+    }
+    if(p==='/api/equipo/operadores'&&req.method==='POST'){
+      const nombre=txt(b.nombre,40);if(!nombre)return J({error:'falta el nombre'},400);
+      let id=nombre.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,24);
+      if(id.length<2||id==='admin')id='operador';
+      if(await env.ESTADO.get('op:'+id))id=id.slice(0,20)+'-'+aleatorio(2);
+      const clave='op'+aleatorio(24),h=await sha(clave);
+      await env.ESTADO.put('op:'+id,JSON.stringify({id,nombre,activo:true,creado:new Date().toISOString(),h}));
+      await env.ESTADO.put('opk:'+h,id);await bit(env,A,'operador.alta',null,{id,nombre});
+      return J({ok:true,id,nombre,clave});
+    }
+    if(p==='/api/equipo/operadores/revocar'&&req.method==='POST'){
+      const o=OPID.test(String(b.id||''))?await env.ESTADO.get('op:'+b.id,'json'):null;if(!o)return J({error:'no existe ese operador'},404);
+      o.activo=false;await env.ESTADO.put('op:'+o.id,JSON.stringify(o));if(o.h)await env.ESTADO.delete('opk:'+o.h);
+      await bit(env,A,'operador.baja',null,{id:o.id});return J({ok:true,id:o.id});
+    }
+    if(p==='/api/equipo/reasignar'&&req.method==='POST'){
+      if(!SLUG.test(slug))return J({error:'dirección inválida'},400);
+      const existe=(await own(slug))||(await env.ESTADO.get('pub:'+slug))||(await env.ESTADO.get('ct:'+slug));if(!existe)return J({error:'no existe un comercio con esa dirección'},404);
+      let nuevo=null;if(b.op){const o=OPID.test(String(b.op))?await env.ESTADO.get('op:'+b.op,'json'):null;if(!o||!o.activo)return J({error:'ese operador no existe o está dado de baja'},400);nuevo=o}
+      const ow=(await own(slug))||{hist:[]};ow.op=nuevo?nuevo.id:null;ow.nombre=nuevo?nuevo.nombre:null;ow.hist=[...(ow.hist||[]),{op:ow.op,t:new Date().toISOString(),por:A.id}].slice(-20);
+      await env.ESTADO.put('own:'+slug,JSON.stringify(ow));await bit(env,A,'comercio.reasignar',slug,{a:ow.op});
+      return J({ok:true,slug,op:ow.op?{id:ow.op,nombre:ow.nombre}:null});
+    }
+    if(p==='/api/equipo/bitacora'&&req.method==='GET'){
+      const n=Math.min(Math.max(parseInt(new URL(req.url).searchParams.get('n')||'50',10)||50,1),200);
+      const ks=(await env.ESTADO.list({prefix:'bit:',limit:n})).keys;const out=[];for(const k of ks){const v=await env.ESTADO.get(k.name,'json');if(v)out.push(v)}
+      return J(out);
+    }
   }
   return J({error:'no existe'},404);
 }
