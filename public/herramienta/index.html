@@ -87,6 +87,11 @@ function pintar(){
    <div class="acc"><button data-a="editar">Editar</button><button class="q" data-a="quitar">Quitar</button></div></div>`});cart+='</div>'}});
  h+=pn('carta','Carta',base.secciones.filter(s=>!s.oculta).length+' categorías',false,cart);
  if(who.agente)h+=pn('hist','Conversación con el Agente',hist.length||'',false,hist.length?hist.map(x=>`<div class="hi ${x.k}"><small>${esc(x.h)}</small><p>${x.k==='yo'?'<b>Vos:</b> ':x.k==='ok'?'<b>Hecho:</b> ':'<b>Agente:</b> '}${esc(x.txt)}</p></div>`).join('')+'<button class="lim" data-a="limpiar">Borrar conversación</button>':'<div class="vac">Todavía no hablaste con el Agente hoy.</div>');
+ if(who.marian){const M=who.marian;
+  const mc=M.estado==='vinculado'?`<p style="margin:12px 0">Está activo. Podés pedirle al asistente «abrime Marian» o tocar el botón.</p><div class="row"><button class="go" data-a="marir">Ir a Marian</button></div>`
+   :M.estado==='pendiente'?`<p style="margin:12px 0">Pedimos activarlo con <b>${esc(M.mail||'')}</b>. Nuestro equipo lo confirma y te avisamos por acá: cuando esté listo vas a ver el botón «Ir a Marian».</p><button class="lim" data-a="marcan">Cancelar el pedido</button>`
+   :`<p style="margin:12px 0">Con tu mail, el asistente puede mostrarte el catálogo de Marian, armar tu pedido de reposición y abrirte el portal. Es opcional.</p><input id="mm" type="email" inputmode="email" autocomplete="email" maxlength="120" placeholder="El mail con el que te registraste en Marian" style="width:100%;font:16px system-ui;padding:12px 14px;border:1px solid var(--line);border-radius:12px;margin:0 0 10px"><div class="row"><button class="go" data-a="marsol">Pedir activación</button></div>`;
+  h+=pn('marian','Pedidos a Marian',M.estado==='vinculado'?'activo':M.estado==='pendiente'?'pendiente':'',M.estado==='pendiente',mc)}
  app.innerHTML=h+'</main>';
  $('#und').disabled=!(est.v>0);
 }
@@ -99,6 +104,9 @@ app.addEventListener('click',e=>{
  if(a==='suspender'||a==='reactivar')return op({op:a,id});
  if(a==='quitar')return dlg(`<h3>¿Quitar «${esc(it.n)}» de la carta?</h3><p>Se puede deshacer desde el botón Deshacer.</p><div class="row"><button data-x>Cancelar</button><button class="go" id="ok">Quitar</button></div>`,()=>$('#ok').onclick=()=>{$('#dlg').classList.remove('on');op({op:'quitar',id})});
  if(a==='plegar'){const s=b.dataset.s;catAb=catAb===s?null:s;return pintar()}
+ if(a==='marir'){const w=window.open('','_blank');return abrirMarian(w)}
+ if(a==='marsol'){const m=($('#mm')||{}).value||'';return api('/api/portal/solicitar',{method:'POST',body:JSON.stringify({email:m})}).then(r=>{who.marian={estado:'pendiente',mail:r.mail};pintar();toast('Listo. Lo confirma nuestro equipo.')}).catch(e=>toast(e.message))}
+ if(a==='marcan'){return api('/api/portal/cancelar',{method:'POST',body:'{}'}).then(()=>{who.marian={estado:'ninguno',mail:null};pintar()}).catch(e=>toast(e.message))}
  if(a==='panel'){const p=b.dataset.p;if(panel===p)return;panel=p;if(p!=='carta')catAb=null;return pintar()}
  if(a==='limpiar'){hist=[];try{localStorage.removeItem(HK())}catch(x){}return pintar()}
  if(a==='editar'){const pr=it.v.length?it.v.map((v,k)=>`<label style="display:block;font-size:14px;margin:0 0 4px">Precio · ${esc(v.n)}</label><input class="pv" data-k="${k}" inputmode="numeric" value="${esc(v.p)}">`).join(''):`<label style="display:block;font-size:14px;margin:0 0 4px">Precio</label><input class="pv" inputmode="numeric" value="${esc(it.p??'')}">`;

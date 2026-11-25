@@ -129,7 +129,7 @@ async function equipo(env,req,p,q){
     const out=[];
     for(const s of sl){if(!SLUG.test(s))continue;const ow=await own(s);if(!A.admin&&!(ow&&ow.op===A.id))continue;const pb=pubs[s];let c=null;
       try{c=pb?await env.ESTADO.get(`cv:${s}:${pb.n}`,'json'):await carta(env,req,s)}catch(x){}
-      out.push({slug:s,n:pb?pb.n:null,prev:pb&&pb.prev||null,nombre:c&&c.resto&&c.resto.nombre,fija:!pb,asistente:await agOn(env,s),marian:!!(await env.ESTADO.get('pm:'+s)),op:ow&&ow.op?{id:ow.op,nombre:ow.nombre}:null})}
+      out.push({slug:s,n:pb?pb.n:null,prev:pb&&pb.prev||null,nombre:c&&c.resto&&c.resto.nombre,fija:!pb,asistente:await agOn(env,s),marian:!!(await env.ESTADO.get('pm:'+s)),pendiente:((await env.ESTADO.get('pmq:'+s,'json'))||{}).mail||null,op:ow&&ow.op?{id:ow.op,nombre:ow.nombre}:null})}
     return J(out);
   }
   if(req.method==='POST'&&p==='/api/equipo/borrador'){
@@ -169,11 +169,20 @@ async function equipo(env,req,p,q){
     await bit(env,A,b.on?'asistente.habilitar':'asistente.cortar',slug);
     return J({ok:true,slug,on:b.on,clave:!!env.ANTHROPIC_API_KEY});
   }
+  if(req.method==='POST'&&p==='/api/equipo/portal/resolver'){
+    if(!A.admin)return SOLOADM;
+    if(!SLUG.test(slug))return J({error:'dirección inválida'},400);
+    const sol=await env.ESTADO.get('pmq:'+slug,'json');if(!sol||!sol.mail)return J({error:'no hay una solicitud para esa carta'},404);
+    if(b.aprobar===true){await env.ESTADO.put('pm:'+slug,sol.mail);await env.ESTADO.delete('pmq:'+slug);await bit(env,A,'marian.aprobar',slug);return J({ok:true,slug,vinculado:true})}
+    if(b.aprobar===false){await env.ESTADO.delete('pmq:'+slug);await bit(env,A,'marian.rechazar',slug);return J({ok:true,slug,vinculado:false})}
+    return J({error:'falta aprobar true/false'},400);
+  }
   if(req.method==='POST'&&p==='/api/equipo/portal'){
-    if(!(await puede(slug)))return NOES;
+    if(!A.admin)return SOLOADM;
     if(!SLUG.test(slug))return J({error:'dirección inválida'},400);
     if(b.email===null||b.email==='')await env.ESTADO.delete('pm:'+slug);
     else{const m=txt(b.email,120).toLowerCase();if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(m))return J({error:'mail inválido'},400);await env.ESTADO.put('pm:'+slug,m)}
+    await env.ESTADO.delete('pmq:'+slug);
     await bit(env,A,(b.email===null||b.email==='')?'marian.desvincular':'marian.vincular',slug);
     return J({ok:true,slug,vinculado:!!(await env.ESTADO.get('pm:'+slug)),clave:!!env.RESTO_SVC_KEY});
   }
@@ -395,7 +404,22 @@ const app={
       const q=await quien(env,req);
       if(!q)return J({error:'sin acceso'},401);
       const slug=q.slug;
-      if(req.method==='GET'&&p==='/api/yo')return J({slug,rol:q.rol,agente:!!(env.ANTHROPIC_API_KEY&&await agOn(env,slug))});
+      if(req.method==='GET'&&p==='/api/yo'){
+        let marian=null;
+        if(q.rol==='comercio'&&env.RESTO_SVC_KEY){const pm=await env.ESTADO.get('pm:'+slug),pq=await env.ESTADO.get('pmq:'+slug,'json');marian={estado:pm?'vinculado':(pq?'pendiente':'ninguno'),mail:pq&&pq.mail||null}}
+        return J({slug,rol:q.rol,agente:!!(env.ANTHROPIC_API_KEY&&await agOn(env,slug)),marian});
+      }
+      if(q.rol==='comercio'&&req.method==='POST'&&p==='/api/portal/solicitar'){
+        if(!env.RESTO_SVC_KEY)return J({error:'el pedido a Marian todavía no está disponible'},503);
+        if(await env.ESTADO.get('pm:'+slug))return J({error:'ya está activo'},409);
+        let b;try{b=await req.json()}catch(e){return J({error:'pedido inválido'},400)}
+        const m=txt(b.email,120).toLowerCase();if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(m))return J({error:'ese mail no parece válido'},400);
+        const ck='pmn:'+slug+':'+hoyAR(),n=Number(await env.ESTADO.get(ck))||0;if(n>=5)return J({error:'ya pediste varias veces hoy; probá mañana'},429);
+        await env.ESTADO.put(ck,String(n+1),{expirationTtl:172800});
+        await env.ESTADO.put('pmq:'+slug,JSON.stringify({mail:m,t:Date.now()}));
+        return J({ok:true,estado:'pendiente',mail:m});
+      }
+      if(q.rol==='comercio'&&req.method==='POST'&&p==='/api/portal/cancelar'){await env.ESTADO.delete('pmq:'+slug);return J({ok:true,estado:'ninguno'})}
       if(req.method==='POST'&&p==='/api/agente')return agente(env,req,slug);
       if(req.method==='POST'&&p==='/api/portal/acceso'){
         if(!env.RESTO_SVC_KEY||!(await agOn(env,slug)))return J({error:'el acceso a Marian no está activado para esta carta'},403);
