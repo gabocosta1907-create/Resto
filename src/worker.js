@@ -106,7 +106,7 @@ async function actor(env,req){
   if(!id||id==='admin')return{id:'admin',nombre:'Administrador',admin:true};
   if(!OPID.test(id))return null;
   const o=await env.ESTADO.get('op:'+id,'json');
-  return o&&o.activo?{id,nombre:o.nombre,admin:false}:null;
+  return o&&o.activo&&!o.bloq?{id,nombre:o.nombre,admin:false}:null;
 }
 async function bit(env,A,accion,slug,det){
   try{const t=new Date().toISOString();
@@ -256,7 +256,7 @@ async function equipo(env,req,p,q){
   if(p==='/api/equipo/op/quien'&&req.method==='POST'){
     const k=String(b.clave||'').trim();if(k.length<20)return J({error:'no'},404);
     const id=await env.ESTADO.get('opk:'+await sha(k));const o=id&&await env.ESTADO.get('op:'+id,'json');
-    if(!o||!o.activo)return J({error:'no'},404);
+    if(!o||!o.activo||o.bloq)return J({error:'no'},404);
     if(!o.ult||Date.now()-Date.parse(o.ult)>600000){o.ult=new Date().toISOString();await env.ESTADO.put('op:'+id,JSON.stringify(o))}
     return J({id,nombre:o.nombre});
   }
@@ -264,11 +264,11 @@ async function equipo(env,req,p,q){
     if(b.accion!=='lectura')return J({error:'acción no permitida'},400);
     await bit(env,A,'lectura',null,b.det&&typeof b.det==='object'?{n:Number(b.det.n)||null}:null);return J({ok:true});
   }
-  if(p==='/api/equipo/operadores'||p==='/api/equipo/operadores/revocar'||p==='/api/equipo/reasignar'||p==='/api/equipo/bitacora'){
+  if(p==='/api/equipo/operadores'||p==='/api/equipo/operadores/revocar'||p==='/api/equipo/operadores/acceso'||p==='/api/equipo/operadores/estado'||p==='/api/equipo/reasignar'||p==='/api/equipo/bitacora'){
     if(!A.admin)return SOLOADM;
     if(p==='/api/equipo/operadores'&&req.method==='GET'){
       const cuenta={};for(const k of (await env.ESTADO.list({prefix:'own:'})).keys){const o=await env.ESTADO.get(k.name,'json');if(o&&o.op)cuenta[o.op]=(cuenta[o.op]||0)+1}
-      const out=[];for(const k of (await env.ESTADO.list({prefix:'op:'})).keys){const o=await env.ESTADO.get(k.name,'json');if(o)out.push({id:o.id,nombre:o.nombre,activo:!!o.activo,creado:o.creado,ult:o.ult||null,comercios:cuenta[o.id]||0})}
+      const out=[];for(const k of (await env.ESTADO.list({prefix:'op:'})).keys){const o=await env.ESTADO.get(k.name,'json');if(o)out.push({id:o.id,nombre:o.nombre,activo:!!o.activo,bloqueado:!!o.bloq,creado:o.creado,ult:o.ult||null,comercios:cuenta[o.id]||0})}
       return J(out);
     }
     if(p==='/api/equipo/operadores'&&req.method==='POST'){
@@ -280,6 +280,32 @@ async function equipo(env,req,p,q){
       await env.ESTADO.put('op:'+id,JSON.stringify({id,nombre,activo:true,creado:new Date().toISOString(),h}));
       await env.ESTADO.put('opk:'+h,id);await bit(env,A,'operador.alta',null,{id,nombre});
       return J({ok:true,id,nombre,clave});
+    }
+    // Nuevo acceso: reemplaza la clave del operador (la anterior deja de valer) y no toca sus comercios. Sirve cuando pierde el QR.
+    const cambiarClave=async o=>{const clave='op'+aleatorio(24),h=await sha(clave);if(o.h)await env.ESTADO.delete('opk:'+o.h);o.h=h;await env.ESTADO.put('opk:'+h,o.id);return clave};
+    if(p==='/api/equipo/operadores/acceso'&&req.method==='POST'){
+      const o=OPID.test(String(b.id||''))?await env.ESTADO.get('op:'+b.id,'json'):null;if(!o)return J({error:'no existe ese operador'},404);
+      if(!o.activo)return J({error:'ese operador está dado de baja: reactivalo primero'},409);
+      const clave=await cambiarClave(o);await env.ESTADO.put('op:'+o.id,JSON.stringify(o));
+      await bit(env,A,'operador.acceso',null,{id:o.id});return J({ok:true,id:o.id,nombre:o.nombre,clave,bloqueado:!!o.bloq});
+    }
+    // Bloquear = pausa temporal (conserva la clave y los comercios). Reactivar = levanta el bloqueo; si estaba dado de baja, vuelve con clave nueva.
+    if(p==='/api/equipo/operadores/estado'&&req.method==='POST'){
+      const o=OPID.test(String(b.id||''))?await env.ESTADO.get('op:'+b.id,'json'):null;if(!o)return J({error:'no existe ese operador'},404);
+      if(b.accion==='bloquear'){
+        if(!o.activo)return J({error:'ese operador ya está dado de baja'},409);
+        if(o.bloq)return J({error:'ya estaba bloqueado'},409);
+        o.bloq=true;await env.ESTADO.put('op:'+o.id,JSON.stringify(o));await bit(env,A,'operador.bloquear',null,{id:o.id});
+        return J({ok:true,id:o.id,bloqueado:true});
+      }
+      if(b.accion==='reactivar'){
+        if(o.activo&&!o.bloq)return J({error:'ya estaba activo'},409);
+        let clave=null;
+        if(!o.activo){o.activo=true;o.bloq=false;clave=await cambiarClave(o)}else o.bloq=false;
+        await env.ESTADO.put('op:'+o.id,JSON.stringify(o));await bit(env,A,'operador.reactivar',null,{id:o.id,clave_nueva:!!clave});
+        return J({ok:true,id:o.id,nombre:o.nombre,bloqueado:false,clave});
+      }
+      return J({error:'falta accion: bloquear o reactivar'},400);
     }
     if(p==='/api/equipo/operadores/revocar'&&req.method==='POST'){
       const o=OPID.test(String(b.id||''))?await env.ESTADO.get('op:'+b.id,'json'):null;if(!o)return J({error:'no existe ese operador'},404);

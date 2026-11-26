@@ -1,97 +1,149 @@
 <!doctype html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="robots" content="noindex,nofollow"><meta name="theme-color" content="#2B2B2B"><title>Equipo · publicar carta</title>
+<meta name="robots" content="noindex,nofollow"><meta name="theme-color" content="#2B2B2B"><title>Administración del equipo</title>
 <style>
-:root{--bg:#F4F2EC;--tx:#222;--ac:#8A5A3C;--line:#DDD8CB;--ok:#3F7D4E;--no:#B3402F}
+:root{--bg:#F4F2EC;--tx:#222;--ac:#8A5A3C;--line:#DDD8CB;--ok:#3F7D4E;--no:#B3402F;--av:#9a6b00}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
-header{background:#2B2B2B;color:#fff;padding:14px 16px;font-weight:700}
-main{max-width:640px;margin:0 auto;padding:14px 16px 80px}
+header{background:#2B2B2B;color:#fff;padding:12px 16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+header b{font-size:17px}header .sp{flex:1}
+header a,header button.l{color:#fff;opacity:.85;background:none;border:0;font:14px system-ui;text-decoration:underline;cursor:pointer;padding:0}
+nav{display:flex;gap:8px;padding:12px 16px 0;max-width:980px;margin:0 auto;flex-wrap:wrap}
+nav button{min-height:42px;border-radius:999px;border:1px solid var(--line);background:#fff;font:700 15px system-ui;padding:0 18px;cursor:pointer;color:#222}
+nav button.on{background:#2B2B2B;color:#fff;border-color:#2B2B2B}
+nav .n{display:inline-block;min-width:20px;padding:0 6px;margin-left:6px;border-radius:999px;background:var(--no);color:#fff;font-size:12px;line-height:20px;text-align:center}
+main{max-width:980px;margin:0 auto;padding:6px 16px 90px}
 .card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;margin:14px 0}
-h2{margin:0 0 10px;font-size:17px}h2 span{display:inline-block;width:26px;height:26px;border-radius:50%;background:#2B2B2B;color:#fff;text-align:center;line-height:26px;font-size:14px;margin-right:8px}
+h2{margin:0 0 10px;font-size:18px}h3{margin:0 0 6px;font-size:16px}
 label{display:block;font-size:13px;margin:10px 0 4px;color:#555}
-input[type=text],select,input[type=file]{width:100%;font:16px system-ui;padding:11px;border:1px solid var(--line);border-radius:10px;background:#fff}
-.row{display:flex;gap:8px;flex-wrap:wrap}.row>*{flex:1;min-width:120px}
-.btn{min-height:46px;border-radius:10px;border:0;background:#2B2B2B;color:#fff;font:700 15px system-ui;padding:0 18px}
-.btn.s{background:#fff;color:#222;border:1px solid var(--line)}.btn:disabled{opacity:.35}
-.col{display:flex;gap:10px;align-items:center}.col input[type=color]{width:46px;height:42px;border:1px solid var(--line);border-radius:8px;padding:2px;background:#fff}
-.sw{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.ok{color:var(--ok)}.er{color:var(--no)}.av{color:#9a6b00}.mut{color:#666;font-size:14px}
-ul{margin:6px 0;padding-left:20px}a{color:var(--ac);font-weight:600}
-.qr{display:inline-block;padding:10px;background:#fff;border:1px solid var(--line);border-radius:10px;margin:6px 8px 6px 0;text-align:center;font-size:13px}.qr img{display:block;margin:0 auto 4px}
-.box{background:#FFF7E0;border:1px solid #E7CF86;border-radius:10px;padding:10px 12px;font-size:14px;margin:8px 0}
-.pub{display:flex;justify-content:space-between;gap:8px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}.pub:first-of-type{border-top:0}
+input[type=text],input[type=password],select{width:100%;font:16px system-ui;padding:11px;border:1px solid var(--line);border-radius:10px;background:#fff}
+.btn{min-height:42px;border-radius:10px;border:0;background:#2B2B2B;color:#fff;font:700 14px system-ui;padding:0 16px;cursor:pointer}
+.btn.s{background:#fff;color:#222;border:1px solid var(--line)}.btn.d{background:#fff;color:var(--no);border:1px solid #E2B8B0}.btn:disabled{opacity:.4;cursor:default}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.row.g>*{flex:1;min-width:150px}
+.mut{color:#666;font-size:14px}.ok{color:var(--ok)}.er{color:var(--no)}.av{color:var(--av)}
+.pill{display:inline-block;font-size:12px;font-weight:700;border-radius:999px;padding:2px 10px;border:1px solid var(--line);background:#F4F2EC;vertical-align:middle}
+.pill.ok{background:#E4F1E7;border-color:#BBD8C2;color:var(--ok)}.pill.no{background:#F8E4E0;border-color:#E2B8B0;color:var(--no)}.pill.av{background:#FFF4D6;border-color:#E7CF86;color:var(--av)}
+.it{border-top:1px solid var(--line);padding:14px 0}.it:first-child{border-top:0;padding-top:4px}
+.it .top{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:flex-start}
+.acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.sub{margin-top:10px;padding:10px 12px;background:#FAF8F3;border:1px solid var(--line);border-radius:10px}
+.box{background:#FFF7E0;border:1px solid #E7CF86;border-radius:10px;padding:12px;font-size:14px;margin:10px 0}
+.qr{display:inline-block;padding:10px;background:#fff;border:1px solid var(--line);border-radius:10px;margin:8px 8px 0 0;text-align:center;font-size:13px}.qr img{display:block;margin:0 auto 4px}
+a{color:var(--ac);font-weight:600}
+#toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);max-width:92vw;padding:12px 18px;border-radius:12px;color:#fff;font:600 15px system-ui;z-index:50;box-shadow:0 4px 18px rgba(0,0,0,.25);display:none}
+#toast.ok{background:#2F6B3E}#toast.mal{background:#A63A2B}
+table.act{width:100%;border-collapse:collapse;font-size:14px}table.act td{padding:6px 8px;border-top:1px solid var(--line);vertical-align:top}
 </style></head><body>
-<header>Equipo · publicar una carta</header>
+<header><b>Administración del equipo</b><span class="sp"></span><span id="quien" class="mut" style="color:#ddd"></span><button class="l" id="salir" hidden>Salir</button></header>
 <main id="m"><div class="card">Cargando…</div></main>
+<div id="toast" role="status"></div>
 <script src="qr.js"></script>
 <script>
 (async()=>{
 const $=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-let tok='';try{const h=new URLSearchParams(location.hash.slice(1)).get('t');if(h){localStorage.setItem('resto_eq',h);history.replaceState(null,'',location.pathname)}tok=localStorage.getItem('resto_eq')||''}catch(e){}
-const api=async(p,b)=>{const r=await fetch(p,{method:b?'POST':'GET',headers:{authorization:'Bearer '+tok,'content-type':'application/json'},body:b?JSON.stringify(b):undefined});const j=await r.json().catch(()=>({}));if(!r.ok){const e=new Error(j.error||'Error');e.det=j.errores;throw e}return j};
-const m=$('#m');
-let yo;try{yo=await api('/api/yo');if(yo.rol!=='equipo')throw 0}catch(e){m.innerHTML='<div class="card"><b>Acceso solo para el equipo.</b><p class="mut">Abrí el link de equipo que te dieron.</p></div>';return}
-const PRE={
- 'Claro cálido':{fondo:'#FAF8F3',texto:'#2B2B2B',acento:'#8A5A3C',cabecera:'#8A5A3C',cabeceraTexto:'#FAF8F3',piedra:'#B7B1A1'},
- 'Claro neutro':{fondo:'#FFFFFF',texto:'#1F1F1F',acento:'#1F6F5C',cabecera:'#1F6F5C',cabeceraTexto:'#FFFFFF',piedra:'#A9B8B2'},
- 'Oscuro petróleo':{fondo:'#14282B',texto:'#EDE6D3',acento:'#D4A055',cabecera:'#D4A055',cabeceraTexto:'#14282B',piedra:'#7F9794'},
- 'Oscuro grafito':{fondo:'#1C1C1E',texto:'#F2F2F2',acento:'#E0A458',cabecera:'#E0A458',cabeceraTexto:'#1C1C1E',piedra:'#8A8A8E'}};
-const FU=['Newsreader','DM Sans','Playfair Display','Cormorant Garamond','Inter','Lora','Fraunces','Work Sans'];
-const slugify=s=>s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,40);
-let P=null,borr=null;
-const CK=['fondo','texto','acento','cabecera','cabeceraTexto'];
-m.innerHTML=`
-<div class="card"><h2><span>1</span>Carta del Agente</h2><input type="file" id="f" accept=".json,application/json"><div id="inf" class="mut" style="margin-top:8px">Subí el archivo JSON que exportó el Agente de cartas.</div></div>
-<div class="card" id="c2" style="display:none"><h2><span>2</span>Dirección y estilo</h2>
- <label>Dirección (resto.marianacaci.com/…)</label><input type="text" id="sl" maxlength="40" autocapitalize="none">
- <label>Estilo base</label><select id="pre">${Object.keys(PRE).map(k=>`<option>${k}</option>`).join('')}</select>
- <div class="row" style="margin-top:6px">${CK.map(k=>`<div><label>${k}</label><div class="col"><input type="color" id="k_${k}"></div></div>`).join('')}</div>
- <div class="row"><div><label>Tipografía de títulos</label><select id="ft">${FU.map(f=>`<option>${f}</option>`).join('')}</select></div><div><label>Tipografía de cuerpo</label><select id="fb">${FU.map(f=>`<option${f==='DM Sans'?' selected':''}>${f}</option>`).join('')}</select></div></div>
-</div>
-<div class="card" id="c3" style="display:none"><h2><span>3</span>Vista previa y publicación</h2><button class="btn" id="bp">Crear vista previa</button><div id="vp"></div></div>
-<div class="card"><h2>Comercios y cartas</h2><div id="lst" class="mut">Cargando…</div></div>
-<div class="card"><h2>Asistente de apoyo (lenguaje natural)</h2><div class="mut" style="margin-bottom:8px">Viene activo desde que se entrega el link de la herramienta: el comercio ve un campo para escribir o dictar sus cambios y siempre confirma antes de que se haga algo. Acá solo se corta o se vuelve a habilitar su acceso.</div><input type="text" id="agslug" placeholder="dirección de la carta, ej. ceto-claro" autocomplete="off"><div style="display:flex;gap:8px;margin-top:8px"><button class="btn" id="agon">Habilitar</button><button class="btn" id="agoff">Cortar acceso</button><button class="btn" id="agver">Ver estado</button><button class="btn" id="agcs">Ver consultas</button></div><div class="mut" style="margin:14px 0 6px"><b>Pedidos a Marian (opcional):</b> mail del comercio aprobado en el portal mayorista. Con eso el asistente puede armar el borrador de un pedido de reposición.</div><input type="text" id="pmmail" placeholder="mail del comercio en el portal" autocomplete="off"><div style="display:flex;gap:8px;margin-top:8px"><button class="btn" id="pmset">Vincular</button><button class="btn" id="pmoff">Desvincular</button></div><div id="agmsg" class="mut" style="margin-top:8px"></div><div id="aglink"></div><div id="agcons"></div></div>`;
-function aplicarPre(){const p=PRE[$('#pre').value];CK.forEach(k=>$('#k_'+k).value=p[k]);P&&(P._piedra=p.piedra)}
-$('#pre').onchange=aplicarPre;aplicarPre();
-$('#ft').value='Newsreader';
-$('#f').onchange=async e=>{
- borr=null;$('#vp').innerHTML='';
- try{P=JSON.parse(await e.target.files[0].text());if(!P.resto||!P.secciones)throw 0}catch(x){P=null;$('#inf').innerHTML='<span class="er">Ese archivo no es una carta del Agente.</span>';$('#c2').style.display=$('#c3').style.display='none';return}
- const n=P.secciones.reduce((a,s)=>a+(s.items||[]).length,0),du=P.secciones.reduce((a,s)=>a+(s.items||[]).filter(i=>i.dudoso).length,0),h=P.secciones.filter(s=>s.foto).length;
- $('#inf').innerHTML=`<b>${esc(P.resto.nombre)}</b> · ${P.secciones.length} secciones · ${n} platos · ${h} con hero${P.resto.mapa?' · con Google Maps':''}${du?`<div class="av">⚠ ${du} plato(s) dudoso(s) sin resolver. Revisalos antes de publicar.</div>`:''}`;
- $('#sl').value=slugify(P.resto.nombre||'');$('#c2').style.display=$('#c3').style.display='block'};
-function paquete(){const p=JSON.parse(JSON.stringify(P));p.resto.tema={escala:'fina',pesoTitulos:400,titulos:$('#ft').value,cuerpo:$('#fb').value,piedra:PRE[$('#pre').value].piedra};CK.forEach(k=>p.resto.tema[k]=$('#k_'+k).value.toUpperCase());return p}
-const errs=e=>`<div class="er"><b>${esc(e.message)}</b>${e.det?'<ul>'+e.det.slice(0,12).map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul>':''}</div>`;
-$('#bp').onclick=async()=>{
- const b=$('#bp');b.disabled=true;$('#vp').innerHTML='Creando…';
- try{borr=await api('/api/equipo/borrador',{slug:$('#sl').value.trim(),paquete:paquete()});
-  $('#vp').innerHTML=`<p class="ok"><b>Vista previa lista</b> · ${borr.secciones} secciones, ${borr.platos} platos.</p>${(borr.avisos||[]).length?'<div class="av"><ul>'+borr.avisos.map(a=>'<li>'+esc(a)+'</li>').join('')+'</ul></div>':''}<p><a href="${borr.vista}" target="_blank" rel="noopener">Abrir vista previa ↗</a> <span class="mut">(link privado, dura 7 días)</span></p><div class="row"><button class="btn" id="pu">Publicar</button><button class="btn s" id="rp">Rehacer vista previa</button></div>`;
-  $('#rp').onclick=()=>$('#bp').click();
-  $('#pu').onclick=async()=>{if(!confirm('¿Publicar la carta en resto.marianacaci.com/'+$('#sl').value.trim()+'/ ?'))return;$('#pu').disabled=true;
-   try{const r=await api('/api/equipo/publicar',{slug:$('#sl').value.trim(),n:borr.n});publicada(r)}catch(e){$('#vp').insertAdjacentHTML('beforeend',errs(e));$('#pu').disabled=false}}
- }catch(e){$('#vp').innerHTML=errs(e)}b.disabled=false};
-async function agSet(on){const sl=$('#agslug').value.trim();if(!sl)return $('#agmsg').textContent='Escribí la dirección de la carta.';
- try{const j=on===null?await api('/api/equipo/agente?slug='+encodeURIComponent(sl)):await api('/api/equipo/agente',{slug:sl,on});
-  $('#agmsg').textContent='/'+sl+'/: asistente '+(j.on?'activo':'CORTADO por el equipo')+(j.clave?'':' (pero falta cargar la clave de Anthropic en el Worker: no funcionará)')+(j.portal!==undefined?' Portal de Marian: '+(j.portal?'vinculado':'sin vincular')+(j.portal&&!j.claveportal?' (falta cargar RESTO_SVC_KEY en el Worker)':''):'')+'.'+(j.sonda?(j.sonda.error?' Prueba con el portal: FALLÓ (HTTP '+j.sonda.http+': '+j.sonda.error+').':' Prueba con el portal: bien, ve '+j.sonda.productos+' productos para pedir.'):'')}catch(e){$('#agmsg').textContent=e.message}}
-$('#agon').onclick=()=>agSet(true);$('#agoff').onclick=()=>agSet(false);$('#agver').onclick=()=>agSet(null);
-$('#agcs').onclick=async()=>{const sl=$('#agslug').value.trim();if(!sl)return $('#agmsg').textContent='Escribí la dirección de la carta.';
- try{const j=await api('/api/equipo/consultas?slug='+encodeURIComponent(sl));const f=t=>new Date(t).toLocaleString('es-AR',{timeZone:'America/Argentina/Buenos_Aires',day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
-  $('#agcons').innerHTML=`<div class="mut" style="margin:10px 0 6px"><b>/${esc(sl)}/</b>: ${j.hoy} de ${j.tope} consultas hoy · tokens (entrada/salida) en lo que se ve: ${j.tokens[0]} / ${j.tokens[1]}</div>`+(j.consultas.length?j.consultas.map(x=>`<div class="box" style="margin:6px 0"><small>${esc(f(x.t))}${x.u?' · '+x.u[0]+'/'+x.u[1]+' tokens':''}</small><br><b>Dijo:</b> ${esc(x.texto)}<br><b>Asistente:</b> ${esc(x.mensaje||'')}${(x.ops&&x.ops.length)?'<br><b>Propuso:</b> '+x.ops.map(esc).join(' · '):''}</div>`).join(''):'<div class="mut">Todavía no hay consultas registradas.</div>')}catch(e){$('#agmsg').textContent=e.message}};
-const pmSet=async m=>{const sl=$('#agslug').value.trim();if(!sl)return $('#agmsg').textContent='Escribí la dirección de la carta.';try{const j=await api('/api/equipo/portal',{slug:sl,email:m});$('#agmsg').textContent=`/${sl}/: ${j.vinculado?'vinculada al portal':'sin vínculo con el portal'}${j.vinculado&&!j.clave?'. Falta cargar la clave de servicio (RESTO_SVC_KEY) en el Worker.':'.'}`}catch(x){$('#agmsg').textContent=x.message}};
-$('#pmset').onclick=()=>pmSet($('#pmmail').value.trim());$('#pmoff').onclick=()=>pmSet(null);
-$('#aglk').onclick=async()=>{const sl=$('#agslug').value.trim();if(!sl)return $('#agmsg').textContent='Escribí la dirección de la carta.';if(!confirm('Esto genera un link nuevo de herramienta para /'+sl+'/ e invalida el anterior. ¿Seguir?'))return;try{const j=await api('/api/equipo/token',{slug:sl});const u=location.origin+j.herramienta;$('#agmsg').textContent='';$('#aglink').innerHTML=`<div class="box"><b>Link de herramienta de /${esc(sl)}/</b> — se muestra una sola vez. Entregáselo al responsable del local y no lo publiques.<br><br><input type="text" readonly value="${esc(u)}" onclick="this.select()"></div>${qr(u,'Herramienta (privado)')}`}catch(x){$('#agmsg').textContent=x.message}};
-function qr(url,tit){const q=qrcode(0,'M');q.addData(url);q.make();return `<div class="qr">${q.createImgTag(5,8)}${esc(tit)}</div>`}
-function publicada(r){
- const url=location.origin+r.url,her=r.herramienta?location.origin+r.herramienta:null;
- $('#vp').innerHTML=`<p class="ok"><b>Publicada.</b></p><p>Carta: <a href="${esc(url)}" target="_blank" rel="noopener">${esc(url)}</a></p>${qr(url,'Carta (para las mesas)')}
- ${her?`<div class="box"><b>Herramienta del comercio</b> — este link se muestra una sola vez. Entregáselo al responsable del local y no lo publiques.<br><br><input type="text" readonly value="${esc(her)}" onclick="this.select()"></div>${qr(her,'Herramienta (privado)')}`:'<p class="mut">Esta carta ya tenía link de herramienta. Si hace falta uno nuevo, usá «Link nuevo de herramienta» abajo.</p>'}`;
- listar()}
-async function listar(){
- try{const l=await api('/api/equipo/cartas');$('#lst').innerHTML=l.length?l.map(c=>`<div class="pub"><div><b>${esc(c.nombre||c.slug)}</b><br><a href="/${esc(c.slug)}/" target="_blank" rel="noopener">/${esc(c.slug)}/</a> <span class="mut">· ${c.fija?'carta fija':'versión '+c.n}</span><br><span class="mut">Asistente: <b>${c.asistente?'activo':'CORTADO'}</b> · Marian: ${c.marian?'vinculado':'sin vincular'}</span></div><div class="row" style="flex:0 0 auto"><button class="btn s" data-r="${esc(c.slug)}" ${c.prev?'':'disabled'}>Revertir</button><button class="btn s" data-a="${esc(c.slug)}" data-on="${c.asistente?1:0}">${c.asistente?'Cortar asistente':'Habilitar asistente'}</button><button class="btn s" data-t="${esc(c.slug)}">Link nuevo de herramienta</button></div></div>`).join(''):'Todavía no hay comercios: acá aparecen las cartas publicadas desde Equipo y las que ya tienen herramienta entregada.'}catch(e){$('#lst').innerHTML=errs(e)}}
-$('#lst').onclick=async e=>{const r=e.target.dataset.r,t=e.target.dataset.t,a=e.target.dataset.a;
- if(a){const on=e.target.dataset.on==='1';if(confirm(on?'¿Cortar el asistente de /'+a+'/ ? El comercio deja de verlo y de poder usarlo.':'¿Volver a habilitar el asistente de /'+a+'/ ?')){try{await api('/api/equipo/agente',{slug:a,on:!on});listar()}catch(x){alert(x.message)}}return}
- if(r&&confirm('¿Volver a la versión anterior de /'+r+'/ ?')){try{await api('/api/equipo/revertir',{slug:r});listar()}catch(x){alert(x.message)}}
- if(t&&confirm('Esto invalida el link de herramienta actual de /'+t+'/ . ¿Generar uno nuevo?')){try{const j=await api('/api/equipo/token',{slug:t});const u=location.origin+j.herramienta;$('#lst').insertAdjacentHTML('afterbegin',`<div class="box"><b>Link nuevo de /${esc(t)}/</b> (se muestra una vez)<br><input type="text" readonly value="${esc(u)}" onclick="this.select()">${qr(u,'Herramienta (privado)')}</div>`)}catch(x){alert(x.message)}}};
-listar();
+const M=$('#m');let tok='';
+try{const h=new URLSearchParams(location.hash.slice(1)).get('t');if(h){localStorage.setItem('resto_eq',h);history.replaceState(null,'',location.pathname)}tok=localStorage.getItem('resto_eq')||''}catch(e){}
+let tt=null;
+function toast(t,mal){const e=$('#toast');e.textContent=t;e.className=mal?'mal':'ok';e.style.display='block';clearTimeout(tt);tt=setTimeout(()=>e.style.display='none',mal?9000:4500)}
+async function api(p,b){
+ let r;try{r=await fetch(p,{method:b?'POST':'GET',headers:{authorization:'Bearer '+tok,'content-type':'application/json'},body:b?JSON.stringify(b):undefined})}catch(e){throw new Error('No hay conexión con el servidor. Probá de nuevo.')}
+ const j=await r.json().catch(()=>({}));if(!r.ok){const e=new Error(j.error||('Error '+r.status));e.st=r.status;throw e}return j}
+// Una acción del usuario: avisa siempre, con éxito o con error.
+async function run(btn,fn,okMsg){if(btn)btn.disabled=true;try{const r=await fn();if(okMsg)toast(typeof okMsg==='function'?okMsg(r):okMsg);return r}catch(e){toast(e.message,true)}finally{if(btn)btn.disabled=false}}
+const b64u=o=>btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+const ORIGEN_AGENTE='https://agente.marianacaci.com';
+function qrImg(url,tit){const q=qrcode(0,'M');q.addData(url);q.make();return `<div class="qr">${q.createImgTag(5,8)}${esc(tit)}</div>`}
+const fecha=t=>t?new Date(t).toLocaleString('es-AR',{timeZone:'America/Argentina/Buenos_Aires',day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}):'—';
+const MAIL=/^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+
+// ───────── Acceso ─────────
+function entrar(msg){
+ $('#salir').hidden=true;$('#quien').textContent='';
+ M.innerHTML=`<div class="card" style="max-width:460px;margin:30px auto"><h2>Entrar como administrador</h2><p class="mut">Pegá la clave del equipo. Queda guardada en este navegador.</p><label>Clave del equipo</label><input type="password" id="ck" autocomplete="current-password"><div class="row" style="margin-top:12px"><button class="btn" id="ce">Entrar</button></div>${msg?`<p class="er" style="margin-top:10px">${esc(msg)}</p>`:''}</div>`;
+ const go=async()=>{const v=$('#ck').value.trim();if(!v)return toast('Pegá la clave del equipo.',true);tok=v;
+  try{const y=await api('/api/yo');if(y.rol!=='equipo')throw new Error('Esa clave no es del equipo.');try{localStorage.setItem('resto_eq',tok)}catch(e){}iniciar()}catch(e){tok='';entrar(e.st===401||e.st===403?'Esa clave no es válida.':e.message)}};
+ $('#ce').onclick=go;$('#ck').onkeydown=e=>{if(e.key==='Enter')go()};$('#ck').focus()}
+$('#salir').onclick=()=>{if(confirm('¿Salir de la administración? Para volver vas a necesitar la clave del equipo.')){try{localStorage.removeItem('resto_eq')}catch(e){}tok='';entrar()}};
+
+// ───────── Estado y pestañas ─────────
+const S={tab:'ops',ops:[],com:[],filtroOp:'',filtro:'todos',nuevo:null};
+async function cargar(){const [o,c]=await Promise.all([api('/api/equipo/operadores'),api('/api/equipo/cartas')]);S.ops=o;S.com=c}
+async function iniciar(){
+ try{const y=await api('/api/yo');if(y.rol!=='equipo')throw new Error('x')}catch(e){return entrar(tok?'Esa clave no es válida.':'')}
+ $('#salir').hidden=false;$('#quien').textContent='Sesión: administrador';
+ try{await cargar()}catch(e){M.innerHTML=`<div class="card er">${esc(e.message)}</div>`;return}
+ pintar()}
+function pintar(){
+ const pend=S.com.filter(c=>c.pendiente).length;
+ M.innerHTML=`<nav><button data-t="ops" class="${S.tab==='ops'?'on':''}">Operadores</button><button data-t="com" class="${S.tab==='com'?'on':''}">Comercios${pend?`<span class="n">${pend}</span>`:''}</button></nav><div id="vista"></div>`;
+ M.querySelector('nav').onclick=e=>{const t=e.target.closest('button');if(t){S.tab=t.dataset.t;pintar()}};
+ (S.tab==='ops'?vistaOps:vistaCom)()}
+async function recargar(){try{await cargar()}catch(e){toast(e.message,true)}pintar()}
+
+// ───────── Operadores ─────────
+function estadoOp(o){return !o.activo?'<span class="pill no">Dado de baja</span>':o.bloqueado?'<span class="pill av">Bloqueado</span>':'<span class="pill ok">Activo</span>'}
+function cajaAcceso(titulo,nombre,clave){
+ const url=ORIGEN_AGENTE+'/#c='+b64u({a:clave});
+ return `<div class="box"><b>${esc(titulo)}: ${esc(nombre)}</b><br>La clave y el QR se muestran <b>una sola vez</b>. Pasáselos con la cámara del celular y que no los comparta. Si se pierden, generás uno nuevo.<label>Clave</label><input type="text" readonly value="${esc(clave)}" onclick="this.select()"><label>Link de acceso</label><input type="text" readonly value="${esc(url)}" onclick="this.select()">${qrImg(url,'Acceso de '+nombre+' (privado)')}</div>`}
+function vistaOps(){
+ const act=S.ops.filter(o=>o.activo&&!o.bloqueado).length;
+ $('#vista').innerHTML=`<div class="card"><h2>Crear operador</h2><div class="row"><input type="text" id="opn" placeholder="Nombre del operador" maxlength="40" style="flex:1;min-width:200px"><button class="btn" id="opa">Crear operador</button></div><div id="nuevo">${S.nuevo?cajaAcceso(S.nuevo.t,S.nuevo.n,S.nuevo.c):''}</div></div>
+ <div class="card"><h2>Operadores <span class="mut">· ${act} activos de ${S.ops.length}</span></h2>${S.ops.length?S.ops.map(o=>`<div class="it"><div class="top"><div><b>${esc(o.nombre)}</b> ${estadoOp(o)}<br><span class="mut">${o.comercios} comercio${o.comercios===1?'':'s'} · último acceso: ${fecha(o.ult)}</span></div><div class="acts" style="margin-top:0">
+  ${o.comercios?`<button class="btn s" data-v="${esc(o.id)}">Ver comercios</button>`:''}
+  ${o.activo?`<button class="btn s" data-q="${esc(o.id)}">Nuevo QR</button>`:''}
+  ${o.activo&&!o.bloqueado?`<button class="btn s" data-b="${esc(o.id)}">Bloquear</button>`:''}
+  ${(!o.activo||o.bloqueado)?`<button class="btn s" data-r="${esc(o.id)}">Reactivar</button>`:''}
+  ${o.activo?`<button class="btn d" data-x="${esc(o.id)}">Dar de baja</button>`:''}</div></div></div>`).join(''):'<p class="mut">Todavía no hay operadores. Creá el primero arriba.</p>'}
+ <p class="mut" style="margin-top:12px"><b>Bloquear</b> es una pausa: conserva su clave y sus comercios. <b>Dar de baja</b> anula su acceso; sus comercios quedan a tu nombre hasta que los reasignes. <b>Nuevo QR</b> reemplaza su clave por otra y deja la anterior sin efecto.</p></div>`;
+ $('#opa').onclick=async e=>{const n=$('#opn').value.trim();if(!n)return toast('Escribí el nombre del operador.',true);
+  const j=await run(e.target,()=>api('/api/equipo/operadores',{nombre:n}),'Operador creado.');if(j){S.nuevo={t:'Operador creado',n:j.nombre,c:j.clave};await recargar()}};
+ $('#vista').onclick=async e=>{const t=e.target.closest('button[data-v],button[data-q],button[data-b],button[data-r],button[data-x]');if(!t)return;
+  const id=t.dataset.v||t.dataset.q||t.dataset.b||t.dataset.r||t.dataset.x,o=S.ops.find(x=>x.id===id);if(!o)return;
+  if(t.dataset.v){S.filtroOp=id;S.filtro='todos';S.tab='com';return pintar()}
+  if(t.dataset.q){if(!confirm('Esto reemplaza la clave de '+o.nombre+': el QR anterior deja de funcionar. Sus comercios no cambian. ¿Generar un QR nuevo?'))return;
+   const j=await run(t,()=>api('/api/equipo/operadores/acceso',{id}),'QR nuevo generado.');if(j){S.nuevo={t:'QR nuevo',n:j.nombre,c:j.clave};await recargar();window.scrollTo(0,0)}return}
+  if(t.dataset.b){if(!confirm('¿Bloquear a '+o.nombre+'? No podrá usar el Agente hasta que lo reactives. Conserva su clave y sus comercios.'))return;
+   if(await run(t,()=>api('/api/equipo/operadores/estado',{id,accion:'bloquear'}),o.nombre+' quedó bloqueado.'))await recargar();return}
+  if(t.dataset.r){const j=await run(t,()=>api('/api/equipo/operadores/estado',{id,accion:'reactivar'}),r=>o.nombre+' quedó activo'+(r.clave?'. Se generó una clave nueva.':'.'));
+   if(j){if(j.clave){S.nuevo={t:'Operador reactivado, clave nueva',n:j.nombre,c:j.clave}}await recargar();if(j.clave)window.scrollTo(0,0)}return}
+  if(t.dataset.x){if(!confirm('¿Dar de baja a '+o.nombre+'? Pierde el acceso ya mismo y sus '+o.comercios+' comercio(s) quedan a tu nombre hasta que los reasignes.'))return;
+   if(await run(t,()=>api('/api/equipo/operadores/revocar',{id}),o.nombre+' fue dado de baja.'))await recargar()}}}
+
+// ───────── Comercios ─────────
+function vistaCom(){
+ const hay=S.com;
+ const f=S.com.filter(c=>(!S.filtroOp||(S.filtroOp==='_sin'?!c.op:(c.op&&c.op.id===S.filtroOp)))&&(S.filtro==='todos'||(S.filtro==='pend'&&c.pendiente)||(S.filtro==='sin'&&!c.op)||(S.filtro==='cortado'&&!c.asistente)));
+ f.sort((a,b)=>(b.pendiente?1:0)-(a.pendiente?1:0)||String(a.nombre||a.slug).localeCompare(String(b.nombre||b.slug)));
+ const nP=hay.filter(c=>c.pendiente).length,nS=hay.filter(c=>!c.op).length,nC=hay.filter(c=>!c.asistente).length;
+ const opts=(sel)=>`<option value="">Sin operador (administrador)</option>`+S.ops.filter(o=>o.activo).map(o=>`<option value="${esc(o.id)}"${sel===o.id?' selected':''}>${esc(o.nombre)}${o.bloqueado?' (bloqueado)':''}</option>`).join('');
+ const chip=(k,t)=>`<button class="btn ${S.filtro===k?'':'s'}" data-f="${k}">${t}</button>`;
+ $('#vista').innerHTML=`<div class="card"><h2>Comercios <span class="mut">· ${hay.length}</span></h2>
+ <div class="row">${chip('todos','Todos')}${chip('pend','Pedidos de Marian pendientes · '+nP)}${chip('sin','Sin operador · '+nS)}${chip('cortado','Asistente cortado · '+nC)}
+ <select id="fop" style="width:auto;flex:0 0 auto"><option value="">Todos los operadores</option><option value="_sin"${S.filtroOp==='_sin'?' selected':''}>Sin operador</option>${S.ops.map(o=>`<option value="${esc(o.id)}"${S.filtroOp===o.id?' selected':''}>${esc(o.nombre)}</option>`).join('')}</select></div></div>
+ <div class="card">${f.length?f.map(c=>`<div class="it" data-s="${esc(c.slug)}"><div class="top"><div><b>${esc(c.nombre||c.slug)}</b><br><a href="/${esc(c.slug)}/" target="_blank" rel="noopener">/${esc(c.slug)}/</a> <span class="mut">· ${c.fija?'carta fija':'versión '+c.n}${c.hojas&&c.hojas.length?' · '+c.hojas.length+' hoja(s) de etiquetas':''}</span></div>
+  <div style="text-align:right"><span class="pill ${c.asistente?'ok':'no'}">Asistente ${c.asistente?'activo':'cortado'}</span> ${c.marian?'<span class="pill ok">Marian vinculado</span>':c.pendiente?'<span class="pill av">Pide vincularse a Marian</span>':'<span class="pill">Sin Marian</span>'}</div></div>
+  <div class="sub"><div class="row"><span class="mut">Operador:</span><select data-op style="flex:1;min-width:180px;width:auto">${opts(c.op&&c.op.id)}</select><button class="btn s" data-reas>Reasignar</button></div></div>
+  <div class="sub">${c.pendiente?`<div class="av" style="margin-bottom:8px"><b>Solicitud de vínculo con Marian:</b> ${esc(c.pendiente)}</div><div class="row"><button class="btn" data-apr>Aprobar</button><button class="btn d" data-rec>Rechazar</button></div>`
+   :c.marian?`<div style="margin-bottom:8px"><b>Vinculado con Marian:</b> ${esc(c.marianMail||'')}</div><button class="btn s" data-desv>Desvincular</button>`
+   :`<div class="row"><input type="text" data-mail placeholder="Mail del comercio en el portal de Marian" style="flex:1;min-width:220px;width:auto" autocomplete="off"><button class="btn s" data-vinc>Vincular</button></div>`}</div>
+  <div class="acts"><button class="btn s" data-ag="${c.asistente?0:1}">${c.asistente?'Cortar asistente':'Habilitar asistente'}</button><button class="btn s" data-tok>Link nuevo de herramienta</button></div><div data-out></div></div>`).join(''):'<p class="mut">No hay comercios con ese filtro.</p>'}</div>`;
+ $('#fop').onchange=e=>{S.filtroOp=e.target.value;vistaCom()};
+ $('#vista').onclick=async e=>{
+  const fb=e.target.closest('button[data-f]');if(fb){S.filtro=fb.dataset.f;return vistaCom()}
+  const it=e.target.closest('.it[data-s]');if(!it)return;const slug=it.dataset.s,c=S.com.find(x=>x.slug===slug),b=e.target.closest('button');if(!b||!c)return;
+  if('reas' in b.dataset){const v=it.querySelector('[data-op]').value;if((c.op?c.op.id:'')===v)return toast('Ya está asignado a ese operador.',true);
+   const o=S.ops.find(x=>x.id===v);if(await run(b,()=>api('/api/equipo/reasignar',{slug,op:v||null}),'/'+slug+'/ quedó a nombre de '+(o?o.nombre:'administrador')+'.'))await recargar();return}
+  if('apr' in b.dataset){if(!confirm('¿Aprobar el vínculo de /'+slug+'/ con '+c.pendiente+'? Si no existe en el portal de Marian, se da de alta como comercio activo.'))return;
+   if(await run(b,()=>api('/api/equipo/portal/resolver',{slug,aprobar:true}),r=>'Aprobado.'+(r.portal&&r.portal.creado?' Se dio de alta en el portal.':' Ya existía en el portal.')))await recargar();return}
+  if('rec' in b.dataset){if(!confirm('¿Rechazar la solicitud de /'+slug+'/ ?'))return;if(await run(b,()=>api('/api/equipo/portal/resolver',{slug,aprobar:false}),'Solicitud rechazada.'))await recargar();return}
+  if('desv' in b.dataset){if(!confirm('¿Desvincular /'+slug+'/ del portal de Marian? El asistente deja de poder armar pedidos para ese comercio. En el portal el comercio sigue existiendo.'))return;
+   if(await run(b,()=>api('/api/equipo/portal',{slug,email:null}),'Desvinculado de Marian.'))await recargar();return}
+  if('vinc' in b.dataset){const m=it.querySelector('[data-mail]').value.trim().toLowerCase();
+   if(!MAIL.test(m))return toast('Ese mail no es válido: tiene que ser como nombre@dominio.com.',true);
+   const j=await run(b,()=>api('/api/equipo/portal',{slug,email:m}),r=>'Vinculado con '+m+'.'+(r.portal?(r.portal.creado?' Se dio de alta en el portal.':' Ya existía en el portal.'):''));if(j)await recargar();return}
+  if('ag' in b.dataset){const on=b.dataset.ag==='1';if(!confirm(on?'¿Volver a habilitar el asistente de /'+slug+'/ ?':'¿Cortar el asistente de /'+slug+'/ ? El comercio deja de verlo.'))return;
+   if(await run(b,()=>api('/api/equipo/agente',{slug,on}),on?'Asistente habilitado.':'Asistente cortado.'))await recargar();return}
+  if('tok' in b.dataset){if(!confirm('Esto invalida el link de herramienta actual de /'+slug+'/ y genera uno nuevo. ¿Seguir?'))return;
+   const j=await run(b,()=>api('/api/equipo/token',{slug}),'Link nuevo generado.');if(j){const u=location.origin+j.herramienta;it.querySelector('[data-out]').innerHTML=`<div class="box"><b>Link de herramienta de /${esc(slug)}/</b>: se muestra una sola vez. Entregáselo al responsable del local y no lo publiques.<input type="text" readonly value="${esc(u)}" onclick="this.select()" style="margin-top:8px">${qrImg(u,'Herramienta (privado)')}</div>`}}}}
+iniciar();
 })();
 </script></body></html>
