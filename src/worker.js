@@ -173,7 +173,16 @@ async function equipo(env,req,p,q){
     if(!A.admin)return SOLOADM;
     if(!SLUG.test(slug))return J({error:'dirección inválida'},400);
     const sol=await env.ESTADO.get('pmq:'+slug,'json');if(!sol||!sol.mail)return J({error:'no hay una solicitud para esa carta'},404);
-    if(b.aprobar===true){await env.ESTADO.put('pm:'+slug,sol.mail);await env.ESTADO.delete('pmq:'+slug);await bit(env,A,'marian.aprobar',slug);return J({ok:true,slug,vinculado:true})}
+    if(b.aprobar===true){
+      // Al aprobar, el comercio queda dado de alta (y habilitado) en el portal si todavía no existía; recién ahí se vincula.
+      if(!env.RESTO_SVC_KEY)return J({error:'falta la clave del portal en Resto'},503);
+      let nombre='';try{const pb=await env.ESTADO.get('pub:'+slug,'json');const c=pb?await env.ESTADO.get(`cv:${slug}:${pb.n}`,'json'):await carta(env,req,slug);nombre=(c&&c.resto&&c.resto.nombre)||''}catch(x){}
+      const r=await portal(env,'/api/svc/comercio',{email:sol.mail,nombre:nombre||slug,slug});
+      if(!r.ok)return J({error:'no pude dar de alta el comercio en el portal: '+((r.j&&r.j.error)||'sin respuesta')},502);
+      if(!r.j.habilitado)return J({error:'ese mail está en el portal pero figura '+(r.j.estado||'no habilitado')+'; habilitalo allá primero'},409);
+      await env.ESTADO.put('pm:'+slug,sol.mail);await env.ESTADO.delete('pmq:'+slug);await bit(env,A,'marian.aprobar',slug);
+      return J({ok:true,slug,vinculado:true,portal:{creado:!!r.j.creado,estado:r.j.estado}});
+    }
     if(b.aprobar===false){await env.ESTADO.delete('pmq:'+slug);await bit(env,A,'marian.rechazar',slug);return J({ok:true,slug,vinculado:false})}
     return J({error:'falta aprobar true/false'},400);
   }
