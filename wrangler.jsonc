@@ -3,6 +3,6 @@
   "name": "resto-dev",
   "main": "src/worker.js",
   "compatibility_date": "2026-11-01",
-  "assets": { "directory": "./public", "binding": "ASSETS", "run_worker_first": ["/api/*"] },
+  "assets": { "directory": "./public", "binding": "ASSETS", "run_worker_first": ["/api/*", "/q/*"] },
   "kv_namespaces": [{ "binding": "ESTADO", "id": "2c325e2f35a74c0697585629f6d0f540" }]
 }

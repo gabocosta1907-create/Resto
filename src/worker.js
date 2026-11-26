@@ -126,10 +126,10 @@ async function equipo(env,req,p,q){
     // Comercios: cartas publicadas desde Equipo + cartas fijas con herramienta entregada (ct:).
     const pubs={};for(const k of (await env.ESTADO.list({prefix:'pub:'})).keys)pubs[k.name.slice(4)]=await env.ESTADO.get(k.name,'json');
     const sl=new Set(Object.keys(pubs));for(const k of (await env.ESTADO.list({prefix:'ct:'})).keys)sl.add(k.name.slice(3));
-    const out=[];
+    const out=[];const hj={};for(const h of await hojasDe(env))if(h.slug)(hj[h.slug]=hj[h.slug]||[]).push({c:h.codigo,t:h.tipo,d:h.desde});
     for(const s of sl){if(!SLUG.test(s))continue;const ow=await own(s);if(!A.admin&&!(ow&&ow.op===A.id))continue;const pb=pubs[s];let c=null;
       try{c=pb?await env.ESTADO.get(`cv:${s}:${pb.n}`,'json'):await carta(env,req,s)}catch(x){}
-      out.push({slug:s,n:pb?pb.n:null,prev:pb&&pb.prev||null,nombre:c&&c.resto&&c.resto.nombre,fija:!pb,asistente:await agOn(env,s),marian:!!(await env.ESTADO.get('pm:'+s)),marianMail:A.admin?(await env.ESTADO.get('pm:'+s))||null:undefined,pendiente:((await env.ESTADO.get('pmq:'+s,'json'))||{}).mail||null,op:ow&&ow.op?{id:ow.op,nombre:ow.nombre}:null})}
+      out.push({slug:s,n:pb?pb.n:null,prev:pb&&pb.prev||null,nombre:c&&c.resto&&c.resto.nombre,fija:!pb,asistente:await agOn(env,s),marian:!!(await env.ESTADO.get('pm:'+s)),marianMail:A.admin?(await env.ESTADO.get('pm:'+s))||null:undefined,pendiente:((await env.ESTADO.get('pmq:'+s,'json'))||{}).mail||null,hojas:hj[s]||[],op:ow&&ow.op?{id:ow.op,nombre:ow.nombre}:null})}
     return J(out);
   }
   if(req.method==='POST'&&p==='/api/equipo/borrador'){
@@ -195,6 +195,42 @@ async function equipo(env,req,p,q){
     await env.ESTADO.delete('pmq:'+slug);
     await bit(env,A,(b.email===null||b.email==='')?'marian.desvincular':'marian.vincular',slug);
     return J({ok:true,slug,vinculado:!!(await env.ESTADO.get('pm:'+slug)),clave:!!env.RESTO_SVC_KEY,portal:portalRes});
+  }
+  if(req.method==='POST'&&p==='/api/equipo/hojas'){
+    if(!A.admin)return SOLOADM;
+    const tipo=b.tipo==='mesas'?'mesas':b.tipo==='carta'?'carta':null;if(!tipo)return J({error:'el tipo es carta o mesas'},400);
+    const cant=Math.min(Math.max(parseInt(b.cantidad)||1,1),20),d0=Math.min(Math.max(parseInt(b.desde)||1,1),9000),out=[];
+    for(let i=0;i<cant;i++){
+      let c=null;for(let t=0;t<8&&!c;t++){const x=codigoNuevo();if(!(await env.ESTADO.get('et:'+x)))c=x}
+      if(!c)return J({error:'no pude generar el código, probá de nuevo'},500);
+      const h={tipo,desde:tipo==='mesas'?d0+i*HOJA_N:null,slug:null,t:new Date().toISOString()};
+      await env.ESTADO.put('et:'+c,JSON.stringify(h));out.push({codigo:c,tipo,desde:h.desde,slug:null});
+    }
+    await bit(env,A,'hoja.crear',null,{tipo,n:cant});
+    return J({ok:true,hojas:out});
+  }
+  if(req.method==='POST'&&p==='/api/equipo/hojas/asociar'){
+    const c=codigoDe(b.codigo);if(!c)return J({error:'código inválido: son 6 letras o números (o el link del QR)'},400);
+    if(!SLUG.test(slug))return J({error:'dirección inválida'},400);
+    if(!(await puede(slug)))return NOES;
+    const h=await env.ESTADO.get('et:'+c,'json');if(!h)return J({error:'esa hoja no existe'},404);
+    if(h.slug&&h.slug!==slug)return J({error:A.admin?'esa hoja ya está asociada a /'+h.slug+'/; liberala primero':'esa hoja ya está en uso'},409);
+    if(!(await carta(env,req,slug)))return J({error:'no existe una carta con esa dirección'},404);
+    h.slug=slug;h.por=A.id;h.ta=new Date().toISOString();await env.ESTADO.put('et:'+c,JSON.stringify(h));
+    await bit(env,A,'hoja.asociar',slug,{c,tipo:h.tipo});
+    return J({ok:true,codigo:c,tipo:h.tipo,desde:h.desde||null,slug});
+  }
+  if(req.method==='POST'&&p==='/api/equipo/hojas/liberar'){
+    if(!A.admin)return SOLOADM;
+    const c=codigoDe(b.codigo);if(!c)return J({error:'código inválido'},400);
+    const h=await env.ESTADO.get('et:'+c,'json');if(!h)return J({error:'esa hoja no existe'},404);
+    const antes=h.slug||null;h.slug=null;await env.ESTADO.put('et:'+c,JSON.stringify(h));
+    await bit(env,A,'hoja.liberar',antes,{c});return J({ok:true,codigo:c});
+  }
+  if(req.method==='GET'&&p==='/api/equipo/hojas'){
+    let L=await hojasDe(env);
+    if(!A.admin){const ok=[];for(const h of L)if(h.slug&&await puede(h.slug))ok.push(h);L=ok}
+    return J(L.sort((a,c)=>(c.t||'').localeCompare(a.t||'')));
   }
   if(req.method==='GET'&&p==='/api/equipo/consultas'){
     if(!A.admin)return SOLOADM;
@@ -405,9 +441,28 @@ async function agente(env,req,slug){
 const hoyAR=()=>new Date(Date.now()-3*3600e3).toISOString().slice(0,10);
 // El asistente viene activo; el equipo puede cortarlo por comercio (agoff:<slug>).
 async function agOn(env,slug){return !(await env.ESTADO.get('agoff:'+slug))}
+// ───────── Etiquetas preimpresas (hojas de 24 QR) ─────────
+// Hoja "carta": las 24 etiquetas llevan el mismo QR (/q/<código>). Hoja "mesas": cada etiqueta lleva su número (/q/<código>/<mesa>).
+// La hoja se asocia a un comercio al publicar (et:<código> = {tipo,desde,slug}); el QR impreso no cambia nunca.
+const HOJA_N=24,ALFA='abcdefghjkmnpqrstuvwxyz23456789';
+const codigoNuevo=()=>[...crypto.getRandomValues(new Uint8Array(6))].map(x=>ALFA[x%ALFA.length]).join('');
+function codigoDe(x){x=String(x||'').trim().toLowerCase();const m=x.match(/\/q\/([a-z2-9]{6})(?:[\/?#]|$)/);if(m)return m[1];return /^[a-z2-9]{6}$/.test(x)?x:null}
+const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function paginaEtiqueta(tit,txt,st){return new Response(`<!doctype html><html lang="es"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(tit)}</title><body style="font-family:system-ui,sans-serif;max-width:420px;margin:18vh auto;padding:0 24px;text-align:center;color:#333"><h1 style="font-size:22px">${esc(tit)}</h1><p style="line-height:1.5">${esc(txt)}</p></body></html>`,{status:st,headers:{'content-type':'text/html; charset=utf-8','cache-control':'no-store'}})}
+async function etiqueta(env,p){
+  const m=p.match(/^\/q\/([a-z2-9]{6})(?:\/(\d{1,4}))?\/?$/);if(!m)return null;
+  const h=await env.ESTADO.get('et:'+m[1],'json');
+  if(!h)return paginaEtiqueta('Etiqueta no válida','Este QR no está registrado. Avisale al local.',404);
+  if(!h.slug)return paginaEtiqueta('Etiqueta todavía sin activar','Este QR todavía no está asociado a ninguna carta.',200);
+  const k=h.tipo==='mesas'&&m[2]?Number(m[2]):0,mesa=k>=h.desde&&k<h.desde+HOJA_N?k:0;
+  return new Response(null,{status:302,headers:{location:'/'+h.slug+'/'+(mesa?'?m='+mesa:''),'cache-control':'no-store'}});
+}
+async function hojasDe(env){const o=[];for(const k of (await env.ESTADO.list({prefix:'et:'})).keys){const h=await env.ESTADO.get(k.name,'json');if(h)o.push({codigo:k.name.slice(3),tipo:h.tipo,desde:h.desde||null,slug:h.slug||null,t:h.t||null})}return o}
+
 const app={
   async fetch(req,env){
     const u=new URL(req.url),p=u.pathname;
+    if(req.method==='GET'&&p.startsWith('/q/')){const e=await etiqueta(env,p);if(e)return e}
     if(!p.startsWith('/api/')){
       const r=await env.ASSETS.fetch(req);
       if(r.status!==404||req.method!=='GET')return r;
@@ -418,6 +473,10 @@ const app={
       if(req.method==='GET'&&(m=p.match(/^\/api\/estado\/([a-z0-9-]{2,40})$/))){
         const e=await env.ESTADO.get('est:'+m[1],'json');
         return J(e?pub(e):pub(vacio()),200,{'cache-control':'no-cache'});
+      }
+      if(req.method==='GET'&&(m=p.match(/^\/api\/hoja\/([a-z2-9]{6})$/))){
+        const h=await env.ESTADO.get('et:'+m[1],'json');if(!h)return J({error:'no existe'},404);
+        return J({tipo:h.tipo,desde:h.desde||null,n:HOJA_N},200,{'cache-control':'no-cache'});
       }
       const q=await quien(env,req);
       if(!q)return J({error:'sin acceso'},401);

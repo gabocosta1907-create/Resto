@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow"><title>Hoja de etiquetas</title>
+<style>
+:root{--m:5mm}
+*{box-sizing:border-box}
+body{margin:0;background:#EEE;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:#111}
+.barra{position:sticky;top:0;z-index:5;background:#2B2B2B;color:#fff;padding:12px 16px;display:flex;gap:12px;flex-wrap:wrap;align-items:center;font-size:15px}
+.barra button{min-height:40px;border:0;border-radius:8px;background:#fff;color:#222;font:700 15px system-ui;padding:0 16px}
+.barra select{min-height:40px;border-radius:8px;border:0;padding:0 8px;font:15px system-ui}
+.barra .n{opacity:.8;font-size:13px;flex-basis:100%}
+.err{color:#B3402F;padding:14px 24px;font-weight:600;margin:0}
+.hoja{width:210mm;height:297mm;margin:14px auto;background:#fff;padding:var(--m);display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(6,1fr);box-shadow:0 2px 10px rgba(0,0,0,.15);page-break-after:always;break-after:page;overflow:hidden}
+.et{border:.2mm dashed #BBB;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:1.5mm;overflow:hidden}
+.q{width:30mm;height:30mm;flex:none}.q svg{width:100%;height:100%;display:block}
+.t1{font-weight:800;font-size:5mm;line-height:1.1;margin-top:.8mm}
+.t2{font-size:2.8mm;line-height:1.2;margin-top:.6mm;color:#333}
+.cd{font:2.3mm/1 ui-monospace,Menlo,monospace;color:#888;margin-top:.8mm;letter-spacing:.2mm}
+@page{size:A4;margin:0}
+@media print{body{background:#fff}.barra,#errs{display:none}.hoja{margin:0;box-shadow:none;width:210mm;height:297mm}.hoja:last-child{page-break-after:auto;break-after:auto}.et{border-color:#CCC}}
+</style></head><body>
+<div class="barra"><button id="imp" type="button">Imprimir</button>
+<label>Margen de la hoja <select id="mar"><option value="0">0 mm</option><option value="5" selected>5 mm</option><option value="10">10 mm</option></select></label>
+<span class="n">En el cuadro de impresión elegí tamaño A4 y escala 100 % (sin «ajustar a la página»). Son 24 etiquetas por hoja, 4 columnas × 6 filas.</span></div>
+<div id="errs"></div>
+<div id="hojas"></div>
+<script src="qr.js"></script>
+<script>
+(function(){
+ var out=document.getElementById('hojas'),N=24;
+ var cods=(new URLSearchParams(location.search).get('h')||'').toLowerCase().split(',').map(function(s){return s.trim()}).filter(function(s){return /^[a-z2-9]{6}$/.test(s)}).slice(0,20);
+ function esc(t){return String(t).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+ function qrSvg(u){var z=qrcode(0,'M');z.addData(u);z.make();var n=z.getModuleCount(),d='';
+  for(var r=0;r<n;r++)for(var k=0;k<n;k++)if(z.isDark(r,k))d+='M'+(k+4)+' '+(r+4)+'h1v1h-1z';
+  return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 '+(n+8)+' '+(n+8)+'" shape-rendering="crispEdges"><rect width="100%" height="100%" fill="#fff"/><path d="'+d+'" fill="#000"/></svg>'}
+ function hoja(c,h){
+  var base=location.origin+'/q/'+c,html='';
+  for(var i=0;i<N;i++){
+   var mesa=h.tipo==='mesas'?(h.desde||1)+i:0;
+   html+='<div class="et"><div class="q">'+qrSvg(mesa?base+'/'+mesa:base)+'</div>'
+    +(mesa?'<div class="t1">Mesa '+mesa+'</div><div class="t2">Escaneá para ver la carta</div>':'<div class="t1">Mirá la carta</div><div class="t2">Escaneá este código</div>')
+    +'<div class="cd">'+esc(c)+(mesa?' · '+mesa:'')+'</div></div>';
+  }
+  var d=document.createElement('div');d.className='hoja';d.innerHTML=html;return d}
+ document.getElementById('imp').onclick=function(){window.print()};
+ document.getElementById('mar').onchange=function(){document.documentElement.style.setProperty('--m',this.value+'mm')};
+ var errs=document.getElementById('errs');
+ function fallo(t){var p=document.createElement('p');p.className='err';p.textContent=t;errs.appendChild(p)}
+ if(!window.qrcode){fallo('No se pudo cargar el generador de QR.');return}
+ if(!cods.length){fallo('Falta el código de la hoja en la dirección (…?h=ab12cd).');return}
+ cods.forEach(function(c){
+  var lugar=document.createElement('div');out.appendChild(lugar);
+  fetch('/api/hoja/'+c).then(function(r){if(!r.ok)throw 0;return r.json()}).then(function(h){lugar.replaceWith(hoja(c,h))})
+   .catch(function(){lugar.remove();fallo('La hoja '+c+' no existe.')});
+ });
+})();
+</script></body></html>
