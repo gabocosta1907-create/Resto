@@ -16,9 +16,18 @@ async function carta(env,req,slug){
 }
 function indexar(c){const m={};(c.secciones||[]).forEach(s=>(s.items||[]).forEach(i=>{m[i.id]={nombre:i.nombre,seccion:s.id,vars:(i.variantes||[]).map(v=>v.n)}}));return m}
 
+// El administrador entra con la MISMA clave que ya usa en el Agente (la verifica el servidor del Agente, que es quien la tiene).
+// Solo vale si el Agente responde que esa clave es de administrador; las de operadores no sirven acá.
+const _adm=new Map();
+async function adminDelAgente(env,k){
+  if(!env.AGENTE||k.length<8||k.length>400)return false;
+  const h=await sha(k),c=_adm.get(h);if(c&&Date.now()-c.t<30000)return c.ok;
+  let ok=false;try{const r=await env.AGENTE.fetch('https://agente.marianacaci.com/api/resto/estado',{headers:{'x-acceso':k}});if(r.ok){const j=await r.json();ok=!!j&&j.rol==='admin'}}catch(e){}
+  if(_adm.size>50)_adm.clear();_adm.set(h,{ok,t:Date.now()});return ok;
+}
 async function quien(env,req){
   const a=req.headers.get('authorization')||'';const t=a.startsWith('Bearer ')?a.slice(7).trim():'';
-  if(t.length<20)return null;
+  if(t.length<20){const k=String(req.headers.get('x-acceso')||'').trim();return k&&await adminDelAgente(env,k)?{slug:'equipo',rol:'equipo'}:null}
   const r=await env.ESTADO.get('tok:'+await sha(t),'json');
   return r&&r.slug&&SLUG.test(r.slug)?r:null;
 }

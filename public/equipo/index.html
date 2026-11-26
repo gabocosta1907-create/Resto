@@ -41,11 +41,15 @@ table.act{width:100%;border-collapse:collapse;font-size:14px}table.act td{paddin
 (async()=>{
 const $=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const M=$('#m');let tok='';
-try{const h=new URLSearchParams(location.hash.slice(1)).get('t');if(h){localStorage.setItem('resto_eq',h);history.replaceState(null,'',location.pathname)}tok=localStorage.getItem('resto_eq')||''}catch(e){}
+// La clave de administrador es la misma que se usa en el Agente. Se acepta pegada tal cual o como el link/QR que la contiene.
+function leer(t){t=String(t||'').trim();const m=/[#&]c=([A-Za-z0-9_-]+)/.exec(t);
+ if(m){try{let x=m[1].replace(/-/g,'+').replace(/_/g,'/');while(x.length%4)x+='=';const o=JSON.parse(decodeURIComponent(escape(atob(x))));return o.a?String(o.a):''}catch(e){return ''}}
+ const k=/[#&]k=([0-9a-f]+)/.exec(t);if(k)return k[1];return /^[A-Za-z0-9_-]{8,}$/.test(t)?t:''}
+try{tok=localStorage.getItem('resto_adm')||''}catch(e){}
 let tt=null;
 function toast(t,mal){const e=$('#toast');e.textContent=t;e.className=mal?'mal':'ok';e.style.display='block';clearTimeout(tt);tt=setTimeout(()=>e.style.display='none',mal?9000:4500)}
 async function api(p,b){
- let r;try{r=await fetch(p,{method:b?'POST':'GET',headers:{authorization:'Bearer '+tok,'content-type':'application/json'},body:b?JSON.stringify(b):undefined})}catch(e){throw new Error('No hay conexión con el servidor. Probá de nuevo.')}
+ let r;try{r=await fetch(p,{method:b?'POST':'GET',headers:{'x-acceso':tok,'content-type':'application/json'},body:b?JSON.stringify(b):undefined})}catch(e){throw new Error('No hay conexión con el servidor. Probá de nuevo.')}
  const j=await r.json().catch(()=>({}));if(!r.ok){const e=new Error(j.error||('Error '+r.status));e.st=r.status;throw e}return j}
 // Una acción del usuario: avisa siempre, con éxito o con error.
 async function run(btn,fn,okMsg){if(btn)btn.disabled=true;try{const r=await fn();if(okMsg)toast(typeof okMsg==='function'?okMsg(r):okMsg);return r}catch(e){toast(e.message,true)}finally{if(btn)btn.disabled=false}}
@@ -58,17 +62,17 @@ const MAIL=/^[^@\s]+@[^@\s]+\.[^@\s]+$/;
 // ───────── Acceso ─────────
 function entrar(msg){
  $('#salir').hidden=true;$('#quien').textContent='';
- M.innerHTML=`<div class="card" style="max-width:460px;margin:30px auto"><h2>Entrar como administrador</h2><p class="mut">Pegá la clave del equipo. Queda guardada en este navegador.</p><label>Clave del equipo</label><input type="password" id="ck" autocomplete="current-password"><div class="row" style="margin-top:12px"><button class="btn" id="ce">Entrar</button></div>${msg?`<p class="er" style="margin-top:10px">${esc(msg)}</p>`:''}</div>`;
- const go=async()=>{const v=$('#ck').value.trim();if(!v)return toast('Pegá la clave del equipo.',true);tok=v;
-  try{const y=await api('/api/yo');if(y.rol!=='equipo')throw new Error('Esa clave no es del equipo.');try{localStorage.setItem('resto_eq',tok)}catch(e){}iniciar()}catch(e){tok='';entrar(e.st===401||e.st===403?'Esa clave no es válida.':e.message)}};
+ M.innerHTML=`<div class="card" style="max-width:460px;margin:30px auto"><h2>Entrar como administrador</h2><p class="mut">Es la misma clave de administrador que usás en el Agente de cartas. Pegala acá (o pegá su link). Queda guardada en este navegador.</p><label>Clave de administrador</label><input type="password" id="ck" autocomplete="current-password"><div class="row" style="margin-top:12px"><button class="btn" id="ce">Entrar</button></div>${msg?`<p class="er" style="margin-top:10px">${esc(msg)}</p>`:''}</div>`;
+ const go=async()=>{const v=leer($('#ck').value);if(!v)return toast('No reconozco eso. Pegá la clave de administrador o su link completo.',true);tok=v;
+  try{const y=await api('/api/yo');if(y.rol!=='equipo')throw new Error('Esa clave no es de administrador.');try{localStorage.setItem('resto_adm',tok)}catch(e){}iniciar()}catch(e){tok='';entrar(e.st===401||e.st===403?'Esa clave no es de administrador, o no está vigente.':e.message)}};
  $('#ce').onclick=go;$('#ck').onkeydown=e=>{if(e.key==='Enter')go()};$('#ck').focus()}
-$('#salir').onclick=()=>{if(confirm('¿Salir de la administración? Para volver vas a necesitar la clave del equipo.')){try{localStorage.removeItem('resto_eq')}catch(e){}tok='';entrar()}};
+$('#salir').onclick=()=>{if(confirm('¿Salir de la administración? Para volver vas a necesitar tu clave de administrador.')){try{localStorage.removeItem('resto_adm')}catch(e){}tok='';entrar()}};
 
 // ───────── Estado y pestañas ─────────
 const S={tab:'ops',ops:[],com:[],filtroOp:'',filtro:'todos',nuevo:null};
 async function cargar(){const [o,c]=await Promise.all([api('/api/equipo/operadores'),api('/api/equipo/cartas')]);S.ops=o;S.com=c}
 async function iniciar(){
- try{const y=await api('/api/yo');if(y.rol!=='equipo')throw new Error('x')}catch(e){return entrar(tok?'Esa clave no es válida.':'')}
+ try{const y=await api('/api/yo');if(y.rol!=='equipo')throw new Error('x')}catch(e){return entrar(tok?'Esa clave ya no es válida. Ingresala de nuevo.':'')}
  $('#salir').hidden=false;$('#quien').textContent='Sesión: administrador';
  try{await cargar()}catch(e){M.innerHTML=`<div class="card er">${esc(e.message)}</div>`;return}
  pintar()}
