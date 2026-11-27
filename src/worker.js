@@ -242,7 +242,7 @@ async function equipo(env,req,p,q){
     if(!SLUG.test(slug))return J({error:'dirección inválida'},400);
     if(!(await puede(slug)))return NOES;
     const h=await env.ESTADO.get('et:'+c,'json');if(!h)return J({error:'esa hoja no existe'},404);
-    if(h.slug&&h.slug!==slug)return J({error:A.admin?'esa hoja ya está asociada a /'+h.slug+'/; liberala primero':'esa hoja ya está en uso'},409);
+    if(h.slug)return J({error:A.admin?'esa hoja ya está asociada a /'+h.slug+'/; liberala primero':'esa hoja ya está en uso'},409);
     if(!A.admin&&h.op!==A.id)return J({error:'esa hoja no está habilitada para vos: pedile al administrador que te la asigne'},403);
     if(!(await carta(env,req,slug)))return J({error:'no existe una carta con esa dirección'},404);
     h.slug=slug;h.por=A.id;h.ta=new Date().toISOString();await env.ESTADO.put('et:'+c,JSON.stringify(h));
