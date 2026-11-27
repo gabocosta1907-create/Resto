@@ -67,6 +67,22 @@ async function run(btn,fn,okMsg){if(btn)btn.disabled=true;try{const r=await fn()
 const b64u=o=>btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
 const ORIGEN_AGENTE='https://agente.marianacaci.com';
 function qrImg(url,tit){const q=qrcode(0,'M');q.addData(url);q.make();return `<div class="qr">${q.createImgTag(5,8)}${esc(tit)}</div>`}
+// Imagen del QR lista para guardar o mandar por chat: QR grande con el título debajo.
+function qrPng(url,tit){return new Promise(res=>{const q=qrcode(0,'M');q.addData(url);q.make();const n=q.getModuleCount(),m=Math.max(8,Math.floor(720/(n+8))),W=(n+8)*m,H=W+90,c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d');
+ x.fillStyle='#fff';x.fillRect(0,0,W,H);x.fillStyle='#000';for(let r=0;r<n;r++)for(let k=0;k<n;k++)if(q.isDark(r,k))x.fillRect((k+4)*m,(r+4)*m,m,m);
+ x.fillStyle='#222';x.textAlign='center';x.font='600 30px system-ui,sans-serif';const t=String(tit||'');x.fillText(t.length>38?t.slice(0,37)+'…':t,W/2,W+12+30);x.font='22px system-ui,sans-serif';x.fillStyle='#A63A2B';x.fillText('Privado: no lo publiques',W/2,W+12+66);
+ c.toBlob(b=>res(b),'image/png')})}
+const nomArch=t=>String(t||'qr').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')+'.png';
+function accionesQr(url,tit){const d=`data-url="${esc(url)}" data-tit="${esc(tit)}"`;
+ return `<div class="row" style="margin-top:8px"><button class="btn" data-qa="png" ${d}>Descargar imagen</button>${navigator.share?`<button class="btn" data-qa="share" ${d}>Compartir…</button>`:''}<button class="btn" data-qa="copy" ${d}>Copiar link</button><button class="btn" data-qa="mail" ${d}>Enviar por mail</button></div>`}
+document.addEventListener('click',async e=>{const b=e.target.closest('button[data-qa]');if(!b)return;const url=b.dataset.url,tit=b.dataset.tit,a=b.dataset.qa;
+ try{
+  if(a==='copy'){await navigator.clipboard.writeText(url);return toast('Link copiado.')}
+  if(a==='mail'){location.href='mailto:?subject='+encodeURIComponent(tit)+'&body='+encodeURIComponent('Este link es privado, no lo reenvíes ni lo publiques:\n\n'+url);return toast('Se abrió tu programa de mail con el link.')}
+  const blob=await qrPng(url,tit),f=new File([blob],nomArch(tit),{type:'image/png'});
+  if(a==='share'){if(navigator.canShare&&navigator.canShare({files:[f]}))await navigator.share({files:[f],title:tit});else return toast('Este navegador no deja compartir la imagen: usá Descargar imagen.',true);return}
+  const u=URL.createObjectURL(blob),l=document.createElement('a');l.href=u;l.download=f.name;document.body.append(l);l.click();l.remove();setTimeout(()=>URL.revokeObjectURL(u),5000);toast('Imagen descargada.')
+ }catch(x){if(x&&x.name==='AbortError')return;toast('No se pudo: '+(x&&x.message||'probá de nuevo'),true)}});
 const fecha=t=>t?new Date(t).toLocaleString('es-AR',{timeZone:'America/Argentina/Buenos_Aires',day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}):'—';
 const MAIL=/^[^@\s]+@[^@\s]+\.[^@\s]+$/;
 
@@ -98,7 +114,7 @@ async function recargar(){try{await cargar()}catch(e){toast(e.message,true)}pint
 function estadoOp(o){return !o.activo?'<span class="pill no">Dado de baja</span>':o.bloqueado?'<span class="pill av">Bloqueado</span>':'<span class="pill ok">Activo</span>'}
 function cajaAcceso(titulo,nombre,clave){
  const url=ORIGEN_AGENTE+'/#c='+b64u({a:clave});
- return `<div class="box"><b>${esc(titulo)}: ${esc(nombre)}</b><br>La clave y el QR se muestran <b>una sola vez</b>. Pasáselos con la cámara del celular y que no los comparta. Si se pierden, generás uno nuevo.<label>Clave</label><input type="text" readonly value="${esc(clave)}" onclick="this.select()"><label>Link de acceso</label><input type="text" readonly value="${esc(url)}" onclick="this.select()">${qrImg(url,'Acceso de '+nombre+' (privado)')}</div>`}
+ return `<div class="box"><b>${esc(titulo)}: ${esc(nombre)}</b><br>La clave y el QR se muestran <b>una sola vez</b>. Pasáselos con la cámara del celular y que no los comparta. Si se pierden, generás uno nuevo.<label>Clave</label><input type="text" readonly value="${esc(clave)}" onclick="this.select()"><label>Link de acceso</label><input type="text" readonly value="${esc(url)}" onclick="this.select()">${qrImg(url,'Acceso de '+nombre+' (privado)')}${accionesQr(url,'Acceso de '+nombre)}</div>`}
 function vistaOps(){
  const act=S.ops.filter(o=>o.activo&&!o.bloqueado).length;
  $('#vista').innerHTML=`<div class="card"><h2>Crear operador</h2><div class="row"><input type="text" id="opn" placeholder="Nombre del operador" maxlength="40" style="flex:1;min-width:200px"><button class="btn" id="opa">Crear operador</button></div><div id="nuevo">${S.nuevo?cajaAcceso(S.nuevo.t,S.nuevo.n,S.nuevo.c):''}</div></div>
@@ -158,7 +174,7 @@ function vistaCom(){
   if('ag' in b.dataset){const on=b.dataset.ag==='1';if(!await pregunta(on?'¿Volver a habilitar el asistente de /'+slug+'/ ?':'¿Cortar el asistente de /'+slug+'/ ? El comercio deja de verlo.'))return;
    if(await run(b,()=>api('/api/equipo/agente',{slug,on}),on?'Asistente habilitado.':'Asistente cortado.'))await recargar();return}
   if('tok' in b.dataset){if(!await pregunta('Esto invalida el link de herramienta actual de /'+slug+'/ y genera uno nuevo. ¿Seguir?'))return;
-   const j=await run(b,()=>api('/api/equipo/token',{slug}),'Link nuevo generado.');if(j){const u=location.origin+j.herramienta;it.querySelector('[data-out]').innerHTML=`<div class="box"><b>Link de herramienta de /${esc(slug)}/</b>: se muestra una sola vez. Entregáselo al responsable del local y no lo publiques.<input type="text" readonly value="${esc(u)}" onclick="this.select()" style="margin-top:8px">${qrImg(u,'Herramienta (privado)')}</div>`}}}}
+   const j=await run(b,()=>api('/api/equipo/token',{slug}),'Link nuevo generado.');if(j){const u=location.origin+j.herramienta;it.querySelector('[data-out]').innerHTML=`<div class="box"><b>Link de herramienta de /${esc(slug)}/</b>: se muestra una sola vez. Entregáselo al responsable del local y no lo publiques.<input type="text" readonly value="${esc(u)}" onclick="this.select()" style="margin-top:8px">${qrImg(u,'Herramienta (privado)')}${accionesQr(u,'Herramienta de /'+slug+'/')}</div>`}}}}
 iniciar();
 })();
 </script></body></html>
