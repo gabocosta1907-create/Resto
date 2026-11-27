@@ -206,17 +206,36 @@ async function equipo(env,req,p,q){
     return J({ok:true,slug,vinculado:!!(await env.ESTADO.get('pm:'+slug)),clave:!!env.RESTO_SVC_KEY,portal:portalRes});
   }
   if(req.method==='POST'&&p==='/api/equipo/hojas'){
-    if(!A.admin)return SOLOADM;
     const tipo=b.tipo==='mesas'?'mesas':b.tipo==='carta'?'carta':null;if(!tipo)return J({error:'el tipo es carta o mesas'},400);
     const cant=Math.min(Math.max(parseInt(b.cantidad)||1,1),20),d0=Math.min(Math.max(parseInt(b.desde)||1,1),9000),out=[];
+    // Administrador: crea sin límite y puede dejarlas a nombre de un operador. Operador: solo si el administrador le fijó un tope, y dentro de ese tope.
+    let dueno=null;
+    if(A.admin){
+      if(b.op){const od=OPID.test(String(b.op))?await env.ESTADO.get('op:'+b.op,'json'):null;if(!od||!od.activo)return J({error:'ese operador no existe o está dado de baja'},404);dueno=od.id}
+    }else{
+      const od=await env.ESTADO.get('op:'+A.id,'json'),cupo=od?Number(od.cupo)||0:0;
+      if(cupo<1)return J({error:'el administrador todavía no te habilitó para crear hojas'},403);
+      const libres=(await hojasDe(env)).filter(h=>h.op===A.id&&!h.slug).length;
+      if(libres+cant>cupo)return J({error:'tu tope es de '+cupo+' hoja(s) sin usar y ya tenés '+libres+': podés crear '+Math.max(cupo-libres,0)+' más. Asociá las que tenés a un comercio o pedile al administrador que te amplíe el tope.'},409);
+      dueno=A.id;
+    }
     for(let i=0;i<cant;i++){
       let c=null;for(let t=0;t<8&&!c;t++){const x=codigoNuevo();if(!(await env.ESTADO.get('et:'+x)))c=x}
       if(!c)return J({error:'no pude generar el código, probá de nuevo'},500);
-      const h={tipo,desde:tipo==='mesas'?d0+i*HOJA_N:null,slug:null,t:new Date().toISOString()};
-      await env.ESTADO.put('et:'+c,JSON.stringify(h));out.push({codigo:c,tipo,desde:h.desde,slug:null});
+      const h={tipo,desde:tipo==='mesas'?d0+i*HOJA_N:null,slug:null,op:dueno,t:new Date().toISOString()};
+      await env.ESTADO.put('et:'+c,JSON.stringify(h));out.push({codigo:c,tipo,desde:h.desde,slug:null,op:dueno});
     }
-    await bit(env,A,'hoja.crear',null,{tipo,n:cant});
+    await bit(env,A,'hoja.crear',null,{tipo,n:cant,op:dueno});
     return J({ok:true,hojas:out});
+  }
+  if(req.method==='POST'&&p==='/api/equipo/hojas/asignar'){
+    if(!A.admin)return SOLOADM;
+    const c=codigoDe(b.codigo);if(!c)return J({error:'código inválido'},400);
+    const h=await env.ESTADO.get('et:'+c,'json');if(!h)return J({error:'esa hoja no existe'},404);
+    if(h.slug)return J({error:'esa hoja ya está asociada a /'+h.slug+'/'},409);
+    let nuevo=null;if(b.op){const od=OPID.test(String(b.op))?await env.ESTADO.get('op:'+b.op,'json'):null;if(!od||!od.activo)return J({error:'ese operador no existe o está dado de baja'},404);nuevo=od.id}
+    h.op=nuevo;await env.ESTADO.put('et:'+c,JSON.stringify(h));
+    await bit(env,A,'hoja.asignar',null,{c,op:nuevo});return J({ok:true,codigo:c,op:nuevo});
   }
   if(req.method==='POST'&&p==='/api/equipo/hojas/asociar'){
     const c=codigoDe(b.codigo);if(!c)return J({error:'código inválido: son 6 letras o números (o el link del QR)'},400);
@@ -224,6 +243,7 @@ async function equipo(env,req,p,q){
     if(!(await puede(slug)))return NOES;
     const h=await env.ESTADO.get('et:'+c,'json');if(!h)return J({error:'esa hoja no existe'},404);
     if(h.slug&&h.slug!==slug)return J({error:A.admin?'esa hoja ya está asociada a /'+h.slug+'/; liberala primero':'esa hoja ya está en uso'},409);
+    if(!A.admin&&h.op!==A.id)return J({error:'esa hoja no está habilitada para vos: pedile al administrador que te la asigne'},403);
     if(!(await carta(env,req,slug)))return J({error:'no existe una carta con esa dirección'},404);
     h.slug=slug;h.por=A.id;h.ta=new Date().toISOString();await env.ESTADO.put('et:'+c,JSON.stringify(h));
     await bit(env,A,'hoja.asociar',slug,{c,tipo:h.tipo});
@@ -238,8 +258,13 @@ async function equipo(env,req,p,q){
   }
   if(req.method==='GET'&&p==='/api/equipo/hojas'){
     let L=await hojasDe(env);
-    if(!A.admin){const ok=[];for(const h of L)if(h.slug&&await puede(h.slug))ok.push(h);L=ok}
-    return J(L.sort((a,c)=>(c.t||'').localeCompare(a.t||'')));
+    if(!A.admin){const ok=[];for(const h of L)if(h.op===A.id||(h.slug&&await puede(h.slug)))ok.push(h);L=ok}
+    L.sort((a,c)=>(c.t||'').localeCompare(a.t||''));
+    if(new URL(req.url).searchParams.get('resumen')){
+      const od=A.admin?null:await env.ESTADO.get('op:'+A.id,'json');
+      return J({cupo:A.admin?null:(Number(od&&od.cupo)||0),libres:L.filter(h=>!h.slug&&(A.admin||h.op===A.id)).length,hojas:L});
+    }
+    return J(L);
   }
   if(req.method==='GET'&&p==='/api/equipo/consultas'){
     if(!A.admin)return SOLOADM;
@@ -273,11 +298,11 @@ async function equipo(env,req,p,q){
     if(b.accion!=='lectura')return J({error:'acción no permitida'},400);
     await bit(env,A,'lectura',null,b.det&&typeof b.det==='object'?{n:Number(b.det.n)||null}:null);return J({ok:true});
   }
-  if(p==='/api/equipo/operadores'||p==='/api/equipo/operadores/revocar'||p==='/api/equipo/operadores/acceso'||p==='/api/equipo/operadores/estado'||p==='/api/equipo/reasignar'||p==='/api/equipo/bitacora'){
+  if(p==='/api/equipo/operadores'||p==='/api/equipo/operadores/revocar'||p==='/api/equipo/operadores/acceso'||p==='/api/equipo/operadores/estado'||p==='/api/equipo/operadores/cupo'||p==='/api/equipo/reasignar'||p==='/api/equipo/bitacora'){
     if(!A.admin)return SOLOADM;
     if(p==='/api/equipo/operadores'&&req.method==='GET'){
       const cuenta={};for(const k of (await env.ESTADO.list({prefix:'own:'})).keys){const o=await env.ESTADO.get(k.name,'json');if(o&&o.op)cuenta[o.op]=(cuenta[o.op]||0)+1}
-      const out=[];for(const k of (await env.ESTADO.list({prefix:'op:'})).keys){const o=await env.ESTADO.get(k.name,'json');if(o)out.push({id:o.id,nombre:o.nombre,activo:!!o.activo,bloqueado:!!o.bloq,creado:o.creado,ult:o.ult||null,comercios:cuenta[o.id]||0})}
+      const hj=await hojasDe(env),out=[];for(const k of (await env.ESTADO.list({prefix:'op:'})).keys){const o=await env.ESTADO.get(k.name,'json');if(o){const mias=hj.filter(h=>h.op===o.id);out.push({id:o.id,nombre:o.nombre,activo:!!o.activo,bloqueado:!!o.bloq,creado:o.creado,ult:o.ult||null,comercios:cuenta[o.id]||0,cupo:Number(o.cupo)||0,hojasLibres:mias.filter(h=>!h.slug).length,hojasTotal:mias.length})}}
       return J(out);
     }
     if(p==='/api/equipo/operadores'&&req.method==='POST'){
@@ -289,6 +314,12 @@ async function equipo(env,req,p,q){
       await env.ESTADO.put('op:'+id,JSON.stringify({id,nombre,activo:true,creado:new Date().toISOString(),h}));
       await env.ESTADO.put('opk:'+h,id);await bit(env,A,'operador.alta',null,{id,nombre});
       return J({ok:true,id,nombre,clave});
+    }
+    if(p==='/api/equipo/operadores/cupo'&&req.method==='POST'){
+      const o=OPID.test(String(b.id||''))?await env.ESTADO.get('op:'+b.id,'json'):null;if(!o)return J({error:'no existe ese operador'},404);
+      const n=Number(b.cupo);if(!Number.isInteger(n)||n<0||n>200)return J({error:'el tope es un número entero entre 0 y 200'},400);
+      const antes=Number(o.cupo)||0;o.cupo=n;await env.ESTADO.put('op:'+o.id,JSON.stringify(o));
+      await bit(env,A,'operador.cupo',null,{id:o.id,antes,n});return J({ok:true,id:o.id,cupo:n});
     }
     // Nuevo acceso: reemplaza la clave del operador (la anterior deja de valer) y no toca sus comercios. Sirve cuando pierde el QR.
     const cambiarClave=async o=>{const clave='op'+aleatorio(24),h=await sha(clave);if(o.h)await env.ESTADO.delete('opk:'+o.h);o.h=h;await env.ESTADO.put('opk:'+h,o.id);return clave};
@@ -492,7 +523,7 @@ async function etiqueta(env,p){
   const k=h.tipo==='mesas'&&m[2]?Number(m[2]):0,mesa=k>=h.desde&&k<h.desde+HOJA_N?k:0;
   return new Response(null,{status:302,headers:{location:'/'+h.slug+'/'+(mesa?'?m='+mesa:''),'cache-control':'no-store'}});
 }
-async function hojasDe(env){const o=[];for(const k of (await env.ESTADO.list({prefix:'et:'})).keys){const h=await env.ESTADO.get(k.name,'json');if(h)o.push({codigo:k.name.slice(3),tipo:h.tipo,desde:h.desde||null,slug:h.slug||null,t:h.t||null})}return o}
+async function hojasDe(env){const o=[];for(const k of (await env.ESTADO.list({prefix:'et:'})).keys){const h=await env.ESTADO.get(k.name,'json');if(h)o.push({codigo:k.name.slice(3),tipo:h.tipo,desde:h.desde||null,slug:h.slug||null,op:h.op||null,t:h.t||null})}return o}
 
 const app={
   async fetch(req,env){

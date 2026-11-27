@@ -27,6 +27,7 @@ input[type=text],input[type=password],select{width:100%;font:16px system-ui;padd
 .acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .sub{margin-top:10px;padding:10px 12px;background:#FAF8F3;border:1px solid var(--line);border-radius:10px}
 .box{background:#FFF7E0;border:1px solid #E7CF86;border-radius:10px;padding:12px;font-size:14px;margin:10px 0}
+.lk{display:inline-flex;align-items:center;min-height:36px;padding:0 14px;border-radius:10px;border:1px solid var(--line);background:#fff;color:#222;font:700 14px system-ui;text-decoration:none}
 .qr{display:inline-block;padding:10px;background:#fff;border:1px solid var(--line);border-radius:10px;margin:8px 8px 0 0;text-align:center;font-size:13px}.qr img{display:block;margin:0 auto 4px}
 a{color:var(--ac);font-weight:600}
 #toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);max-width:92vw;padding:12px 18px;border-radius:12px;color:#fff;font:600 15px system-ui;z-index:50;box-shadow:0 4px 18px rgba(0,0,0,.25);display:none}
@@ -96,8 +97,8 @@ function entrar(msg){
 $('#salir').onclick=async()=>{if(await pregunta('¿Salir de la administración? Para volver vas a necesitar tu clave de administrador.')){try{localStorage.removeItem('resto_adm')}catch(e){}tok='';entrar()}};
 
 // ───────── Estado y pestañas ─────────
-const S={tab:'ops',ops:[],com:[],filtroOp:'',filtro:'todos',nuevo:null};
-async function cargar(){const [o,c]=await Promise.all([api('/api/equipo/operadores'),api('/api/equipo/cartas')]);S.ops=o;S.com=c}
+const S={tab:'ops',ops:[],com:[],hojas:[],filtroOp:'',filtro:'todos',nuevo:null,fEti:'libres',fEtiOp:'',cajaEti:null};
+async function cargar(){const [o,c,h]=await Promise.all([api('/api/equipo/operadores'),api('/api/equipo/cartas'),api('/api/equipo/hojas')]);S.ops=o;S.com=c;S.hojas=h}
 async function iniciar(){
  try{const y=await api('/api/yo');if(y.rol!=='equipo')throw new Error('x')}catch(e){return entrar(tok?'Esa clave ya no es válida. Ingresala de nuevo.':'')}
  $('#salir').hidden=false;$('#quien').textContent='Sesión: administrador';
@@ -105,9 +106,9 @@ async function iniciar(){
  pintar()}
 function pintar(){
  const pend=S.com.filter(c=>c.pendiente).length;
- M.innerHTML=`<nav><button data-t="ops" class="${S.tab==='ops'?'on':''}">Operadores</button><button data-t="com" class="${S.tab==='com'?'on':''}">Comercios${pend?`<span class="n">${pend}</span>`:''}</button></nav><div id="vista"></div>`;
- M.querySelector('nav').onclick=e=>{const t=e.target.closest('button');if(t){S.tab=t.dataset.t;pintar()}};
- (S.tab==='ops'?vistaOps:vistaCom)()}
+ M.innerHTML=`<nav><button data-t="ops" class="${S.tab==='ops'?'on':''}">Operadores</button><button data-t="com" class="${S.tab==='com'?'on':''}">Comercios${pend?`<span class="n">${pend}</span>`:''}</button><button data-t="eti" class="${S.tab==='eti'?'on':''}">Etiquetas</button></nav><div id="vista"></div>`;
+ M.querySelector('nav').onclick=e=>{const t=e.target.closest('button');if(t){S.tab=t.dataset.t;recargar()}};
+ (S.tab==='ops'?vistaOps:S.tab==='eti'?vistaEti:vistaCom)()}
 async function recargar(){try{await cargar()}catch(e){toast(e.message,true)}pintar()}
 
 // ───────── Operadores ─────────
@@ -118,16 +119,19 @@ function cajaAcceso(titulo,nombre,clave){
 function vistaOps(){
  const act=S.ops.filter(o=>o.activo&&!o.bloqueado).length;
  $('#vista').innerHTML=`<div class="card"><h2>Crear operador</h2><div class="row"><input type="text" id="opn" placeholder="Nombre del operador" maxlength="40" style="flex:1;min-width:200px"><button class="btn" id="opa">Crear operador</button></div><div id="nuevo">${S.nuevo?cajaAcceso(S.nuevo.t,S.nuevo.n,S.nuevo.c):''}</div></div>
- <div class="card"><h2>Operadores <span class="mut">· ${act} activos de ${S.ops.length}</span></h2>${S.ops.length?S.ops.map(o=>`<div class="it"><div class="top"><div><b>${esc(o.nombre)}</b> ${estadoOp(o)}<br><span class="mut">${o.comercios} comercio${o.comercios===1?'':'s'} · último acceso: ${fecha(o.ult)}</span></div><div class="acts" style="margin-top:0">
+ <div class="card"><h2>Operadores <span class="mut">· ${act} activos de ${S.ops.length}</span></h2>${S.ops.length?S.ops.map(o=>`<div class="it"><div class="top"><div><b>${esc(o.nombre)}</b> ${estadoOp(o)}<br><span class="mut">${o.comercios} comercio${o.comercios===1?'':'s'} · último acceso: ${fecha(o.ult)}</span>${o.activo?`<div class="row" style="margin-top:8px"><span class="mut">Hojas de etiquetas · tope:</span><input type="number" min="0" max="200" value="${o.cupo}" data-cpi="${esc(o.id)}" style="width:80px" title="Máximo de hojas sin asociar que puede tener creadas. 0: no puede crear."><button class="btn s" data-cp="${esc(o.id)}">Guardar tope</button><span class="mut">${o.hojasLibres} sin usar · ${o.hojasTotal} en total</span></div>`:''}</div><div class="acts" style="margin-top:0">
   ${o.comercios?`<button class="btn s" data-v="${esc(o.id)}">Ver comercios</button>`:''}
   ${o.activo?`<button class="btn s" data-q="${esc(o.id)}">Nuevo QR</button>`:''}
   ${o.activo&&!o.bloqueado?`<button class="btn s" data-b="${esc(o.id)}">Bloquear</button>`:''}
   ${(!o.activo||o.bloqueado)?`<button class="btn s" data-r="${esc(o.id)}">Reactivar</button>`:''}
   ${o.activo?`<button class="btn d" data-x="${esc(o.id)}">Dar de baja</button>`:''}</div></div></div>`).join(''):'<p class="mut">Todavía no hay operadores. Creá el primero arriba.</p>'}
- <p class="mut" style="margin-top:12px"><b>Bloquear</b> es una pausa: conserva su clave y sus comercios. <b>Dar de baja</b> anula su acceso; sus comercios quedan a tu nombre hasta que los reasignes. <b>Nuevo QR</b> reemplaza su clave por otra y deja la anterior sin efecto.</p></div>`;
+ <p class="mut" style="margin-top:12px"><b>Bloquear</b> es una pausa: conserva su clave y sus comercios. <b>Dar de baja</b> anula su acceso; sus comercios quedan a tu nombre hasta que los reasignes. <b>Nuevo QR</b> reemplaza su clave por otra y deja la anterior sin efecto. El <b>tope de hojas</b> es la cantidad máxima de hojas de etiquetas sin asociar que el operador puede tener creadas: con 0 no puede crear; cada hoja que asocia a un comercio libera lugar.</p></div>`;
  $('#opa').onclick=async e=>{const n=$('#opn').value.trim();if(!n)return toast('Escribí el nombre del operador.',true);
   const j=await run(e.target,()=>api('/api/equipo/operadores',{nombre:n}),'Operador creado.');if(j){S.nuevo={t:'Operador creado',n:j.nombre,c:j.clave};await recargar()}};
- $('#vista').onclick=async e=>{const t=e.target.closest('button[data-v],button[data-q],button[data-b],button[data-r],button[data-x]');if(!t)return;
+ $('#vista').onclick=async e=>{
+  const cp=e.target.closest('button[data-cp]');if(cp){const id=cp.dataset.cp,o=S.ops.find(x=>x.id===id),v=$('[data-cpi="'+id+'"]').value.trim();if(!/^\d{1,3}$/.test(v))return toast('El tope es un número entero entre 0 y 200.',true);
+   if(await run(cp,()=>api('/api/equipo/operadores/cupo',{id,cupo:Number(v)}),Number(v)?(o.nombre+' puede tener hasta '+v+' hoja(s) sin usar.'):(o.nombre+' ya no puede crear hojas.')))await recargar();return}
+  const t=e.target.closest('button[data-v],button[data-q],button[data-b],button[data-r],button[data-x]');if(!t)return;
   const id=t.dataset.v||t.dataset.q||t.dataset.b||t.dataset.r||t.dataset.x,o=S.ops.find(x=>x.id===id);if(!o)return;
   if(t.dataset.v){S.filtroOp=id;S.filtro='todos';S.tab='com';return pintar()}
   if(t.dataset.q){if(!await pregunta('Esto reemplaza la clave de '+o.nombre+': el QR anterior deja de funcionar. Sus comercios no cambian. ¿Generar un QR nuevo?'))return;
@@ -138,6 +142,35 @@ function vistaOps(){
    if(j){if(j.clave){S.nuevo={t:'Operador reactivado, clave nueva',n:j.nombre,c:j.clave}}await recargar();if(j.clave)window.scrollTo(0,0)}return}
   if(t.dataset.x){if(!await pregunta('¿Dar de baja a '+o.nombre+'? Pierde el acceso ya mismo y sus '+o.comercios+' comercio(s) quedan a tu nombre hasta que los reasignes.'))return;
    if(await run(t,()=>api('/api/equipo/operadores/revocar',{id}),o.nombre+' fue dado de baja.'))await recargar()}}}
+
+// ───────── Etiquetas ─────────
+const URL_ETI=codigos=>location.origin+'/equipo/etiquetas.html?h='+codigos.join(',');
+function vistaEti(){
+ const nom=id=>{const o=S.ops.find(x=>x.id===id);return o?o.nombre:(id||'')},act=S.ops.filter(o=>o.activo);
+ const opts=sel=>`<option value="">Sin dueño (stock del administrador)</option>`+act.map(o=>`<option value="${esc(o.id)}"${sel===o.id?' selected':''}>${esc(o.nombre)}</option>`).join('');
+ const V=S.hojas.filter(h=>S.fEti==='todas'||(S.fEti==='libres'?!h.slug:!!h.slug)).filter(h=>!S.fEtiOp||(S.fEtiOp==='_'?!h.op:h.op===S.fEtiOp));
+ const libresV=V.filter(h=>!h.slug).slice(0,20).map(h=>h.codigo),nLib=S.hojas.filter(h=>!h.slug).length;
+ const fb=(k,t)=>`<button class="btn s${S.fEti===k?' on':''}" data-fe="${k}" style="${S.fEti===k?'background:#2B2B2B;color:#fff':''}">${t}</button>`;
+ $('#vista').innerHTML=`<div class="card"><h2>Crear hojas de etiquetas</h2><p class="mut">Cada hoja trae 24 etiquetas con su código. Las que dejás a nombre de un operador solo ese operador puede asociarlas a un comercio. El operador también puede crear las suyas dentro del tope que le fijes en la pestaña Operadores.</p>
+ <div class="row"><select id="etipo"><option value="mesas">Mesas (con número)</option><option value="carta">Carta (QR repetido)</option></select><input type="number" id="ecant" min="1" max="20" value="1" style="width:80px" title="cantidad de hojas"><input type="number" id="edesde" min="1" value="1" style="width:90px" title="primera mesa (solo hojas de mesas)"><select id="eop">${opts('')}</select><button class="btn" id="ecrear">Crear hojas</button></div>
+ <div id="ecaja">${S.cajaEti||''}</div></div>
+ <div class="card"><h2>Hojas <span class="mut">· ${S.hojas.length} en total, ${nLib} sin asociar</span></h2>
+ <div class="row" style="margin-bottom:8px">${fb('libres','Sin asociar')}${fb('usadas','Asociadas')}${fb('todas','Todas')}<select id="efo"><option value="">Todos los dueños</option><option value="_"${S.fEtiOp==='_'?' selected':''}>Sin dueño</option>${act.map(o=>`<option value="${esc(o.id)}"${S.fEtiOp===o.id?' selected':''}>${esc(o.nombre)}</option>`).join('')}</select>${libresV.length?`<a class="lk" target="_blank" rel="noopener" href="${URL_ETI(libresV)}">Imprimir / PDF de estas ${libresV.length} sin asociar</a>`:''}</div>
+ ${V.length?V.map(h=>`<div class="it" data-h="${esc(h.codigo)}"><div class="top"><div><b>${esc(h.codigo)}</b> · ${h.tipo==='mesas'?`Mesas ${h.desde} a ${h.desde+23}`:'Carta (QR repetido)'}<br><span class="mut">${h.slug?`Asociada a /${esc(h.slug)}/`:'Sin asociar'} · ${h.op?'Dueño: '+esc(nom(h.op)):'Sin dueño'}</span></div>
+  <div class="acts" style="margin-top:0"><a class="lk" target="_blank" rel="noopener" href="${URL_ETI([h.codigo])}">Imprimir / PDF</a>${h.slug?`<button class="btn d" data-lib="${esc(h.codigo)}">Liberar</button>`:`<select data-aso="${esc(h.codigo)}">${opts(h.op||'')}</select><button class="btn s" data-asg="${esc(h.codigo)}">Asignar</button>`}</div></div></div>`).join(''):'<p class="mut">No hay hojas con este filtro.</p>'}
+ <p class="mut" style="margin-top:12px"><b>Liberar</b> desasocia la hoja del comercio (el QR impreso no cambia): queda sin asociar y se puede asociar de nuevo. <b>Asignar</b> cambia el dueño de una hoja sin asociar.</p></div>`;
+ $('#efo').onchange=e=>{S.fEtiOp=e.target.value;vistaEti()};
+ $('#vista').onclick=async e=>{
+  const f=e.target.closest('button[data-fe]');if(f){S.fEti=f.dataset.fe;return vistaEti()}
+  const c=e.target.closest('#ecrear');if(c){const cant=Number($('#ecant').value)||1,tipo=$('#etipo').value,desde=Number($('#edesde').value)||1,op=$('#eop').value||undefined;
+   if(cant<1||cant>20)return toast('Se pueden crear de 1 a 20 hojas por vez.',true);
+   const j=await run(c,()=>api('/api/equipo/hojas',{tipo,cantidad:cant,desde,op}),r=>r.hojas.length+(r.hojas.length===1?' hoja creada.':' hojas creadas.'));
+   if(j){const cs=j.hojas.map(x=>x.codigo);S.cajaEti=`<div class="box"><b>${cs.length} ${cs.length===1?'hoja creada':'hojas creadas'}</b>: ${esc(cs.join(', '))}${op?' · a nombre de '+esc(nom(op)):''}<br><a class="lk" target="_blank" rel="noopener" style="margin-top:8px" href="${URL_ETI(cs)}">Imprimir / PDF</a></div>`;await recargar()}return}
+  const a=e.target.closest('button[data-asg]');if(a){const cod=a.dataset.asg,op=$('[data-aso="'+cod+'"]').value||null;
+   if(await run(a,()=>api('/api/equipo/hojas/asignar',{codigo:cod,op}),op?'Hoja '+cod+' asignada a '+nom(op)+'.':'Hoja '+cod+' quedó sin dueño.'))await recargar();return}
+  const l=e.target.closest('button[data-lib]');if(l){const cod=l.dataset.lib,h=S.hojas.find(x=>x.codigo===cod);
+   if(!await pregunta('¿Liberar la hoja '+cod+'? Deja de apuntar a /'+(h&&h.slug)+'/ y queda sin asociar. El QR impreso no cambia.'))return;
+   if(await run(l,()=>api('/api/equipo/hojas/liberar',{codigo:cod}),'Hoja '+cod+' liberada.'))await recargar()}}}
 
 // ───────── Comercios ─────────
 function vistaCom(){
