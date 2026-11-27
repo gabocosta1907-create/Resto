@@ -32,6 +32,12 @@ a{color:var(--ac);font-weight:600}
 #toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);max-width:92vw;padding:12px 18px;border-radius:12px;color:#fff;font:600 15px system-ui;z-index:50;box-shadow:0 4px 18px rgba(0,0,0,.25);display:none}
 #toast.ok{background:#2F6B3E}#toast.mal{background:#A63A2B}
 table.act{width:100%;border-collapse:collapse;font-size:14px}table.act td{padding:6px 8px;border-top:1px solid var(--line);vertical-align:top}
+.pq{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;padding:18px;z-index:60}
+.pq>div{background:#fff;border-radius:16px;max-width:440px;width:100%;padding:20px;box-shadow:0 10px 40px rgba(0,0,0,.3)}
+.pq p{margin:0 0 18px;font:16px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:#222}
+.pq .bt{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
+.pq button{min-height:46px;padding:0 20px;border-radius:12px;font:700 16px system-ui;cursor:pointer;border:1px solid #DDD8CB;background:#fff;color:#222}
+.pq button.ok{background:#2B2B2B;color:#fff;border-color:#2B2B2B}
 </style></head><body>
 <header><b>Administración del equipo</b><span class="sp"></span><span id="quien" class="mut" style="color:#ddd"></span><button class="l" id="salir" hidden>Salir</button></header>
 <main id="m"><div class="card">Cargando…</div></main>
@@ -47,6 +53,11 @@ function leer(t){t=String(t||'').trim();const m=/[#&]c=([A-Za-z0-9_-]+)/.exec(t)
  const k=/[#&]k=([0-9a-f]+)/.exec(t);if(k)return k[1];return /^[A-Za-z0-9_-]{8,}$/.test(t)?t:''}
 try{tok=localStorage.getItem('resto_adm')||''}catch(e){}
 let tt=null;
+function pregunta(msg,si){return new Promise(res=>{const o=document.createElement('div');o.className='pq';o.setAttribute('role','dialog');o.setAttribute('aria-modal','true');
+ const d=document.createElement('div'),p=document.createElement('p'),bt=document.createElement('div'),n=document.createElement('button'),a=document.createElement('button');
+ p.textContent=msg;bt.className='bt';n.textContent='Cancelar';a.textContent=si||'Aceptar';a.className='ok';bt.append(n,a);d.append(p,bt);o.append(d);document.body.append(o);
+ const f=v=>{document.removeEventListener('keydown',k,true);o.remove();res(v)};const k=e=>{if(e.key==='Escape'){e.preventDefault();f(false)}};
+ document.addEventListener('keydown',k,true);n.onclick=()=>f(false);a.onclick=()=>f(true);o.onclick=e=>{if(e.target===o)f(false)};n.focus()})}
 function toast(t,mal){const e=$('#toast');e.textContent=t;e.className=mal?'mal':'ok';e.style.display='block';clearTimeout(tt);tt=setTimeout(()=>e.style.display='none',mal?9000:4500)}
 async function api(p,b){
  let r;try{r=await fetch(p,{method:b?'POST':'GET',headers:{'x-acceso':tok,'content-type':'application/json'},body:b?JSON.stringify(b):undefined})}catch(e){throw new Error('No hay conexión con el servidor. Probá de nuevo.')}
@@ -66,7 +77,7 @@ function entrar(msg){
  const go=async()=>{const v=leer($('#ck').value);if(!v)return toast('No reconozco eso. Pegá la clave de administrador o su link completo.',true);tok=v;
   try{const y=await api('/api/yo');if(y.rol!=='equipo')throw new Error('Esa clave no es de administrador.');try{localStorage.setItem('resto_adm',tok)}catch(e){}iniciar()}catch(e){tok='';entrar(e.st===401||e.st===403?'Esa clave no es de administrador, o no está vigente.':e.message)}};
  $('#ce').onclick=go;$('#ck').onkeydown=e=>{if(e.key==='Enter')go()};$('#ck').focus()}
-$('#salir').onclick=()=>{if(confirm('¿Salir de la administración? Para volver vas a necesitar tu clave de administrador.')){try{localStorage.removeItem('resto_adm')}catch(e){}tok='';entrar()}};
+$('#salir').onclick=async()=>{if(await pregunta('¿Salir de la administración? Para volver vas a necesitar tu clave de administrador.')){try{localStorage.removeItem('resto_adm')}catch(e){}tok='';entrar()}};
 
 // ───────── Estado y pestañas ─────────
 const S={tab:'ops',ops:[],com:[],filtroOp:'',filtro:'todos',nuevo:null};
@@ -103,13 +114,13 @@ function vistaOps(){
  $('#vista').onclick=async e=>{const t=e.target.closest('button[data-v],button[data-q],button[data-b],button[data-r],button[data-x]');if(!t)return;
   const id=t.dataset.v||t.dataset.q||t.dataset.b||t.dataset.r||t.dataset.x,o=S.ops.find(x=>x.id===id);if(!o)return;
   if(t.dataset.v){S.filtroOp=id;S.filtro='todos';S.tab='com';return pintar()}
-  if(t.dataset.q){if(!confirm('Esto reemplaza la clave de '+o.nombre+': el QR anterior deja de funcionar. Sus comercios no cambian. ¿Generar un QR nuevo?'))return;
+  if(t.dataset.q){if(!await pregunta('Esto reemplaza la clave de '+o.nombre+': el QR anterior deja de funcionar. Sus comercios no cambian. ¿Generar un QR nuevo?'))return;
    const j=await run(t,()=>api('/api/equipo/operadores/acceso',{id}),'QR nuevo generado.');if(j){S.nuevo={t:'QR nuevo',n:j.nombre,c:j.clave};await recargar();window.scrollTo(0,0)}return}
-  if(t.dataset.b){if(!confirm('¿Bloquear a '+o.nombre+'? No podrá usar el Agente hasta que lo reactives. Conserva su clave y sus comercios.'))return;
+  if(t.dataset.b){if(!await pregunta('¿Bloquear a '+o.nombre+'? No podrá usar el Agente hasta que lo reactives. Conserva su clave y sus comercios.'))return;
    if(await run(t,()=>api('/api/equipo/operadores/estado',{id,accion:'bloquear'}),o.nombre+' quedó bloqueado.'))await recargar();return}
   if(t.dataset.r){const j=await run(t,()=>api('/api/equipo/operadores/estado',{id,accion:'reactivar'}),r=>o.nombre+' quedó activo'+(r.clave?'. Se generó una clave nueva.':'.'));
    if(j){if(j.clave){S.nuevo={t:'Operador reactivado, clave nueva',n:j.nombre,c:j.clave}}await recargar();if(j.clave)window.scrollTo(0,0)}return}
-  if(t.dataset.x){if(!confirm('¿Dar de baja a '+o.nombre+'? Pierde el acceso ya mismo y sus '+o.comercios+' comercio(s) quedan a tu nombre hasta que los reasignes.'))return;
+  if(t.dataset.x){if(!await pregunta('¿Dar de baja a '+o.nombre+'? Pierde el acceso ya mismo y sus '+o.comercios+' comercio(s) quedan a tu nombre hasta que los reasignes.'))return;
    if(await run(t,()=>api('/api/equipo/operadores/revocar',{id}),o.nombre+' fue dado de baja.'))await recargar()}}}
 
 // ───────── Comercios ─────────
@@ -136,17 +147,17 @@ function vistaCom(){
   const it=e.target.closest('.it[data-s]');if(!it)return;const slug=it.dataset.s,c=S.com.find(x=>x.slug===slug),b=e.target.closest('button');if(!b||!c)return;
   if('reas' in b.dataset){const v=it.querySelector('[data-op]').value;if((c.op?c.op.id:'')===v)return toast('Ya está asignado a ese operador.',true);
    const o=S.ops.find(x=>x.id===v);if(await run(b,()=>api('/api/equipo/reasignar',{slug,op:v||null}),'/'+slug+'/ quedó a nombre de '+(o?o.nombre:'administrador')+'.'))await recargar();return}
-  if('apr' in b.dataset){if(!confirm('¿Aprobar el vínculo de /'+slug+'/ con '+c.pendiente+'? Si no existe en el portal de Marian, se da de alta como comercio activo.'))return;
+  if('apr' in b.dataset){if(!await pregunta('¿Aprobar el vínculo de /'+slug+'/ con '+c.pendiente+'? Si no existe en el portal de Marian, se da de alta como comercio activo.'))return;
    if(await run(b,()=>api('/api/equipo/portal/resolver',{slug,aprobar:true}),r=>'Aprobado.'+(r.portal&&r.portal.creado?' Se dio de alta en el portal.':' Ya existía en el portal.')))await recargar();return}
-  if('rec' in b.dataset){if(!confirm('¿Rechazar la solicitud de /'+slug+'/ ?'))return;if(await run(b,()=>api('/api/equipo/portal/resolver',{slug,aprobar:false}),'Solicitud rechazada.'))await recargar();return}
-  if('desv' in b.dataset){if(!confirm('¿Desvincular /'+slug+'/ del portal de Marian? El asistente deja de poder armar pedidos para ese comercio. En el portal el comercio sigue existiendo.'))return;
+  if('rec' in b.dataset){if(!await pregunta('¿Rechazar la solicitud de /'+slug+'/ ?'))return;if(await run(b,()=>api('/api/equipo/portal/resolver',{slug,aprobar:false}),'Solicitud rechazada.'))await recargar();return}
+  if('desv' in b.dataset){if(!await pregunta('¿Desvincular /'+slug+'/ del portal de Marian? El asistente deja de poder armar pedidos para ese comercio. En el portal el comercio sigue existiendo.'))return;
    if(await run(b,()=>api('/api/equipo/portal',{slug,email:null}),'Desvinculado de Marian.'))await recargar();return}
   if('vinc' in b.dataset){const m=it.querySelector('[data-mail]').value.trim().toLowerCase();
    if(!MAIL.test(m))return toast('Ese mail no es válido: tiene que ser como nombre@dominio.com.',true);
    const j=await run(b,()=>api('/api/equipo/portal',{slug,email:m}),r=>'Vinculado con '+m+'.'+(r.portal?(r.portal.creado?' Se dio de alta en el portal.':' Ya existía en el portal.'):''));if(j)await recargar();return}
-  if('ag' in b.dataset){const on=b.dataset.ag==='1';if(!confirm(on?'¿Volver a habilitar el asistente de /'+slug+'/ ?':'¿Cortar el asistente de /'+slug+'/ ? El comercio deja de verlo.'))return;
+  if('ag' in b.dataset){const on=b.dataset.ag==='1';if(!await pregunta(on?'¿Volver a habilitar el asistente de /'+slug+'/ ?':'¿Cortar el asistente de /'+slug+'/ ? El comercio deja de verlo.'))return;
    if(await run(b,()=>api('/api/equipo/agente',{slug,on}),on?'Asistente habilitado.':'Asistente cortado.'))await recargar();return}
-  if('tok' in b.dataset){if(!confirm('Esto invalida el link de herramienta actual de /'+slug+'/ y genera uno nuevo. ¿Seguir?'))return;
+  if('tok' in b.dataset){if(!await pregunta('Esto invalida el link de herramienta actual de /'+slug+'/ y genera uno nuevo. ¿Seguir?'))return;
    const j=await run(b,()=>api('/api/equipo/token',{slug}),'Link nuevo generado.');if(j){const u=location.origin+j.herramienta;it.querySelector('[data-out]').innerHTML=`<div class="box"><b>Link de herramienta de /${esc(slug)}/</b>: se muestra una sola vez. Entregáselo al responsable del local y no lo publiques.<input type="text" readonly value="${esc(u)}" onclick="this.select()" style="margin-top:8px">${qrImg(u,'Herramienta (privado)')}</div>`}}}}
 iniciar();
 })();

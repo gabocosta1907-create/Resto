@@ -51,6 +51,12 @@ main{max-width:620px;margin:0 auto;padding:8px 16px 90px}
 @keyframes pul{0%{box-shadow:0 0 0 0 rgba(179,64,47,.45)}100%{box-shadow:0 0 0 14px rgba(179,64,47,0)}}
 .ag:not([hidden])+.toast{bottom:92px}
 .dlg ul{margin:0 0 14px;padding-left:20px}.dlg li{margin:0 0 6px}.dlg p{margin:0 0 12px}
+.pq{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;padding:18px;z-index:60}
+.pq>div{background:#fff;border-radius:16px;max-width:440px;width:100%;padding:20px;box-shadow:0 10px 40px rgba(0,0,0,.3)}
+.pq p{margin:0 0 18px;font:16px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:#222}
+.pq .bt{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
+.pq button{min-height:46px;padding:0 20px;border-radius:12px;font:700 16px system-ui;cursor:pointer;border:1px solid #DDD8CB;background:#fff;color:#222}
+.pq button.ok{background:#2B2B2B;color:#fff;border-color:#2B2B2B}
 </style></head><body>
 <div id="app"><div class="cent">Cargando…</div></div>
 <div class="dlg" id="dlg"><div class="c" id="dc"></div></div><div class="ag" id="ag" hidden></div><div class="toast" id="toast"></div>
@@ -95,11 +101,16 @@ function pintar(){
  app.innerHTML=h+'</main>';
  $('#und').disabled=!(est.v>0);
 }
+function pregunta(msg,si){return new Promise(res=>{const o=document.createElement('div');o.className='pq';o.setAttribute('role','dialog');o.setAttribute('aria-modal','true');
+ const d=document.createElement('div'),p=document.createElement('p'),bt=document.createElement('div'),n=document.createElement('button'),a=document.createElement('button');
+ p.textContent=msg;bt.className='bt';n.textContent='Cancelar';a.textContent=si||'Aceptar';a.className='ok';bt.append(n,a);d.append(p,bt);o.append(d);document.body.append(o);
+ const f=v=>{document.removeEventListener('keydown',k,true);o.remove();res(v)};const k=e=>{if(e.key==='Escape'){e.preventDefault();f(false)}};
+ document.addEventListener('keydown',k,true);n.onclick=()=>f(false);a.onclick=()=>f(true);o.onclick=e=>{if(e.target===o)f(false)};n.focus()})}
 const dlg=(html,on)=>{$('#dc').innerHTML=html;$('#dlg').classList.add('on');on&&on();const c=()=>$('#dlg').classList.remove('on');$('#dc').querySelectorAll('[data-x]').forEach(b=>b.onclick=c);return c};
 async function op(b){try{const r=await api('/api/op',{method:'POST',body:JSON.stringify(b)});est=r.estado;pintar();toast(r.msg)}catch(e){toast('No se pudo: '+e.message)}}
 const buscar=id=>{for(const s of base.secciones){const x=lista(s).find(i=>i.id===id);if(x)return x}};
-app.addEventListener('click',e=>{
- if(e.target.id==='und'){if(confirm('¿Deshacer el último cambio?'))op({op:'deshacer'});return}
+app.addEventListener('click',async e=>{
+ if(e.target.id==='und'){if(await pregunta('¿Deshacer el último cambio?','Deshacer'))op({op:'deshacer'});return}
  const b=e.target.closest('button[data-a]');if(!b)return;const a=b.dataset.a,row=b.closest('.it,.sus'),id=row&&row.dataset.id,it=id&&buscar(id);
  if(a==='suspender'||a==='reactivar')return op({op:a,id});
  if(a==='quitar')return dlg(`<h3>¿Quitar «${esc(it.n)}» de la carta?</h3><p>Se puede deshacer desde el botón Deshacer.</p><div class="row"><button data-x>Cancelar</button><button class="go" id="ok">Quitar</button></div>`,()=>$('#ok').onclick=()=>{$('#dlg').classList.remove('on');op({op:'quitar',id})});
