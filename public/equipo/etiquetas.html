@@ -10,24 +10,24 @@ body{margin:0;background:#EEE;font-family:system-ui,-apple-system,Segoe UI,Robot
 .barra select{min-height:40px;border-radius:8px;border:0;padding:0 8px;font:15px system-ui}
 .barra .n{opacity:.8;font-size:13px;flex-basis:100%}
 .err{color:#B3402F;padding:14px 24px;font-weight:600;margin:0}
-.hoja{width:210mm;height:297mm;margin:14px auto;background:#fff;padding:var(--m);display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(6,1fr);box-shadow:0 2px 10px rgba(0,0,0,.15);page-break-after:always;break-after:page;overflow:hidden}
+.hoja{width:210mm;height:297mm;margin:14px auto;background:#fff;padding:var(--m);display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(4,1fr);box-shadow:0 2px 10px rgba(0,0,0,.15);page-break-after:always;break-after:page;overflow:hidden}
 .et{border:.2mm dashed #BBB;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:1.5mm;overflow:hidden}
-.q{width:30mm;height:30mm;flex:none}.q svg{width:100%;height:100%;display:block}
-.t1{font-weight:800;font-size:5mm;line-height:1.1;margin-top:.8mm}
-.t2{font-size:2.8mm;line-height:1.2;margin-top:.6mm;color:#333}
-.cd{font:2.3mm/1 ui-monospace,Menlo,monospace;color:#888;margin-top:.8mm;letter-spacing:.2mm}
+.q{width:44mm;height:44mm;flex:none}.q svg{width:100%;height:100%;display:block}
+.t1{font-weight:800;font-size:6mm;line-height:1.1;margin-top:.8mm}
+.t2{font-size:3.4mm;line-height:1.2;margin-top:.6mm;color:#333}
+.cd{font:2.6mm/1 ui-monospace,Menlo,monospace;color:#888;margin-top:.8mm;letter-spacing:.2mm}
 @page{size:A4;margin:0}
 @media print{body{background:#fff}.barra,#errs{display:none}.hoja{margin:0;box-shadow:none;width:210mm;height:297mm}.hoja:last-child{page-break-after:auto;break-after:auto}.et{border-color:#CCC}}
 </style></head><body>
 <div class="barra"><button id="imp" type="button">Imprimir</button><button id="pdf" type="button">Descargar PDF</button>
 <label>Margen de la hoja <select id="mar"><option value="0">0 mm</option><option value="5" selected>5 mm</option><option value="10">10 mm</option></select></label>
-<span class="n">Imprimir: en el cuadro de impresión elegí tamaño A4 y escala 100 % (sin «ajustar a la página»). Para llevar a una imprenta usá «Descargar PDF» (A4, vectorial, a tamaño real). Son 24 etiquetas por hoja, 4 columnas × 6 filas.</span></div>
+<span class="n">Imprimir: en el cuadro de impresión elegí tamaño A4 y escala 100 % (sin «ajustar a la página»). Para llevar a una imprenta usá «Descargar PDF» (A4, vectorial, a tamaño real). Son 12 etiquetas por hoja (3 columnas × 4 filas), cada una con su QR propio y sin número de mesa: la mesa se asigna después desde Gratto.</span></div>
 <div id="errs"></div>
 <div id="hojas"></div>
 <script src="qr.js"></script>
 <script>
 (function(){
- var out=document.getElementById('hojas'),N=24,datos={},esperas=[];
+ var out=document.getElementById('hojas'),N=12,datos={},esperas=[];
  var cods=(new URLSearchParams(location.search).get('h')||'').toLowerCase().split(',').map(function(s){return s.trim()}).filter(function(s){return /^[a-z2-9]{6}$/.test(s)}).slice(0,20);
  function esc(t){return String(t).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
  function qrSvg(u){var z=qrcode(0,'M');z.addData(u);z.make();var n=z.getModuleCount(),d='';
@@ -36,10 +36,9 @@ body{margin:0;background:#EEE;font-family:system-ui,-apple-system,Segoe UI,Robot
  function hoja(c,h){
   var base=location.origin+'/q/'+c,html='';
   for(var i=0;i<N;i++){
-   var mesa=h.tipo==='mesas'?(h.desde||1)+i:0;
-   html+='<div class="et"><div class="q">'+qrSvg(mesa?base+'/'+mesa:base)+'</div>'
-    +(mesa?'<div class="t1">Mesa '+mesa+'</div><div class="t2">Escaneá para ver la carta</div>':'<div class="t1">Mirá la carta</div><div class="t2">Escaneá este código</div>')
-    +'<div class="cd">'+esc(c)+(mesa?' · '+mesa:'')+'</div></div>';
+   html+='<div class="et"><div class="q">'+qrSvg(base+'/'+(i+1))+'</div>'
+    +'<div class="t1">Mirá la carta</div><div class="t2">Escaneá este código</div>'
+    +'<div class="cd">'+esc(c)+'</div></div>';
   }
   var d=document.createElement('div');d.className='hoja';d.innerHTML=html;return d}
  document.getElementById('imp').onclick=function(){window.print()};
@@ -55,28 +54,28 @@ body{margin:0;background:#EEE;font-family:system-ui,-apple-system,Segoe UI,Robot
   esperas.push(pr.catch(function(){}));
  });
 
- // ── PDF vectorial (A4, 24 etiquetas por hoja), armado acá mismo sin librerías ──
+ // ── PDF vectorial (A4, 12 etiquetas por hoja), armado acá mismo sin librerías ──
  var cvs=document.createElement('canvas').getContext('2d');
  function ancho(t,sz,neg){cvs.font=(neg?'bold ':'')+'1000px Helvetica, Arial, sans-serif';return cvs.measureText(t).width/1000*sz}
  function lit(t){var o='(';for(var i=0;i<t.length;i++){var c=t.charCodeAt(i);if(c===40||c===41||c===92)o+='\\'+t[i];else if(c<32||c>126)o+='\\'+('00'+(c&255).toString(8)).slice(-3);else o+=t[i]}return o+')'}
  function f2(x){return x.toFixed(2)}
  function paginaPdf(c,h,mm){
-  var W=595.28,H=841.89,pt=72/25.4,m=mm*pt,cw=(W-2*m)/4,ch=(H-2*m)/6,qs=30*pt,bloque=qs+33,s='q\n0.57 w [2 2] 0 d 0.73 G\n',txt='',cache={};
+  var W=595.28,H=841.89,pt=72/25.4,m=mm*pt,cw=(W-2*m)/3,ch=(H-2*m)/4,qs=44*pt,bloque=qs+37,s='q\n0.57 w [2 2] 0 d 0.73 G\n',txt='',cache={};
   for(var i=0;i<N;i++){
-   var mesa=h.tipo==='mesas'?(h.desde||1)+i:0,url=location.origin+'/q/'+c+(mesa?'/'+mesa:'');
+   var url=location.origin+'/q/'+c+'/'+(i+1);
    var z=cache[url];if(!z){z=qrcode(0,'M');z.addData(url);z.make();cache[url]=z}
-   var n=z.getModuleCount(),ms=qs/(n+8),col=i%4,fila=Math.floor(i/4),x0=m+col*cw,yT=H-m-fila*ch;
+   var n=z.getModuleCount(),ms=qs/(n+8),col=i%3,fila=Math.floor(i/3),x0=m+col*cw,yT=H-m-fila*ch;
    s+=f2(x0)+' '+f2(yT-ch)+' '+f2(cw)+' '+f2(ch)+' re S\n';
    var qx=x0+(cw-qs)/2,qy=yT-(ch-bloque)/2;
    s+='0 g\n';
    for(var r=0;r<n;r++){var k=0;while(k<n){if(!z.isDark(r,k)){k++;continue}var k0=k;while(k<n&&z.isDark(r,k))k++;
      s+=f2(qx+(k0+4)*ms)+' '+f2(qy-(r+5)*ms)+' '+f2((k-k0)*ms)+' '+f2(ms)+' re\n'}}
    s+='f\n';
-   var yb=qy-qs,t1=mesa?'Mesa '+mesa:'Mirá la carta',t2=mesa?'Escaneá para ver la carta':'Escaneá este código',t3=c+(mesa?' · '+mesa:'');
-   var ty=yb-2.3-10.5,sy=ty-3-6.5,cy=sy-3-5.5;
-   txt+='BT /F2 14.17 Tf 0 g '+f2(x0+(cw-ancho(t1,14.17,1))/2)+' '+f2(ty)+' Td '+lit(t1)+' Tj ET\n';
-   txt+='BT /F1 7.94 Tf 0.2 g '+f2(x0+(cw-ancho(t2,7.94))/2)+' '+f2(sy)+' Td '+lit(t2)+' Tj ET\n';
-   txt+='BT /F1 6.5 Tf 0.53 g '+f2(x0+(cw-ancho(t3,6.5))/2)+' '+f2(cy)+' Td '+lit(t3)+' Tj ET\n';
+   var yb=qy-qs,t1='Mirá la carta',t2='Escaneá este código',t3=c;
+   var ty=yb-2.3-12.5,sy=ty-3-7.5,cy=sy-3-6.5;
+   txt+='BT /F2 17 Tf 0 g '+f2(x0+(cw-ancho(t1,17,1))/2)+' '+f2(ty)+' Td '+lit(t1)+' Tj ET\n';
+   txt+='BT /F1 9.6 Tf 0.2 g '+f2(x0+(cw-ancho(t2,9.6))/2)+' '+f2(sy)+' Td '+lit(t2)+' Tj ET\n';
+   txt+='BT /F1 7.4 Tf 0.53 g '+f2(x0+(cw-ancho(t3,7.4))/2)+' '+f2(cy)+' Td '+lit(t3)+' Tj ET\n';
   }
   return s+'Q\n'+txt}
  function armarPdf(paginas){

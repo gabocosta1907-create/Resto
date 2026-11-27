@@ -206,8 +206,8 @@ async function equipo(env,req,p,q){
     return J({ok:true,slug,vinculado:!!(await env.ESTADO.get('pm:'+slug)),clave:!!env.RESTO_SVC_KEY,portal:portalRes});
   }
   if(req.method==='POST'&&p==='/api/equipo/hojas'){
-    const tipo=b.tipo==='mesas'?'mesas':b.tipo==='carta'?'carta':null;if(!tipo)return J({error:'el tipo es carta o mesas'},400);
-    const cant=Math.min(Math.max(parseInt(b.cantidad)||1,1),20),d0=Math.min(Math.max(parseInt(b.desde)||1,1),9000),out=[];
+    const tipo='qr';// una sola clase de hoja: 12 etiquetas, cada una con su QR propio; la mesa la asigna Gratto
+    const cant=Math.min(Math.max(parseInt(b.cantidad)||1,1),20),out=[];
     // Administrador: crea sin límite y puede dejarlas a nombre de un operador. Operador: solo si el administrador le fijó un tope, y dentro de ese tope.
     let dueno=null;
     if(A.admin){
@@ -222,7 +222,7 @@ async function equipo(env,req,p,q){
     for(let i=0;i<cant;i++){
       let c=null;for(let t=0;t<8&&!c;t++){const x=codigoNuevo();if(!(await env.ESTADO.get('et:'+x)))c=x}
       if(!c)return J({error:'no pude generar el código, probá de nuevo'},500);
-      const h={tipo,desde:tipo==='mesas'?d0+i*HOJA_N:null,slug:null,op:dueno,t:new Date().toISOString()};
+      const h={tipo,desde:null,slug:null,op:dueno,t:new Date().toISOString()};
       await env.ESTADO.put('et:'+c,JSON.stringify(h));out.push({codigo:c,tipo,desde:h.desde,slug:null,op:dueno});
     }
     await bit(env,A,'hoja.crear',null,{tipo,n:cant,op:dueno});
@@ -508,9 +508,10 @@ const hoyAR=()=>new Date(Date.now()-3*3600e3).toISOString().slice(0,10);
 // El asistente viene activo; el equipo puede cortarlo por comercio (agoff:<slug>).
 async function agOn(env,slug){return !(await env.ESTADO.get('agoff:'+slug))}
 // ───────── Etiquetas preimpresas (hojas de 24 QR) ─────────
-// Hoja "carta": las 24 etiquetas llevan el mismo QR (/q/<código>). Hoja "mesas": cada etiqueta lleva su número (/q/<código>/<mesa>).
+// Hoja actual (tipo "qr"): 12 etiquetas (3×4), cada una con su QR propio /q/<código>/<1..12>, sin número de mesa impreso; Gratto asigna la mesa a cada QR.
+// Hojas viejas: "carta" (mismo QR) y "mesas" (24, con número) siguen funcionando.
 // La hoja se asocia a un comercio al publicar (et:<código> = {tipo,desde,slug}); el QR impreso no cambia nunca.
-const HOJA_N=24,ALFA='abcdefghjkmnpqrstuvwxyz23456789';
+const HOJA_N=24,HOJA_QR=12,ALFA='abcdefghjkmnpqrstuvwxyz23456789';
 const codigoNuevo=()=>[...crypto.getRandomValues(new Uint8Array(6))].map(x=>ALFA[x%ALFA.length]).join('');
 function codigoDe(x){x=String(x||'').trim().toLowerCase();const m=x.match(/\/q\/([a-z2-9]{6})(?:[\/?#]|$)/);if(m)return m[1];return /^[a-z2-9]{6}$/.test(x)?x:null}
 const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -520,6 +521,7 @@ async function etiqueta(env,p){
   const h=await env.ESTADO.get('et:'+m[1],'json');
   if(!h)return paginaEtiqueta('Etiqueta no válida','Este QR no está registrado. Avisale al local.',404);
   if(!h.slug)return paginaEtiqueta('Etiqueta todavía sin activar','Este QR todavía no está asociado a ninguna carta.',200);
+  if(h.tipo==='qr'){const e=m[2]&&Number(m[2])>=1&&Number(m[2])<=HOJA_QR?'?e='+m[1]+'.'+Number(m[2]):'';return new Response(null,{status:302,headers:{location:'/'+h.slug+'/'+e,'cache-control':'no-store'}})}
   const k=h.tipo==='mesas'&&m[2]?Number(m[2]):0,mesa=k>=h.desde&&k<h.desde+HOJA_N?k:0;
   return new Response(null,{status:302,headers:{location:'/'+h.slug+'/'+(mesa?'?m='+mesa:''),'cache-control':'no-store'}});
 }
@@ -542,7 +544,7 @@ const app={
       }
       if(req.method==='GET'&&(m=p.match(/^\/api\/hoja\/([a-z2-9]{6})$/))){
         const h=await env.ESTADO.get('et:'+m[1],'json');if(!h)return J({error:'no existe'},404);
-        return J({tipo:h.tipo,desde:h.desde||null,n:HOJA_N},200,{'cache-control':'no-cache'});
+        return J({tipo:h.tipo,desde:h.desde||null,n:h.tipo==='qr'?HOJA_QR:HOJA_N},200,{'cache-control':'no-cache'});
       }
       const q=await quien(env,req);
       if(!q)return J({error:'sin acceso'},401);
